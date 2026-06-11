@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zllm"
+version = "0.0.1"
+description = "从零训练中文大语言模型 - step by step TDD 教学项目"
+requires-python = ">=3.14"
+dependencies = [
+    "torch>=2.7",
+    "transformers>=4.52",
+    "datasets>=3.6",
+    "tokenizers>=0.21",
+    "swanlab>=0.4",
+    "streamlit>=1.45",
+    "fastapi>=0.115",
+    "uvicorn>=0.34",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.4", "pytest-cov>=6"]
+
+[tool.setuptools.packages.find]
+include = ["zllm*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"
