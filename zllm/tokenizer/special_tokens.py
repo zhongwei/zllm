@@ -13,6 +13,8 @@ SPECIAL_TOKENS = [
     # 对话边界
     "<|im_start|>",
     "<|im_end|>",
+    # padding
+    "<|pad|>",
     # 多模态预留（当前项目不实现，但保留兼容性）
     "<|vision_start|>",
     "<|vision_end|>",
