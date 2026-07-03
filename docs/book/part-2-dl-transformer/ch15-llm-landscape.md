@@ -19,7 +19,7 @@ status: draft
 读完本章，你应该能够：
 
 - 讲清 GPT 从 GPT-1 到 GPT-4 / Llama / Qwen 的演进脉络，以及 **decoder-only** 为何胜出；
-- 默写出预训练目标 NTP 的损失 $\mathcal{L}_{NTP}=-\sum_t\log P(x_t\mid x_{<t})$，并说清它和 Ch 05 交叉熵的关系；
+- 默写出预训练目标 NTP 的损失 $`\mathcal{L}_{NTP}=-\sum_t\log P(x_t\mid x_{<t})`$ ，并说清它和 Ch 05 交叉熵的关系；
 - 画出「pretrain → SFT → align（RLHF）」三阶段管线，并解释每阶段的目标；
 - 说出 Scaling Law 的幂律形式，以及 Chinchilla 提出的「数据量 vs 参数量」配比直觉；
 - 把这些大图景和 zllm 钉死：zllm 是这套范式的一个**可跑通的缩微版**（对齐 Qwen3/minimind-3，~64M 参数）。
@@ -61,10 +61,10 @@ graph LR
 
 ### NTP：唯一的预训练目标
 
-decoder-only 模型的预训练目标只有一个——**下一个 token 预测（Next-Token Prediction, NTP）**：给定前 $t$ 个 token，预测第 $t+1$ 个。形式上，对一个长度 $T$ 的序列 $x_{1:T}$，最大化它的对数似然，等价于最小化：
+decoder-only 模型的预训练目标只有一个——**下一个 token 预测（Next-Token Prediction, NTP）**：给定前 $t$ 个 token，预测第 $t+1$ 个。形式上，对一个长度 $T$ 的序列 $x_{1:T}$ ，最大化它的对数似然，等价于最小化：
 
 $$
-\boxed{\;\mathcal{L}_{NTP} \;=\; -\sum_{t=1}^{T-1} \log P_\theta(x_{t+1}\mid x_{1:t})\;}
+\boxed{ \mathcal{L}_{NTP}  =  -\sum_{t=1}^{T-1} \log P_\theta(x_{t+1}\mid x_{1:t}) }
 $$
 
 这里 $P_\theta(x_{t+1}\mid x_{1:t})=\mathrm{softmax}(z_{t+1})$ 是模型在词表上输出的类别分布（Ch 03）。这正是 Ch 05 推导过的**交叉熵损失**——「真实下一个 token 服从 one-hot 类别分布」这一假设下，MLE 推出来的必然结果（Ch 04 的「桥二」）。所以 NTP 不是随意选的目标，它是「自回归 + 交叉熵」的自然产物。
@@ -95,10 +95,10 @@ $$
 
 ### Scaling Law：为什么「大力出奇迹」
 
-2020 年前后，人们发现了一个惊人的规律：**LLM 的测试 loss 随参数量 $N$、数据量 $D$、算力 $C$ 按幂律下降**，且非常平滑、可预测。OpenAI 的 Scaling Law 形式（简化）为：
+2020 年前后，人们发现了一个惊人的规律：**LLM 的测试 loss 随参数量 $N$ 、数据量 $D$ 、算力 $C$ 按幂律下降**，且非常平滑、可预测。OpenAI 的 Scaling Law 形式（简化）为：
 
 $$
-\mathcal{L}(N) \;\approx\; \left(\frac{N_c}{N}\right)^{\alpha_N},\qquad \alpha_N \approx 0.076
+\mathcal{L}(N)  \approx  \left(\frac{N_c}{N}\right)^{\alpha_N},\qquad \alpha_N \approx 0.076
 $$
 
 其中 $N_c$ 是常数。把 loss 对参数量画在双对数坐标里，它几乎是一条直线：
@@ -120,7 +120,7 @@ $$
 
 ### Chinchilla：数据与参数要配比
 
-但 Scaling Law 还藏着一个陷阱。DeepMind 2022 年的 Chinchilla 论文指出：**很多大模型其实是「参数多、数据少」的「欠训」状态**。给定固定算力预算 $C$，最优策略是让数据量 $D$ 和参数量 $N$ **近似等比例增长**（约 $D:N \approx 20:1$，即每个参数喂约 20 个 token）。
+但 Scaling Law 还藏着一个陷阱。DeepMind 2022 年的 Chinchilla 论文指出：**很多大模型其实是「参数多、数据少」的「欠训」状态**。给定固定算力预算 $C$ ，最优策略是让数据量 $D$ 和参数量 $N$ **近似等比例增长**（约 $D:N \approx 20:1$ ，即每个参数喂约 20 个 token）。
 
 $$
 N_{opt}\propto C^{0.5},\qquad D_{opt}\propto C^{0.5}
@@ -189,7 +189,7 @@ Tokenizer (M2, Ch16-19)
 把 Part II 的收官章浓缩成几条：
 
 1. **decoder-only 胜出**：自回归生成 + NTP 提供了统一、通用的接口，让 scaling 简单有效。
-2. **NTP**：$\mathcal{L}_{NTP}=-\sum_t\log P(x_{t+1}\mid x_{<t})$，本质是类别分布的交叉熵（Ch 04–05）。
+2. **NTP**： $`\mathcal{L}_{NTP}=-\sum_t\log P(x_{t+1}\mid x_{<t})`$ ，本质是类别分布的交叉熵（Ch 04–05）。
 3. **三阶段**：pretrain（学语言）→ SFT（学指令）→ align（学偏好）。zllm 原样复刻。
 4. **Scaling Law**：loss 随 $N/D/C$ 幂律下降；Chinchilla 说要等比喂参数和数据。
 5. **zllm 定位**：这套范式的缩微版，价值在「看懂 + 跑通」，不在「指标强」。
