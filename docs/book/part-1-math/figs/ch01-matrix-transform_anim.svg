@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 250" font-family="Cambria, Georgia, 'Times New Roman', serif">
+  <title>矩阵乘法 = 旋转 + 缩放（动画）</title>
+  <desc>橙色向量在 x 与 A·x 之间连续形变，演示矩阵把 x 旋转 α 又拉伸。</desc>
+  <defs>
+    <marker id="aX2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/></marker>
+    <marker id="aY2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#ea580c"/></marker>
+  </defs>
+  <rect width="380" height="250" fill="#ffffff"/>
+  <line x1="30" y1="210" x2="360" y2="210" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="60" y1="30" x2="60" y2="235" stroke="#e5e7eb" stroke-width="1"/>
+  <line x1="60" y1="210" x2="163.4" y2="172.4" stroke="#2563eb" stroke-width="2" stroke-opacity="0.35" marker-end="url(#aX2)"/>
+  <text x="168" y="170" font-size="16" font-style="italic" fill="#2563eb" fill-opacity="0.5">x</text>
+  <line x1="60" y1="210" x2="163.4" y2="172.4" stroke="#ea580c" stroke-width="2.8" marker-end="url(#aY2)">
+    <animate attributeName="x2" values="163.4;148;163.4" dur="4s" repeatCount="indefinite"/>
+    <animate attributeName="y2" values="172.4;57.6;172.4" dur="4s" repeatCount="indefinite"/>
+  </line>
+  <text x="153" y="54" font-size="16" font-style="italic" fill="#ea580c">A·x</text>
+  <circle cx="60" cy="210" r="2.8" fill="#1f2937"/>
+  <text x="44" y="227" font-size="12" fill="#6b7280">O</text>
+  <text x="100" y="240" font-size="12.5" fill="#6b7280" font-style="italic">矩阵把 x 旋转 α 又拉伸</text>
+</svg>
