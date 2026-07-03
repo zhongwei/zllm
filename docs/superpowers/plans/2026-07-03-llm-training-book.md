@@ -49,7 +49,7 @@ docs/book/
 ├── part-2-dl-transformer/       # Phase 2 追加
 ├── part-3-tokenizer/            # Phase 3 追加
 ├── part-4-architecture/         # Phase 4 追加
-├── part-5-data-training/        # Phase 5 追加
+├── part-5-training/             # Phase 5 追加
 ├── part-6-finetune-alignment/   # Phase 6 追加
 ├── part-7-serving/              # Phase 7 追加
 └── appendices/                  # Phase 7 追加
@@ -67,7 +67,7 @@ docs/book/
 | 2 | Part II（DL/Transformer 理论） | 待追加 | 后续会话 |
 | 3 | Part III（M1+M2 分词） | 已追加（Task 18–21） | 进行中 |
 | 4 | Part IV（M3+M4 模型架构） | 已追加（Task 22–28） | 已完成 |
-| 5 | Part V（M5+M6+M7 数据与训练） | 待追加 | 后续会话 |
+| 5 | Part V（M5+M6+M7 数据与训练） | 已追加（Task 29–34） | 进行中 |
 | 6 | Part VI（M8-M11 微调与对齐） | 待追加 | 后续会话 |
 | 7 | Part VII + 附录（M12 推理部署 + 附录） | 待追加 | 后续会话 |
 
@@ -870,5 +870,53 @@ Create `ch26-causal-lm-head.md`。YAML `source:zllm/model/causal_lm.py,tests:tes
 > 占位说明（计划本身的进度标记，非内容占位）：以下 Phase 将在后续会话按同样 Task 粒度追加。
 
 - **Phase 5（Part V，Ch 27–32，6 章）**：M5+M6+M7。引用 `zllm/dataset/*.py`、`zllm/training/{utils,amp,gpu,pretrain}.py`、`tests/m05_data_pipeline`、`tests/m06_training`、`tests/m07_pretrain`。
+
+### 前置事实块（Phase 5 引用源，已逐行核实）
+
+**`zllm/dataset/utils.py`（37 行）**：`SYSTEM_PROMPTS` 10 条中英 `:10-21`；`pre_processing_chat` 概率加 system prompt `:24-30`（有 tools 直接返回 `:25-26`、已有 system 不重复 `:27`、`random.random() < ratio` `:28-29`）；`post_processing_chat` 概率移除空 think 标签 `:33-37`（`<reasoningchain_start>\n\n<reasoningchain_end>` `:34`、`random.random() > ratio` 移除 `:35-36`）。
+
+**`zllm/dataset/pretrain.py`（41 行）**：`PretrainDataset.__init__` `:18-23`（`wrap(tokenizer)` `:21`、`load_dataset("json")` `:23`）；`__getitem__` `:28-41`（encode `add_special_tokens=False` + `max_length-2` 截断 `:30-35`、加 BOS/EOS `:36`、pad 补齐 `:37`、`labels = input_ids.clone()` `:39`、**pad 位置 → -100** `:40`）。
+
+**`zllm/dataset/sft.py`（81 行）**：`SFTDataset.__init__` `:20-36`（features schema `:25-33`、`bos_id`/`eos_id` 编码 `:35-36`）；`create_chat_prompt` `:41-53`（tools 解析 `:46-47`、`apply_chat_template` `:51-53`）；**`generate_labels`** `:55-71`（全 -100 起始 `:56`、找 `bos_id` 锚点 `:59`、找 `eos_id` 结束 `:63`、start..end+eos 标记真实 id `:66-67`）；`__getitem__` `:73-81`（pre/post processing `:75-77`、encode+pad `:78-79`）。
+
+**`zllm/dataset/dpo.py`（70 行）**：`DPODataset.__init__` `:19-26`；`__getitem__` `:31-52`（chosen/rejected 各渲染+编码 `:33-42`、**错位一位** `ids[:-1]`/`ids[1:]` `:46-51`、返回 6 个张量 dict `:45-52`）；`generate_loss_mask` `:54-70`（与 sft generate_labels 同构，但 mask=0/1 而非 -100/id）。
+
+**`zllm/dataset/rlaif.py`（42 行）**：`RLAIFDataset.__init__` `:18-24`（`thinking_ratio=0.5` `:23`）；`create_chat_prompt` `:29-37`（`pre_processing_chat` `:30`、**`use_thinking = random < ratio`** `:31`、`conversations[:-1]` 去掉答案 `:33`、`add_generation_prompt=True` `:36`）；`__getitem__` `:39-42`（只返回 prompt，answer=""）。
+
+**`zllm/dataset/agent.py`（40 行）**：`AgentRLDataset.__init__` `:14-22`（手读 JSONL `:20-22`）；`parse_conversations` `:27-35`（tools 解析 `:32-33`、**`messages[:-1]` 去最后一条 assistant** `:35`）；`__getitem__` `:37-40`（返回 messages+tools+gt）。
+
+**`zllm/training/utils.py`（165 行）**：`get_lr` **余弦退火** `:46-47`（`base*(0.1+0.45*(1+cos(π·step/total)))`，起点=base、终点=0.1·base）；`setup_seed` `:59-64`（random/np/torch/cuda 四重种子）；`init_model` `:67-78`（权重路径 `f"{from_weight}_{hidden}{_moe}.pth"` `:72-73`、`load_state_dict(strict=False)` `:75`）；**`lm_checkpoint`** `:81-139`（原子写 `.tmp`→`os.replace` `:96-98/125-127`、half().cpu() `:94`、resume 含 optimizer/epoch/step/world_size/wandb_id `:108-115`、读时 world_size 变化自动换算 step `:133-137`）；`SkipBatchSampler` `:142-165`（断点续训跳过已训 batch）。
+
+**`zllm/training/amp.py`（76 行）**：`GradScalerManager` `:12-29`（封装 `torch.amp.GradScaler`）；**`train_step`** `:32-76`（autocast bf16 `:61`、`loss = output.loss + aux_loss` `:63`、`/ accumulation_steps` `:64`、`scaler.scale().backward()` `:66`、累积边界判断 `:68`、unscale→clip→step→update→zero_grad `:70-74`）。
+
+**`zllm/training/gpu.py`（25 行）**：`enable_tf32` `:9-11`、`enable_cudnn_benchmark` `:14-15`、`enable_flash_sdpa` `:18-19`、`setup_gpu_performance` `:22-25`。
+
+**`zllm/training/pretrain.py`（120 行）**：`PretrainConfig` dataclass `:17-36`（epochs=2/batch=64/lr=5e-4/accum=4/grad_clip=1.0/max_seq_len=340）；**`train_epoch`** `:51-120`（余弦 lr 调度 `:82-84`、autocast+loss+accum `:86-89`、scaler 反传 `:91`、边界 unscale→clip→step `:93-99`、log `:104-108`、末尾补齐残余累积 `:112-118`）；`_format_duration` `:39-48`。
+
+**测试**：`test_113_utils`（pre_processing ratio `:13/19`、tools 保留 `:34`、empty think 移除/保留 `:49/55`）；`test_115_pretrain`（BOS at start `:51`、pad→-100 `:55-59`、non-pad labels==input `:61-65`）；`test_121_sft`（labels 有 valid `:53`、prompt masked `:58`、pad masked `:63`、generate_labels 无 assistant 全 -100 `:70`、assistant region marked `:75`）；`test_126_dpo`（6 keys `:49-56`、错位 shape `(63,)` `:60`、mask has ones `:69`、chosen≠rejected `:74`）；`test_130_rlaif_agent`（prompt+generation_prompt `:50-52`、agent messages/tools/gt `:88/93/98`、drop last `:103`）；`test_145_utils`（lr 起点 `:40-43`、终点 `:45-48`、中点 `:55-58`、seed 可复现 `:24-29`、checkpoint save/load `:100-139`、moe suffix `:141-152`）；`test_161_amp`（basic step `:40`、grad clip `:48`、accumulation `:57`、amp cuda `:67`、zero_grad `:76`）；`test_166_gpu`（SkipBatchSampler skip `:32-37`、tf32/flash `:52-55`）；`test_194_loss_ntp`（**loss 下降** `:42-57`、**过拟合** `:61-73`、**下一 token 预测 >10%** `:75-102`）。
+
+### Task 29: Ch 27 数据流水线总览与 TokenizerAdapter（M5-a）
+Create `part-5-training/ch27-data-pipeline-adapter.md`。YAML `source:zllm/dataset/utils.py,tests:tests/m05_data_pipeline/test_113_utils.py`。原理：回引 Ch 19（tokenizer）+ Ch 16（数据是训练燃料），讲数据流水线全景（原始文本→预处理→tokenize→batch→labels/mask），Mermaid 画五种 Dataset 的关系图。代码：`dataset/utils.py` 的 `pre_processing_chat`（概率加 system prompt `:24-30`）+ `post_processing_chat`（概率移除空 think 标签 `:33-37`）+ `wrap()` adapter 介绍。重点：概率增强为什么有益（数据多样性）、empty think 移除让模型学会「该想就想、不想就不写空标签」。测试 test_113（ratio 0/1 `:13/19`、tools 保留 `:34`、think 移除/保留 `:49/55`）。pytest test_113。校验 `grep "\.py:[0-9]"`≥4。README Ch27→✅。Commit `docs(book): write Ch27 data pipeline + TokenizerAdapter (M5-a)`。
+
+### Task 30: Ch 28 五种 Dataset 实现（M5-b）
+Create `part-5-training/ch28-dataset-implementations.md`。YAML `source:zllm/dataset/{pretrain,sft,dpo,rlaif,agent}.py,tests:tests/m05_data_pipeline/test_115_pretrain.py`。原理：回引 Ch 05（NTP）+ Ch 26（ignore_index=-100），讲五种 Dataset 各自产出什么——Pretrain（input_ids, labels 全保留）、SFT（labels 只留 assistant 区域）、DPO（chosen/rejected 错位 + loss_mask）、RLAIF（prompt-only）、Agent（messages+tools+gt）。Mermaid 对比五种 Dataset 的输入输出。代码：PretrainDataset（BOS/EOS/pad/-100 `:36-40`）、SFTDataset（**generate_labels** bos→eos 锚点 `:55-71`）、DPODataset（错位 `:46-51` + loss_mask `:54-70`）、RLAIFDataset（thinking_ratio `:31` + prompt-only `:39-42`）、AgentRLDataset（drop last assistant `:35`）。重点：SFT label masking 是「只对回复算 loss」的核心、DPO 与 SFT 的 mask 差异（-100 vs 0/1）、RLAIF 为什么不需要 labels。测试 test_115（BOS `:51`、pad→-100 `:55`）+ test_121（labels valid `:53`、prompt masked `:58`）+ test_126（6 keys `:49`、错位 shape `:60`）。pytest test_115 test_121 test_126 test_130。校验 `grep "\.py:[0-9]"`≥8。README Ch28→✅。Commit `docs(book): write Ch28 five Dataset implementations (M5-b)`。
+
+### Task 31: Ch 29 训练基础设施：种子/学习率/checkpoint（M6-a）
+Create `part-5-training/ch29-training-infrastructure.md`。YAML `source:zllm/training/utils.py,tests:tests/m06_training/test_145_utils.py`。原理：回引 Ch 09（SGD）+ Ch 11（学习率调度），讲种子可复现、**余弦退火**学习率曲线、checkpoint 原子写入与断点续训。LaTeX 画余弦退火公式 $\eta_t = \eta_0(0.1+0.45(1+\cos(\pi t/T)))$。代码：`get_lr` `:46-47`（起点 base、终点 0.1·base）、`setup_seed` `:59-64`（四重种子）、`init_model` `:67-78`（权重路径命名 `:72-73`）、**`lm_checkpoint`** `:81-139`（原子写 `.tmp`→`replace` `:96-98`、half().cpu() `:94`、resume dict `:108-115`、world_size 变化自动换算 `:133-137`）、`SkipBatchSampler` `:142-165`。重点：余弦退火为什么有效（大步快学→小步精调）、原子写防崩溃、断点续训的工程价值、MoE 参数统计 `A{active}M` 含义。测试 test_145（lr 三点 `:40/45/55`、seed 复现 `:24`、checkpoint save/load `:100`、moe suffix `:141`）。pytest test_145 test_166（SkipBatchSampler）。校验 `grep "\.py:[0-9]"`≥7。README Ch29→✅。Commit `docs(book): write Ch29 training infrastructure (M6-a)`。
+
+### Task 32: Ch 30 混合精度 AMP + 梯度累积 + GPU 优化（M6-b）
+Create `part-5-training/ch30-amp-grad-accumulation.md`。YAML `source:zllm/training/amp.py,tests:tests/m06_training/test_161_amp.py`。原理：回引 Ch 08（数值稳定性）+ Ch 10（梯度），讲 bf16 混合精度（前向 bf16、梯度累加 fp32）、梯度累积（小 batch 模拟大 batch）、梯度裁剪（防爆炸）、TF32/cuDNN/Flash SDPA 硬件加速。LaTeX 梯度累积公式。代码：**`train_step`** `:32-76`（autocast `:61`、`loss+aux_loss` `:63`、`/accum` `:64`、scaler 反传 `:66`、边界 unscale→clip→step `:68-74`）、`GradScalerManager` `:12-29`、`gpu.py` 的 TF32/Flash `:9-25`。重点：bf16 vs fp16（动态范围 vs 精度）、为什么 unscale 后才 clip、梯度累积等价大 batch 的数学、GPU 三大开关各自加速什么。测试 test_161（basic `:40`、clip `:48`、accumulation `:57`、amp cuda `:67`、zero_grad `:76`）+ test_166（tf32 `:52`）。pytest test_161 test_166。校验 `grep "\.py:[0-9]"`≥6。README Ch30→✅。Commit `docs(book): write Ch30 AMP + grad accumulation + GPU optimization (M6-b)`。
+
+### Task 33: Ch 31 预训练：NTP 与训练循环（M7 理论+实现）
+Create `part-5-training/ch31-pretraining-ntp.md`。YAML `source:zllm/training/pretrain.py,tests:tests/m07_pretrain/test_194_loss_ntp.py`。原理：回引 Ch 05（NTP 损失推导）+ Ch 15（训练目标），把 Ch 26 的 CausalLM loss 接上 Ch 30 的 train_step，讲完整训练循环的五个阶段（forward→loss→backward→step→log）。Mermaid 画训练循环状态机。代码：**`train_epoch`** `:51-120`（余弦 lr 调度 `:82-84`、autocast+loss+accum `:86-89`、scaler 反传 `:91`、边界 step `:93-99`、log `:104-108`、末尾补齐 `:112-118`）、`PretrainConfig` dataclass `:17-36`。重点：训练循环 = 前四章零件的总装、余弦 lr 每 step 更新、accumulation 末尾不整除的补齐逻辑、log_interval 的监控意义。测试 test_194（**loss 下降** `:42-57`、**过拟合** `:61-73`、**下一 token 预测 >10%** `:75-102`）。pytest test_194。校验 `grep "\.py:[0-9]"`≥6。README Ch31→✅。Commit `docs(book): write Ch31 pretraining NTP + training loop (M7)`。
+
+### Task 34: Ch 32 预训练实战：数据准备/训练/loss 监控（M7 实操）
+Create `part-5-training/ch32-pretraining-practice.md`。YAML `source:zllm/training/pretrain.py,zllm/dataset/pretrain.py,tests:tests/m07_pretrain/test_200_integration.py`。原理：实操章，把 Ch 27-31 串起来，给出端到端的预训练流程（数据格式→tokenizer→Dataset→DataLoader→模型→训练循环→loss 监控→checkpoint）。重点在「怎么做」而非新代码，大量引用前 5 章的 file:line。代码：组装 `PretrainDataset` + `DataLoader` + `ZLLMForCausalLM` + `train_epoch`，给出完整可跑的 20 行脚本片段。重点：数据量与 epoch 的经验、loss 曲线的健康形态（先快降后缓降→平台）、何时该 SFT（预训练 loss 平台期）、小卡训练的 batch/accum 折衷。动手验证：跑 test_200_integration。校验 `grep "\.py:[0-9]"`≥4。README Ch32→✅，Part V 收官。Commit `docs(book): write Ch32 pretraining practice (M7); completes Part V`。
+
+### Phase 5 完工标准（DoD）
+- Ch 27–32 全部写完，README 第 27–32 行全 ✅（Part V 完成）。
+- 每章 `grep -cE "\.py:[0-9]"` 达标（见各 Task）。
+- 全 Phase 无 TBD/TODO/占位符；所有引用 file:line 经 `sed -n` 抽查真实。
+- Phase 5 完成后更新本计划进度表第 70 行为「已完成」。
 - **Phase 6（Part VI，Ch 33–40，8 章）**：M8-M11。引用 `zllm/training/{full_sft,dpo,ppo,grpo,distillation,agent_rl}.py`、`zllm/model/lora.py`、`tests/m08_sft`…`tests/m11_distill_agent`。
 - **Phase 7（Part VII + 附录，Ch 41–43 + 附录 A-D）**：M12。引用 `zllm/serving/{generate,api_server,cli}.py`、`tests/m12_serving`。
