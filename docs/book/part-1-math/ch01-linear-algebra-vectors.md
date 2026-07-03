@@ -114,7 +114,7 @@ $$
 两个**同维**向量 $\mathbf{x}, \mathbf{y} \in \mathbb{R}^n$ 的**点积**（也叫内积，inner product）定义为逐元素相乘再求和：
 
 $$
-\mathbf{x} \cdot \mathbf{y} \;=\; \mathbf{x}^\top \mathbf{y} \;=\; \sum_{i=1}^{n} x_i\, y_i
+\mathbf{x} \cdot \mathbf{y}  =  \mathbf{x}^\top \mathbf{y}  =  \sum_{i=1}^{n} x_i  y_i
 $$
 
 结果是一个**标量**（单个数）。注意 $\mathbf{x}^\top \mathbf{y}$ 这个写法——把 $\mathbf{x}$ 转置成行向量、再与列向量 $\mathbf{y}$ 做矩阵乘法，得到的恰好就是点积。这一点至关重要：**点积是矩阵乘法的一个特例**，后面 Ch 12 的 $QK^T$ 本质上就是「批量点积」。
@@ -126,7 +126,7 @@ $$
 设 $A \in \mathbb{R}^{m \times p}$ 、 $B \in \mathbb{R}^{p \times n}$ （注意： $A$ 的列数必须等于 $B$ 的行数），它们的乘积 $C = AB \in \mathbb{R}^{m \times n}$ 定义为：
 
 $$
-(AB)_{ij} \;=\; \sum_{k=1}^{p} A_{ik}\, B_{kj}
+(AB)_{ij}  =  \sum_{k=1}^{p} A_{ik}  B_{kj}
 $$
 
 请仔细看这个公式的下标：**$A$ 的行 $\times$ $B$ 的列**，逐位相乘再相加。一句话口诀——
@@ -140,7 +140,7 @@ $$
 向量的**范数**度量它的「长度」或「大小」。最常用的是 $L_p$ 范数族：
 
 $$
-\|\mathbf{x}\|_p \;=\; \left( \sum_{i=1}^{n} |x_i|^p \right)^{1/p}, \qquad p \geq 1
+\|\mathbf{x}\|_p  =  \left( \sum_{i=1}^{n} |x_i|^p \right)^{1/p}, \qquad p \geq 1
 $$
 
 三个特例在 LLM 里反复出现：
@@ -162,7 +162,7 @@ PyTorch 里 `x.norm(p)` 直接给出 $L_p$ 范数；RMSNorm（Ch 20）用到的�
 有了点积和 $L_2$ 范数，就能定义两个非零向量之间的夹角 $\theta \in [0, \pi]$ ：
 
 $$
-\cos\theta \;=\; \frac{\mathbf{x} \cdot \mathbf{y}}{\|\mathbf{x}\|_2\, \|\mathbf{y}\|_2}
+\cos\theta  =  \frac{\mathbf{x} \cdot \mathbf{y}}{\|\mathbf{x}\|_2  \|\mathbf{y}\|_2}
 $$
 
 把 $\cos\theta$ 本身当作相似度指标，就是**余弦相似度（cosine similarity）**：它落在 $[-1, 1]$ 区间，越接近 $1$ 表示两向量方向越一致、越接近 $-1$ 表示方向越相反、为 $0$ 表示正交（毫不相关）。它只看方向、不看长度，因此在比较词义时比直接用点积更稳健——这也是语义检索和「词向量类比」（如「国王 − 男人 + 女人 ≈ 女王」）的理论基础。
@@ -176,7 +176,7 @@ $$
 先回顾余弦定理。对两个向量 $\mathbf{x}, \mathbf{y}$ ，它们差向量的长度满足：
 
 $$
-\|\mathbf{x} - \mathbf{y}\|^2 = \|\mathbf{x}\|^2 + \|\mathbf{y}\|^2 - 2\,\|\mathbf{x}\|\,\|\mathbf{y}\|\cos\theta
+\|\mathbf{x} - \mathbf{y}\|^2 = \|\mathbf{x}\|^2 + \|\mathbf{y}\|^2 - 2 \|\mathbf{x}\| \|\mathbf{y}\|\cos\theta
 $$
 
 另一方面，直接展开左边（逐元素）：
@@ -188,7 +188,7 @@ $$
 比较两式，立刻得到点积的几何形式：
 
 $$
-\boxed{\;\mathbf{x} \cdot \mathbf{y} \;=\; \|\mathbf{x}\|\,\|\mathbf{y}\|\cos\theta\;}
+\boxed{ \mathbf{x} \cdot \mathbf{y}  =  \|\mathbf{x}\| \|\mathbf{y}\|\cos\theta }
 $$
 
 这个等式有三层含义，请逐条品味：
@@ -198,7 +198,7 @@ $$
 3. **柯西–施瓦茨不等式**。因为 $|\cos\theta| \leq 1$ ，所以
 
 $$
-|\mathbf{x}\cdot\mathbf{y}| \;\leq\; \|\mathbf{x}\|\,\|\mathbf{y}\|
+|\mathbf{x}\cdot\mathbf{y}|  \leq  \|\mathbf{x}\| \|\mathbf{y}\|
 $$
 
 等号当且仅当两向量共线（同向或反向）时成立。由此立刻得到：**两个单位向量（长度为 1）的点积取值范围是 $[-1, 1]$**——这正是余弦相似度的值域。
@@ -229,7 +229,7 @@ $$
 为什么叫「线性」？因为矩阵乘法同时满足
 
 $$
-A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}, \qquad A(c\,\mathbf{x}) = c\,A\mathbf{x}
+A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}, \qquad A(c \mathbf{x}) = c A\mathbf{x}
 $$
 
 ——加法和标量乘法在变换前后都保持。这意味着：**只要弄清楚矩阵把「基向量」变到了哪里，就能推出它把任何向量变到哪里。**
@@ -289,7 +289,7 @@ $$
 Transformer 的核心是**注意力机制（attention）**。它的关键一步是计算查询矩阵 $Q$ 和键矩阵 $K$ 的相关度：
 
 $$
-\text{分数} \;=\; Q K^{\top}
+\text{分数}  =  Q K^{\top}
 $$
 
 看明白了吗？ $QK^T$ 就是矩阵乘法，而它的每一格 $(QK^T)_{ij}$ 是「第 $i$ 个词的查询向量」与「第 $j$ 个词的键向量」的**点积**。换句话说，**整章铺垫的点积，就是注意力的引擎**：它逐对衡量「句子中任意两个词有多相关」。本章学透了点积，Ch 12 就只剩「点积 → 缩放 → softmax → 加权求和」这条流水线要学。
