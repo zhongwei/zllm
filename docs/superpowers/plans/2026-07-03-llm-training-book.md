@@ -66,7 +66,7 @@ docs/book/
 | 1 | Part 0 + Part I（序言 + 数学基础） | Task 1–10（含索引/骨架） | 本次会话详细撰写 |
 | 2 | Part II（DL/Transformer 理论） | 待追加 | 后续会话 |
 | 3 | Part III（M1+M2 分词） | 已追加（Task 18–21） | 进行中 |
-| 4 | Part IV（M3+M4 模型架构） | 待追加 | 后续会话 |
+| 4 | Part IV（M3+M4 模型架构） | 已追加（Task 22–28） | 进行中 |
 | 5 | Part V（M5+M6+M7 数据与训练） | 待追加 | 后续会话 |
 | 6 | Part VI（M8-M11 微调与对齐） | 待追加 | 后续会话 |
 | 7 | Part VII + 附录（M12 推理部署 + 附录） | 待追加 | 后续会话 |
@@ -819,11 +819,56 @@ pytest tests/m02_tokenizer/ -v
 
 ---
 
-## Phase 4–7 详细任务（待后续会话追加）
+## Phase 4 详细任务（Part IV，Ch 20–26，模型架构 M3+M4）
+
+**范围：** Ch 20–Ch 26（7 章）。里程碑 M3（模型组件：RMSNorm/RoPE+YaRN/GQA 注意力）+ M4（模型组装：SwiGLU/MoE/Block+Backbone/CausalLM）。全部为**实战章**（模板 spec 3.2），引用 `zllm/model/*.py` + `tests/m03_model_components` + `tests/m04_model_assembly`。
+
+**前置事实（Phase 4 全部任务共用，源自 2026-07-04 探源，确保 file:line 准确）：**
+
+- `zllm/model/norms.py`（21 行）：`RMSNorm(nn.Module)` `:11`；`__init__(dim, eps=1e-5)` `:12-15`（`weight=ones(dim)`）；`norm(x)` `:17-18`（`x*rsqrt(x.pow(2).mean(-1,keepdim)+eps)`，**不乘 weight**）；`forward` `:20-21`（`(weight*self.norm(x.float())).type_as(x)`——float32 内部计算防溢出）。
+- `zllm/model/rope.py`（69 行）：`precompute_freqs_cis(dim,end=32768,rope_base=1e6,rope_scaling=None)` `:17-56`（freqs=`1/rope_base^(2k/d)` `:23-28`；YaRN ramp 混合 `:30-51`；`outer(t,freqs)` `:53`；cos/sin 各 `cat` 复制一份 `:54-55`）；`rotate_half(x)` `:59-63`（`cat(-x[d//2:], x[:d//2])`）；`apply_rotary_pos_emb(q,k,cos,sin,unsqueeze_dim=1)` `:66-69`（`q*cos + rotate_half(q)*sin`）。
+- `zllm/model/attention.py`（125 行）：`repeat_kv(x,n_rep)` `:22-30`（expand+reshape 复制 KV 头）；`Attention.__init__` `:33-69`（`n_rep=num_attention_heads//num_key_value_heads` `:43`；q/k/v/o_proj 无 bias；`q_norm/k_norm=RMSNorm(head_dim)` `:60-61`；`flash` 标志 `:66-69`）；`forward` `:71-125`（q/k/v proj→reshape→**q_norm/k_norm** `:81`→RoPE `:84`→**KV cache concat** `:86-89`→repeat_kv `:92-93`→flash SDPA `:95-109` 或手动 `scores/sqrt(head_dim)`+causal mask triu `:110-121`→o_proj `:124`）。
+- `zllm/model/ffn.py`（67 行）：`FeedForward` `:17-27`（gate_proj/up_proj/down_proj 无 bias `:21-23`，act_fn=`ACT2FN[hidden_act]` `:24`；forward `down(silu(gate(x))*up(x))` `:26-27`）；`MOEFeedForward` `:30-67`（gate=`Linear(hidden,num_experts)` `:34`；experts=ModuleList of FeedForward `:35-37`；forward：softmax gate `:43`、topk `:44-46`、norm_topk_prob 归一 `:47-48`、per-expert `index_add_` `:50-55`、空专家梯度保持 `:56-57`、aux_loss 负载均衡 `:58-66`）。
+- `zllm/model/block.py`（31 行）：`ZLLMBlock.__init__` `:15-21`（self_attn/input_layernorm/post_attention_layernorm=RMSNorm/mllp=`FeedForward if not use_moe else MOEFeedForward` `:21`）；`forward` `:23-31`（**Pre-Norm**：`attn(input_norm(x))+residual` `:24-29`，`mlp(post_norm(x))+residual` `:30`）。
+- `zllm/model/backbone.py`（77 行）：`ZLLMModel.__init__` `:17-36`（embed_tokens `:23`、layers=ModuleList of ZLLMBlock `:25-27`、norm `:28`、预计算并 register_buffer freqs_cos/sin `:29-36`）；`forward` `:38-77`（embed→按 start_pos 切片 position_embeddings `:43-61`→循环 layer `:63-71`→final norm `:72`→汇总 MoE aux_loss `:73-76`）。
+- `zllm/model/causal_lm.py`（54 行）：`ZLLMForCausalLM(PreTrainedModel,GenerationMixin)` `:20`；`_tied_weights_keys={"lm_head.weight":"model.embed_tokens.weight"}` `:22`；`__init__` `:24-31`（model=ZLLMModel、lm_head=`Linear(hidden,vocab)` `:28`、weight tying `:29-30`）；`forward` `:33-54`（hidden,past,aux=model(...) `:34-36`；**logits_to_keep 切片** `:37-42`；labels 时交叉熵 `x[...,:-1] vs y[...,1:]`、`ignore_index=-100` `:44-47`；返回 `MoeCausalLMOutputWithPast` `:48-54`）。
+- 测试：`test_052_rmsnorm.py`（weight ones `:17`、identity `:37`、scaling fill_2.0 `:44`、float32 内部 `:65`、norm 方法不乘 weight `:80`）；`test_057_rope.py`（shapes `:14`、pos0 cos=1/sin=0 `:19-25`、rope_base 影响周期 `:33`、cat 复制 `:40`、rotate_half `:52-58`、pos0 identity `:76`）；`test_063_yarn.py`（缩放频率 `:27`、**低于 orig_max 不生效** `:33`、attn_factor `:40`、pos0 不变 `:53`）；`test_067_attention.py`（repeat_kv `:15-32`、linear shapes `:36`、n_rep `:51`、qk_norm 存在 `:55`、**kv cache concat** `:90-99`、causal `:101`、flash vs manual close `:120`）；`test_082_ffn.py`（linear shapes `:15`、**swiglu 公式手算** `:49-58`、π 缩放 `:33-39`）；`test_093_moe.py`（moe_config fixture `:13-25`、gate shape `:29`、sparse top1 `:51`、aux_loss 训练非零 `:69`、eval 为零 `:77`、aux_loss backward `:102`）；`test_097_block.py`（has self_attn `:15`、双 norm `:19`、moe 切换 `:29`、residual `:48`、moe block `:73`）；`test_104_backbone.py`（embed `:15`、layer count `:19`、rope buffers `:27`、**kv cache 增量 4→6** `:58-65`、moe aux_loss `:67`、attention_mask `:84`）；`test_109_causal_lm.py`（lm_head shape `:15`、**weight tying equal** `:19`、tying disabled `:23`、loss with labels `:48`、ignore_index -100 `:56`、logits_to_keep `:73`、aux_loss moe `:85`、past_key_values 长度=层数 `:95`）。
+
+---
+
+### Task 22: Ch 20 RMSNorm 归一化（M3-a）
+Create `docs/book/part-4-architecture/ch20-rmsnorm.md`。YAML：`part:4,chapter:20,title:RMSNorm 归一化,milestone:M3,source:zllm/model/norms.py,tests:tests/m03_model_components/test_052_rmsnorm.py,status:draft`。6 节实战模板。原理回顾回引 Ch 13（LayerNorm）+ 讲 RMSNorm 省「减均值」的效率。代码：`norms.py:17-21`（norm 方法 + forward float32）。重点推导 RMS 公式 $\text{RMS}(x)=\sqrt{\frac{1}{d}\sum x_i^2}$，对比 LayerNorm $\frac{x-\mu}{\sigma}$ 少算 $\mu$、省一次同步。测试：test_052 identity `:37`、scaling `:44`、float32 内部 `:65`、norm 方法 `:80`。pytest `tests/m03_model_components/test_052_rmsnorm.py -v`。校验 `grep -cE "\.py:[0-9]"`≥4。README Ch20→✅。Commit `docs(book): write Ch20 RMSNorm normalization (M3-a)`。
+
+### Task 23: Ch 21 RoPE 旋转位置编码 + YaRN（M3-b）
+Create `ch21-rope-yarn.md`。YAML `source:zllm/model/rope.py,tests:tests/m03_model_components/test_057_rope.py`。原理：回引 Ch 12/13（位置编码必要性）。核心推导——复数旋转：把 head_dim 两两配对视为 2D 向量，乘旋转矩阵 $R_\theta=\begin{pmatrix}\cos\theta&-\sin\theta\\\sin\theta&\cos\theta\end{pmatrix}$，$\theta_i=m/\theta^{2i/d}$；证明 $\langle R_m q, R_n k\rangle$ 只依赖相对位置 $m-n$（相对位置编码的本质）。代码：`precompute_freqs_cis` `:17-56`、`rotate_half` `:59-63`、`apply_rotary_pos_emb` `:66-69`。YaRN：`rope.py:30-51` 的 ramp 混合，长序列外推（仅 end>orig_max 生效）。测试 test_057（pos0 identity `:76`、rope_base 周期 `:33`）+ test_063（低于 orig_max 不变 `:33`）。校验 `grep "\.py:[0-9]"`≥5。README Ch21→✅。Commit `docs(book): write Ch21 RoPE + YaRN (M3-b)`。
+
+### Task 24: Ch 22 GQA 注意力 + QK-Norm + KV Cache（M3-c）
+Create `ch22-gqa-qknorm-kv-cache.md`。YAML `source:zllm/model/attention.py,tests:tests/m03_model_components/test_067_attention.py`。原理回引 Ch 12（点积注意力 $\sqrt{d_k}$）+ Ch 13（GQA 2:1）。代码：`repeat_kv` `:22-30`（KV 头复制 n_rep）、`Attention.__init__` qk_norm `:60-61`、forward KV cache concat `:86-89`、flash/manual 双路径 `:95-121`（causal mask triu(1) `:113-118`）。重点：GQA 省 KV cache、QK-Norm 稳训练、KV cache 推理加速。测试 test_067（repeat_kv `:21-24`、kv cache concat 4→6 `:90-99`、flash vs manual `:120`）。pytest test_067。校验 `grep "\.py:[0-9]"`≥6。README Ch22→✅。Commit `docs(book): write Ch22 GQA attention + QK-Norm + KV Cache (M3-c)`。
+
+### Task 25: Ch 23 SwiGLU 前馈网络（M4-a）
+Create `ch23-swiglu.md`。YAML `source:zllm/model/ffn.py,tests:tests/m04_model_assembly/test_082_ffn.py`。原理：回引 Ch 13（FFN）+ Ch 09（激活函数）。SwiGLU 公式 $\text{down}(\text{SiLU}(\text{gate}(x))\odot\text{up}(x))$，SiLU=$x\sigma(x)$；对比 ReLU FFN 的门控机制。代码：`FeedForward` `:17-27`（gate/up/down_proj）。测试 test_082（**swiglu 公式手算验证** `:49-58`、π 缩放 intermediate `:33-39` 回引 Ch16）。pytest test_082。校验 `grep "\.py:[0-9]"`≥4。README Ch23→✅。Commit `docs(book): write Ch23 SwiGLU FFN (M4-a)`。
+
+### Task 26: Ch 24 MoE 混合专家（M4-b）
+Create `ch24-moe.md`。YAML `source:zllm/model/ffn.py,tests:tests/m04_model_assembly/test_093_moe.py`。原理：稀疏激活——每个 token 只路由到 top-k 专家，参数多但计算量可控。推导：门控 $g=\text{softmax}(W_g x)$，top-k 选择 + 归一；aux_loss 负载均衡 $L_{aux}=N\cdot\text{coef}\sum_i f_i\cdot P_i$（$f$=实际负载，$P$=平均概率）。代码：`MOEFeedForward` `:30-67`（gate `:34`、topk `:44-46`、index_add_ `:50-55`、空专家梯度保持 `:56-57`、aux_loss `:58-66`）。测试 test_093（sparse top1 `:51`、aux_loss 训练非零/eval 零 `:69/77`、aux backward `:102`）。pytest test_093。校验 `grep "\.py:[0-9]"`≥5。README Ch24→✅。Commit `docs(book): write Ch24 MoE mixture of experts (M4-b)`。
+
+### Task 27: Ch 25 Block + Backbone 组装（M4-c）
+Create `ch25-block-backbone.md`。YAML `source:zllm/model/{block,backbone}.py,tests:tests/m04_model_assembly/test_097_block.py`。原理回引 Ch 13（Pre-Norm Transformer block）+ Ch 10（残差连接）。代码：`ZLLMBlock` Pre-Norm 双残差 `:23-31`、`ZLLMModel` embed+layers+norm+freqs buffers `:17-36`、forward 位置切片 `:43-61`。重点：Pre-Norm 训练稳定（vs Post-Norm）、残差让深网络可训（回引 Ch10）。测试 test_097（双 norm `:19`、moe 切换 `:29`、residual `:48`）+ test_104（layer count `:19`、rope buffers `:27`、**kv cache 增量** `:58-65`）。pytest test_097 test_104。校验 `grep "\.py:[0-9]"`≥6。README Ch25→✅。Commit `docs(book): write Ch25 Block + Backbone assembly (M4-c)`。
+
+### Task 28: Ch 26 CausalLM 头 + Weight Tying + Loss（M4-d）
+Create `ch26-causal-lm-head.md`。YAML `source:zllm/model/causal_lm.py,tests:tests/m04_model_assembly/test_109_causal_lm.py`。原理回引 Ch 05（交叉熵=NTP 目标）+ Ch 15（Weight Tying 参数效率）。代码：`ZLLMForCausalLM` weight tying `:22/29-30`、forward `:33-54`（logits_to_keep 切片 `:37-42`、**NTP loss** `x[:-1] vs y[1:]` + `ignore_index=-100` `:44-47`）。重点：Weight Tying 省 $V\times d$ 参数、logits_to_keep 推理优化、ignore_index 服务 SFT label masking（Ch33）。测试 test_109（weight tying equal `:19`、loss with labels `:48`、ignore_index `:56`、logits_to_keep `:73`、aux_loss moe `:85`）。pytest test_109。Part IV 收官。校验 `grep "\.py:[0-9]"`≥5。README Ch26→✅。Commit `docs(book): write Ch26 CausalLM head + weight tying + loss (M4-d)`。
+
+### Phase 4 完工标准（DoD）
+- Ch 20–26 全部写完，README 第 20–26 行全 ✅（Part IV 完成）。
+- 每章 `grep -cE "\.py:[0-9]"` 达标（见各 Task）。
+- 全 Phase 无 TBD/TODO/占位符；所有引用 file:line 经 `sed -n` 抽查真实。
+- Phase 4 完成后更新本计划进度表第 69 行为「已完成」。
+
+---
+
+## Phase 5–7 详细任务（待后续会话追加）
 
 > 占位说明（计划本身的进度标记，非内容占位）：以下 Phase 将在后续会话按同样 Task 粒度追加。
 
-- **Phase 4（Part IV，Ch 20–26，7 章）**：M3+M4。引用 `zllm/model/*.py`、`tests/m03_model_components`、`tests/m04_model_assembly`。
-- **Phase 5（Part V，Ch 27–32，6 章）**：M5+M6+M7。
-- **Phase 6（Part VI，Ch 33–40，8 章）**：M8-M11。
-- **Phase 7（Part VII + 附录，Ch 41–43 + 附录 A-D）**：M12。
+- **Phase 5（Part V，Ch 27–32，6 章）**：M5+M6+M7。引用 `zllm/dataset/*.py`、`zllm/training/{utils,amp,gpu,pretrain}.py`、`tests/m05_data_pipeline`、`tests/m06_training`、`tests/m07_pretrain`。
+- **Phase 6（Part VI，Ch 33–40，8 章）**：M8-M11。引用 `zllm/training/{full_sft,dpo,ppo,grpo,distillation,agent_rl}.py`、`zllm/model/lora.py`、`tests/m08_sft`…`tests/m11_distill_agent`。
+- **Phase 7（Part VII + 附录，Ch 41–43 + 附录 A-D）**：M12。引用 `zllm/serving/{generate,api_server,cli}.py`、`tests/m12_serving`。
