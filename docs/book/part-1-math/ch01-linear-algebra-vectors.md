@@ -78,7 +78,7 @@ graph LR
 | 概念 | 在 LLM 中的角色 | 本书首次出现 |
 |------|----------------|-------------|
 | 向量 $\mathbb{R}^d$ | 每个 token 的嵌入表示 | Ch 16 |
-| 矩阵乘法 | 线性投影、`x @ W`、`QK^T` | Ch 12、Ch 20 |
+| 矩阵乘法 | 线性投影、 $x @ W$、 $QK^T$ | Ch 12、Ch 20 |
 | 点积 | 注意力分数、相似度 | Ch 12 |
 | 范数 | RMSNorm、归一化、梯度裁剪 | Ch 20、Ch 06 |
 | 余弦相似度 | 语义检索、词向量类比 | Ch 16 |
@@ -92,7 +92,12 @@ graph LR
 **向量**是排成一列的 $n$ 个实数。记作
 
 $$
-\mathbf{x} = \begin{pmatrix} x_1 \\ x_2 \\ \vdots \\ x_n \end{pmatrix} \in \mathbb{R}^n
+\mathbf{x} = \begin{pmatrix} 
+x_1 \\ 
+x_2 \\ 
+\vdots \\ 
+x_n 
+\end{pmatrix} \in \mathbb{R}^n
 $$
 
 其中 $n$ 叫向量的**维数（dimension）**。本书默认向量为**列向量（column vector）**；行向量记作 $\mathbf{x}^\top = (x_1, x_2, \ldots, x_n)$。
