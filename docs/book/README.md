@@ -58,7 +58,7 @@
 |  | 26 | CausalLM 头 + Weight Tying + Loss | M4 | ✅ |
 | V · 数据与训练 | 27 | 数据流水线总览与 TokenizerAdapter | M5 | ✅ |
 |  | 28 | 五种 Dataset 实现 | M5 | ✅ |
-|  | 29 | 训练基础设施：种子/学习率/checkpoint | M6 | ☐ |
+|  | 29 | 训练基础设施：种子/学习率/checkpoint | M6 | ✅ |
 |  | 30 | 混合精度 AMP + 梯度累积 + GPU 优化 | M6 | ☐ |
 |  | 31 | 预训练：NTP 与训练循环 | M7 | ☐ |
 |  | 32 | 预训练实战：数据准备/训练/loss 监控 | M7 | ☐ |
