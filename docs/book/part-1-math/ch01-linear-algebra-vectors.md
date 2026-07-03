@@ -205,7 +205,7 @@ $$
 
 下面这张示意图把「投影」和「夹角」的关系画出来（为清晰起见画在 2 维平面）：
 
-![点积 = 投影长度](figs/ch01-dot-product-projection.svg)
+![点积 = 投影长度](figs/ch01-dot-product-projection_anim.svg)
 
 一个直观的推论：当 $\mathbf{y}$ 与 $\mathbf{x}$ 同向（ $\theta=0$ ）时点积最大、为 $\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ ；反向（ $\theta=\pi$ ）时最小、为 $-\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ 。**点积天然就是「方向一致性」的度量**——这正是注意力机制用它来衡量「词与词有多相关」的原因（Ch 12）。
 
