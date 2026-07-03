@@ -257,7 +257,7 @@ $$
 
 ### 逐步演算：手算一次矩阵乘法
 
-理解了几何，我们再回到代数，亲手算一个 $2\times2$ 的例子，把求和公式 $(AB)_{ij}=\sum_k A_{ik}B_{kj}$ 落实到每一格。设
+理解了几何，我们再回到代数，亲手算一个 $2\times2$ 的例子，把求和公式 $`(AB)_{ij}=\sum_k A_{ik}B_{kj}`$ 落实到每一格。设
 
 $$
 A = \begin{pmatrix} 1 & 2 \cr 3 & 4 \end{pmatrix}, \qquad B = \begin{pmatrix} 5 & 6 \cr 7 & 8 \end{pmatrix}
@@ -326,7 +326,7 @@ LLM 里的几乎每一个可学习参数，都以矩阵（或张量）的形式�
 
 1. **维度阶梯**：标量（0 维）→ 向量（1 维）→ 矩阵（2 维）→ 张量（≥3 维）。PyTorch 里它们统一叫张量，区别只在 `ndim`。
 2. **点积**： $\mathbf{x}\cdot\mathbf{y} = \sum_i x_i y_i = \Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta$ 。它既是「逐位相乘求和」的代数运算，也是「长度 × 投影」的几何度量；**正交 ⟺ 点积为零**。
-3. **矩阵乘法**： $(AB)_{ij} = \sum_k A_{ik}B_{kj}$ ，口诀「行 × 列 做点积」。它同时是「批量点积」和「线性变换」，**一般不可交换**。
+3. **矩阵乘法**： $`(AB)_{ij} = \sum_k A_{ik}B_{kj}`$ ，口诀「行 × 列 做点积」。它同时是「批量点积」和「线性变换」，**一般不可交换**。
 4. **范数**： $L_1$ （稀疏）、 $L_2$ （长度）、 $L_\infty$ （最大分量）；归一化、梯度裁剪都靠它。
 5. **余弦相似度**： $\cos\theta = \dfrac{\mathbf{x}\cdot\mathbf{y}}{\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert} \in [-1,1]$ ，只比方向不比长度，是语义检索与词向量类比的基础。
 
