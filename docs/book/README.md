@@ -55,7 +55,7 @@
 |  | 23 | SwiGLU 前馈网络 | M4 | ✅ |
 |  | 24 | MoE 混合专家 | M4 | ✅ |
 |  | 25 | Block + Backbone 组装 | M4 | ✅ |
-|  | 26 | CausalLM 头 + Weight Tying + Loss | M4 | ☐ |
+|  | 26 | CausalLM 头 + Weight Tying + Loss | M4 | ✅ |
 | V · 数据与训练 | 27 | 数据流水线总览与 TokenizerAdapter | M5 | ☐ |
 |  | 28 | 五种 Dataset 实现 | M5 | ☐ |
 |  | 29 | 训练基础设施：种子/学习率/checkpoint | M6 | ☐ |

@@ -66,7 +66,7 @@ docs/book/
 | 1 | Part 0 + Part I（序言 + 数学基础） | Task 1–10（含索引/骨架） | 本次会话详细撰写 |
 | 2 | Part II（DL/Transformer 理论） | 待追加 | 后续会话 |
 | 3 | Part III（M1+M2 分词） | 已追加（Task 18–21） | 进行中 |
-| 4 | Part IV（M3+M4 模型架构） | 已追加（Task 22–28） | 进行中 |
+| 4 | Part IV（M3+M4 模型架构） | 已追加（Task 22–28） | 已完成 |
 | 5 | Part V（M5+M6+M7 数据与训练） | 待追加 | 后续会话 |
 | 6 | Part VI（M8-M11 微调与对齐） | 待追加 | 后续会话 |
 | 7 | Part VII + 附录（M12 推理部署 + 附录） | 待追加 | 后续会话 |
