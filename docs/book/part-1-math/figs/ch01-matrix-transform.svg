@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 250" font-family="Cambria, Georgia, 'Times New Roman', serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 250" width="190" height="125" font-family="Cambria, Georgia, 'Times New Roman', serif">
   <title>矩阵乘法 = 旋转 + 缩放</title>
   <desc>输入向量 x 经矩阵 A 变换为 A·x：旋转角 α 并缩放。</desc>
+  <style>
+    .axis{color:#e5e7eb}.x{color:#2563eb}.y{color:#ea580c}.arc{color:#6b7280}.faint{color:#cbd5e1}.ink{color:#1f2937}.lbl{color:#374151}.dim{color:#6b7280}
+    @media (prefers-color-scheme: dark){
+      .axis{color:#334155}.x{color:#60a5fa}.y{color:#fb923c}.arc{color:#94a3b8}.faint{color:#334155}.ink{color:#e5e7eb}.lbl{color:#e5e7eb}.dim{color:#9ca3af}
+    }
+  </style>
   <defs>
-    <marker id="mX" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/></marker>
-    <marker id="mY" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#ea580c"/></marker>
-    <marker id="mArc" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#6b7280"/></marker>
+    <marker id="mX" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path class="x" d="M0,0 L8,3 L0,6 Z" fill="currentColor"/></marker>
+    <marker id="mY" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path class="y" d="M0,0 L8,3 L0,6 Z" fill="currentColor"/></marker>
+    <marker id="mArc" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path class="arc" d="M0,0 L7,3 L0,6 Z" fill="currentColor"/></marker>
   </defs>
-  <rect width="380" height="250" fill="#ffffff"/>
-  <line x1="30" y1="210" x2="360" y2="210" stroke="#e5e7eb" stroke-width="1"/>
-  <line x1="60" y1="30" x2="60" y2="235" stroke="#e5e7eb" stroke-width="1"/>
-  <line x1="60" y1="210" x2="163.4" y2="172.4" stroke="#2563eb" stroke-width="2.6" marker-end="url(#mX)"/>
-  <text x="168" y="170" font-size="16" font-style="italic" fill="#2563eb">x</text>
-  <line x1="60" y1="210" x2="148" y2="57.6" stroke="#ea580c" stroke-width="2.6" marker-end="url(#mY)"/>
-  <text x="153" y="54" font-size="16" font-style="italic" fill="#ea580c">A·x</text>
-  <path d="M102.3,194.6 A45,45 0 0,0 82.5,171.03" fill="none" stroke="#6b7280" stroke-width="1.4" marker-end="url(#mArc)"/>
-  <text x="98" y="186" font-size="14" font-style="italic" fill="#374151">α</text>
-  <path d="M170,172.4 A110,110 0 0,1 60,100" fill="none" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="3 4"/>
-  <circle cx="60" cy="210" r="2.8" fill="#1f2937"/>
-  <text x="44" y="227" font-size="12" fill="#6b7280">O</text>
-  <text x="120" y="240" font-size="12.5" fill="#6b7280" font-style="italic">旋转 α · 缩放 ×1.6</text>
+  <line class="axis" x1="30" y1="210" x2="360" y2="210" stroke="currentColor" stroke-width="1"/>
+  <line class="axis" x1="60" y1="30" x2="60" y2="235" stroke="currentColor" stroke-width="1"/>
+  <line class="x" x1="60" y1="210" x2="163.4" y2="172.4" stroke="currentColor" stroke-width="2.6" marker-end="url(#mX)"/>
+  <text class="x" x="168" y="170" font-size="16" font-style="italic" fill="currentColor">x</text>
+  <line class="y" x1="60" y1="210" x2="148" y2="57.6" stroke="currentColor" stroke-width="2.6" marker-end="url(#mY)"/>
+  <text class="y" x="153" y="54" font-size="16" font-style="italic" fill="currentColor">A·x</text>
+  <path class="arc" d="M102.3,194.6 A45,45 0 0,0 82.5,171.03" fill="none" stroke="currentColor" stroke-width="1.4" marker-end="url(#mArc)"/>
+  <text class="lbl" x="98" y="186" font-size="14" font-style="italic" fill="currentColor">α</text>
+  <path class="faint" d="M170,172.4 A110,110 0 0,1 60,100" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="3 4"/>
+  <circle class="ink" cx="60" cy="210" r="2.8" fill="currentColor"/>
+  <text class="dim" x="44" y="227" font-size="12" fill="currentColor">O</text>
+  <text class="dim" x="120" y="240" font-size="12.5" font-style="italic" fill="currentColor">旋转 α · 缩放 ×1.6</text>
 </svg>
