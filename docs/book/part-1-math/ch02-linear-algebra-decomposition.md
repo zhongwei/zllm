@@ -22,11 +22,11 @@ status: draft
 
 读完本章，你应该能够：
 
-- 用一句话说清楚**特征向量、特征值**的含义，写出特征方程 $\det(A-\lambda I)=0$；
-- 默写出对称矩阵的对角化 $A=Q\Lambda Q^\top$，并解释为什么 $Q$ 是正交矩阵；
-- 默写出 SVD 的形式 $A=U\Sigma V^\top$，并能在 2 维平面里画出「旋转→缩放→旋转」的三步几何分解；
+- 用一句话说清楚**特征向量、特征值**的含义，写出特征方程 $\det(A-\lambda I)=0$ ；
+- 默写出对称矩阵的对角化 $A=Q\Lambda Q^\top$ ，并解释为什么 $Q$ 是正交矩阵；
+- 默写出 SVD 的形式 $A=U\Sigma V^\top$ ，并能在 2 维平面里画出「旋转→缩放→旋转」的三步几何分解；
 - 说出**矩阵秩**的定义，并解释「低秩 ≈ 可压缩 ≈ 信息有冗余」这层等价关系；
-- 写出**投影矩阵** $P=A(A^\top A)^{-1}A^\top$，并知道它把任何向量投影到 $A$ 的列空间；
+- 写出**投影矩阵** $P=A(A^\top A)^{-1}A^\top$ ，并知道它把任何向量投影到 $A$ 的列空间；
 - 把这些概念和本书的实战内容挂钩：明白 LoRA（Ch 34）为什么用两个小矩阵代替一个大矩阵，背后正是 SVD 低秩近似 + Eckart-Young 定理。
 
 本章承接 Ch 01「运算」的地基，向上盖一层「结构」。
@@ -39,13 +39,13 @@ status: draft
 
 这是一个很深刻的几何事实：**对很多变换来说，存在某些特殊方向，这些方向上的向量在变换后只是被缩放、方向不变。** 这些「方向不变的轴」就是**特征向量（eigenvector）**，对应的缩放倍数就是**特征值（eigenvalue）**。
 
-更技术化地说，对方阵 $A$，如果存在非零向量 $\mathbf{v}$ 和标量 $\lambda$ 使得
+更技术化地说，对方阵 $A$ ，如果存在非零向量 $\mathbf{v}$ 和标量 $\lambda$ 使得
 
 $$
 A\mathbf{v} = \lambda \mathbf{v}
 $$
 
-那么 $\mathbf{v}$ 是 $A$ 的特征向量，$\lambda$ 是对应的特征值。一句话概括——
+那么 $\mathbf{v}$ 是 $A$ 的特征向量， $\lambda$ 是对应的特征值。一句话概括——
 
 > **特征向量 = 变换中「方向不变」的轴；特征值 = 沿这个轴的拉伸倍数。**
 
@@ -83,7 +83,7 @@ graph TD
 |------|----------------|-------------|
 | 特征值 / 特征向量 | 注意力权重的稳态、谱分析 | Ch 12、Ch 22 |
 | SVD | 模型压缩、初始化分析 | Ch 34 |
-| 矩阵秩 | LoRA 的核心假设：$\Delta W$ 是低秩的 | Ch 34 |
+| 矩阵秩 | LoRA 的核心假设： $\Delta W$ 是低秩的 | Ch 34 |
 | 低秩近似 | LoRA 的 $B_{d\times r}A_{r\times d}$ | Ch 34 |
 | 投影矩阵 | 注意力的「信息投影到子空间」 | Ch 12、Ch 22 |
 | 正交矩阵 | 旋转位置编码 RoPE 的核心 | Ch 21 |
@@ -100,61 +100,61 @@ $$
 A\mathbf{v} = \lambda \mathbf{v}
 $$
 
-则称 $\mathbf{v}$ 是 $A$ 的**特征向量**，$\lambda$ 是对应的**特征值**。把等式改写成
+则称 $\mathbf{v}$ 是 $A$ 的**特征向量**， $\lambda$ 是对应的**特征值**。把等式改写成
 
 $$
-(A - \lambda I)\,\mathbf{v} = \mathbf{0}
+(A - \lambda I) \mathbf{v} = \mathbf{0}
 $$
 
 要使非零解 $\mathbf{v}$ 存在，矩阵 $A - \lambda I$ 必须奇异（不可逆），即
 
 $$
-\boxed{\;\det(A - \lambda I) = 0\;}
+\boxed{ \det(A - \lambda I) = 0 }
 $$
 
 这就是**特征方程（characteristic equation）**。它是一个关于 $\lambda$ 的 $n$ 次多项式方程，解出来就得到全部特征值。
 
 ### 对角化与特征分解
 
-如果 $A$ 有 $n$ 个线性无关的特征向量 $\mathbf{v}_1, \ldots, \mathbf{v}_n$，把它们按列拼成矩阵 $Q = [\mathbf{v}_1, \ldots, \mathbf{v}_n]$，对应的特征值拼成对角阵 $\Lambda = \mathrm{diag}(\lambda_1, \ldots, \lambda_n)$，则有
+如果 $A$ 有 $n$ 个线性无关的特征向量 $`\mathbf{v}_1, \ldots, \mathbf{v}_n`$ ，把它们按列拼成矩阵 $`Q = [\mathbf{v}_1, \ldots, \mathbf{v}_n]`$ ，对应的特征值拼成对角阵 $\Lambda = \mathrm{diag}(\lambda_1, \ldots, \lambda_n)$ ，则有
 
 $$
-A Q = Q \Lambda \quad\Longrightarrow\quad \boxed{\;A = Q \Lambda Q^{-1}\;}
+A Q = Q \Lambda \quad\Longrightarrow\quad \boxed{ A = Q \Lambda Q^{-1} }
 $$
 
 这就是**特征分解（eigendecomposition）**：把 $A$ 拆成「换基 → 沿轴缩放 → 换回原基」三步。
 
-**对称矩阵的特殊地位。** 当 $A$ 是**实对称矩阵（symmetric matrix）**（$A = A^\top$）时，有三条极其漂亮的好事同时发生：
+**对称矩阵的特殊地位。** 当 $A$ 是**实对称矩阵（symmetric matrix）**（ $A = A^\top$ ）时，有三条极其漂亮的好事同时发生：
 
 1. 特征值 $\lambda_i$ 全是**实数**；
 2. 不同特征值对应的特征向量**两两正交**；
-3. 可以选出一组**标准正交**特征向量 $\{\mathbf{q}_i\}$，满足 $\mathbf{q}_i^\top\mathbf{q}_j = \delta_{ij}$（$\delta$ 为 Kronecker 记号）。
+3. 可以选出一组**标准正交**特征向量 $\{\mathbf{q}_i\}$ ，满足 $`\mathbf{q}_i^\top\mathbf{q}_j = \delta_{ij}`$ （ $\delta$ 为 Kronecker 记号）。
 
-此时 $Q$ 是**正交矩阵（orthogonal matrix）**，满足 $Q^\top Q = I$，即 $Q^{-1} = Q^\top$，特征分解简化为
+此时 $Q$ 是**正交矩阵（orthogonal matrix）**，满足 $Q^\top Q = I$ ，即 $Q^{-1} = Q^\top$ ，特征分解简化为
 
 $$
-\boxed{\;A = Q \Lambda Q^\top, \qquad Q^\top Q = I\;}
+\boxed{ A = Q \Lambda Q^\top, \qquad Q^\top Q = I }
 $$
 
-> **正交矩阵 = 旋转（或反射）。** 因为 $Q^\top Q = I$ 意味着 $Q$ 保持所有向量的长度（$\|Q\mathbf{x}\| = \|\mathbf{x}\|$），它只能旋转坐标系、不能拉伸。这条性质后面会反复用到。
+> **正交矩阵 = 旋转（或反射）。** 因为 $Q^\top Q = I$ 意味着 $Q$ 保持所有向量的长度（ $\VertQ\mathbf{x}\Vert = \Vert\mathbf{x}\Vert$ ），它只能旋转坐标系、不能拉伸。这条性质后面会反复用到。
 
 ### 奇异值分解（SVD）
 
 特征分解要求 $A$ 是方阵、且能对角化，条件苛刻。SVD 把这些限制全部去掉——**任何形状的矩阵都有 SVD**。
 
-设 $A \in \mathbb{R}^{m\times n}$，则存在正交矩阵 $U \in \mathbb{R}^{m\times m}$、对角矩阵 $\Sigma \in \mathbb{R}^{m\times n}$、正交矩阵 $V \in \mathbb{R}^{n\times n}$，使得
+设 $A \in \mathbb{R}^{m\times n}$ ，则存在正交矩阵 $U \in \mathbb{R}^{m\times m}$ 、对角矩阵 $\Sigma \in \mathbb{R}^{m\times n}$ 、正交矩阵 $V \in \mathbb{R}^{n\times n}$ ，使得
 
 $$
-\boxed{\;A = U \Sigma V^\top\;}
+\boxed{ A = U \Sigma V^\top }
 $$
 
-其中 $\Sigma$ 对角线上的非负实数 $\sigma_1 \geq \sigma_2 \geq \cdots \geq 0$ 叫**奇异值（singular values）**；$U$ 的列向量 $\mathbf{u}_i$ 叫**左奇异向量**，$V$ 的列向量 $\mathbf{v}_i$ 叫**右奇异向量**。它们满足
+其中 $\Sigma$ 对角线上的非负实数 $\sigma_1 \geq \sigma_2 \geq \cdots \geq 0$ 叫**奇异值（singular values）**； $U$ 的列向量 $\mathbf{u}_i$ 叫**左奇异向量**， $V$ 的列向量 $\mathbf{v}_i$ 叫**右奇异向量**。它们满足
 
 $$
 A\mathbf{v}_i = \sigma_i \mathbf{u}_i, \qquad A^\top \mathbf{u}_i = \sigma_i \mathbf{v}_i
 $$
 
-非零奇异值的个数，恰好等于 $\mathrm{rank}(A)$。
+非零奇异值的个数，恰好等于 $\mathrm{rank}(A)$ 。
 
 ### 矩阵的秩
 
@@ -177,19 +177,19 @@ $$
 
 （这正是 Ch 01 讲过的「点积为零 ⟺ 几何垂直」。）一组向量两两正交且都是单位长度，就叫**标准正交基（orthonormal basis）**；正交矩阵 $Q$ 的列向量正是一组标准正交基。
 
-设 $A \in \mathbb{R}^{m\times n}$（$m \geq n$）列满秩。$A$ 的**列空间（column space）**是所有形如 $A\mathbf{x}$ 的向量构成的子空间。把任意向量 $\mathbf{b}\in\mathbb{R}^m$ 投影到这个子空间上，得到投影向量
+设 $A \in \mathbb{R}^{m\times n}$ （ $m \geq n$ ）列满秩。 $A$ 的**列空间（column space）**是所有形如 $A\mathbf{x}$ 的向量构成的子空间。把任意向量 $\mathbf{b}\in\mathbb{R}^m$ 投影到这个子空间上，得到投影向量
 
 $$
-P\,\mathbf{b} = A(A^\top A)^{-1}A^\top \mathbf{b}
+P \mathbf{b} = A(A^\top A)^{-1}A^\top \mathbf{b}
 $$
 
 其中
 
 $$
-\boxed{\;P = A(A^\top A)^{-1}A^\top\;}
+\boxed{ P = A(A^\top A)^{-1}A^\top }
 $$
 
-就是**投影矩阵（projection matrix）**。它满足两条关键性质：$P^2 = P$（投影两次等于投影一次）、$P^\top = P$（对称）。投影矩阵在最小二乘法（least squares）和注意力的「信息投影」里都会登场。
+就是**投影矩阵（projection matrix）**。它满足两条关键性质： $P^2 = P$ （投影两次等于投影一次）、 $P^\top = P$ （对称）。投影矩阵在最小二乘法（least squares）和注意力的「信息投影」里都会登场。
 
 ## 2.4 推导与几何
 
@@ -198,10 +198,10 @@ $$
 SVD 最震撼的不是公式，而是它揭示的几何图景。把 $A\mathbf{x}$ 拆开看：
 
 $$
-A\mathbf{x} = U\Sigma V^\top \mathbf{x} = \underbrace{U}_{\text{③ 旋转}}\;\underbrace{\Sigma}_{\text{② 缩放}}\;\underbrace{V^\top \mathbf{x}}_{\text{① 旋转}}
+A\mathbf{x} = U\Sigma V^\top \mathbf{x} = \underbrace{U}_{\text{③ 旋转}} \underbrace{\Sigma}_{\text{② 缩放}} \underbrace{V^\top \mathbf{x}}_{\text{① 旋转}}
 $$
 
-从右往左读：$V^\top$ 先把输入向量**旋转**到一个对齐的坐标系（因为 $V^\top$ 是正交矩阵，只旋转不缩放）；$\Sigma$ 接着沿每个坐标轴**独立缩放**（第 $i$ 轴缩放 $\sigma_i$ 倍）；$U$ 最后再**旋转**到输出坐标系。
+从右往左读： $V^\top$ 先把输入向量**旋转**到一个对齐的坐标系（因为 $V^\top$ 是正交矩阵，只旋转不缩放）； $\Sigma$ 接着沿每个坐标轴**独立缩放**（第 $i$ 轴缩放 $\sigma_i$ 倍）； $U$ 最后再**旋转**到输出坐标系。
 
 我们用一个二维的圆来直观感受：输入是一个单位圆，经过 $A$ 变换后变成一个椭圆——
 
@@ -222,14 +222,14 @@ $$
     关键：Vᵀ 把「未来的主轴」对齐到坐标轴；Σ 沿坐标轴缩放；U 把结果转到最终方向。
 ```
 
-这张图揭示了一个深刻事实：**任何线性变换的本质，都是「找到一个最佳视角，让变换退化成沿轴拉伸」**。椭圆的长半轴 $= \sigma_1$，短半轴 $= \sigma_2$；如果某个奇异值 $\sigma_i = 0$，说明变换在那个方向上把信息「压扁」消失了——这正是「秩亏损」的几何含义。
+这张图揭示了一个深刻事实：**任何线性变换的本质，都是「找到一个最佳视角，让变换退化成沿轴拉伸」**。椭圆的长半轴 $= \sigma_1$ ，短半轴 $= \sigma_2$ ；如果某个奇异值 $\sigma_i = 0$ ，说明变换在那个方向上把信息「压扁」消失了——这正是「秩亏损」的几何含义。
 
 ### SVD 的存在性推导（草图）
 
-为什么 SVD 对任意矩阵都成立？关键在于 $A^\top A$ 这个对称半正定矩阵。对任意 $\mathbf{x}$，
+为什么 SVD 对任意矩阵都成立？关键在于 $A^\top A$ 这个对称半正定矩阵。对任意 $\mathbf{x}$ ，
 
 $$
-\mathbf{x}^\top(A^\top A)\mathbf{x} = (A\mathbf{x})^\top(A\mathbf{x}) = \|A\mathbf{x}\|^2 \geq 0
+\mathbf{x}^\top(A^\top A)\mathbf{x} = (A\mathbf{x})^\top(A\mathbf{x}) = \VertA\mathbf{x}\Vert^2 \geq 0
 $$
 
 所以 $A^\top A$ 是半正定的，它的特征值全非负。设其特征分解为
@@ -238,20 +238,20 @@ $$
 A^\top A = V \Lambda V^\top, \qquad \lambda_i \geq 0
 $$
 
-定义奇异值 $\sigma_i = \sqrt{\lambda_i}$，并令 $\mathbf{u}_i = A\mathbf{v}_i / \sigma_i$（对 $\sigma_i > 0$ 的项），可以验证 $\{\mathbf{u}_i\}$ 也是一组标准正交基，且
+定义奇异值 $\sigma_i = \sqrt{\lambda_i}$ ，并令 $`\mathbf{u}_i = A\mathbf{v}_i / \sigma_i`$ （对 $\sigma_i > 0$ 的项），可以验证 $\{\mathbf{u}_i\}$ 也是一组标准正交基，且
 
 $$
 A\mathbf{v}_i = \sigma_i \mathbf{u}_i
 $$
 
-把它们按列拼起来就得到 $A = U\Sigma V^\top$。**注意「$A^\top A$」「$AA^\top$」这两个矩阵的谱（特征值集合）决定了 SVD 的全部信息**——这也是为什么 SVD 在后面分析「权重矩阵的能量分布」时如此好用。
+把它们按列拼起来就得到 $A = U\Sigma V^\top$ 。**注意「 $A^\top A$ 」「 $AA^\top$ 」这两个矩阵的谱（特征值集合）决定了 SVD 的全部信息**——这也是为什么 SVD 在后面分析「权重矩阵的能量分布」时如此好用。
 
 ### 秩与信息量：低秩 ≈ 可压缩
 
-秩为什么重要？因为它度量了「有效信息量」。考虑一个 $1000\times 1000$ 的矩阵 $A$：
+秩为什么重要？因为它度量了「有效信息量」。考虑一个 $1000\times 1000$ 的矩阵 $A$ ：
 
-- 若 $\mathrm{rank}(A) = 1000$（满秩），它携带 100 万个独立数字，不可压缩；
-- 若 $\mathrm{rank}(A) = 5$，那么它其实只需要 $2\times 5\times 1000 = 10000$ 个数字就能精确重建（存两个小矩阵 $U_5\Sigma_5$ 和 $V_5^\top$），**压缩了 100 倍**。
+- 若 $\mathrm{rank}(A) = 1000$ （满秩），它携带 100 万个独立数字，不可压缩；
+- 若 $\mathrm{rank}(A) = 5$ ，那么它其实只需要 $2\times 5\times 1000 = 10000$ 个数字就能精确重建（存两个小矩阵 $U_5\Sigma_5$ 和 $V_5^\top$ ），**压缩了 100 倍**。
 
 这就是 SVD 的「压缩」威力：保留前 $k$ 个最大的奇异值，丢掉小的，得到
 
@@ -267,21 +267,21 @@ $A_k$ 是秩为 $k$ 的矩阵，它只需存 $k(m+n)$ 个数，远少于 $mn$ �
 
 > **截断 SVD 给出的 $A_k$ 是所有秩不超过 $k$ 的矩阵中，最接近 $A$ 的那个。**
 
-形式化地，对任意秩 $\leq k$ 的矩阵 $B$，
+形式化地，对任意秩 $\leq k$ 的矩阵 $B$ ，
 
 $$
-\|A - A_k\|_2 = \sigma_{k+1} \;\leq\; \|A - B\|_2
+\VertA - A_k\Vert_2 = \sigma_{k+1}  \leq  \VertA - B\Vert_2
 $$
 
-（这里 $\|\cdot\|_2$ 是谱范数，即最大奇异值。）对 Frobenius 范数 $\|\cdot\|_F$ 也有类似结论：
+（这里 $\Vert\cdot\Vert_2$ 是谱范数，即最大奇异值。）对 Frobenius 范数 $\Vert\cdot\Vert_F$ 也有类似结论：
 
 $$
-\|A - A_k\|_F^2 = \sum_{i=k+1}^{r} \sigma_i^2
+\VertA - A_k\Vert_F^2 = \sum_{i=k+1}^{r} \sigma_i^2
 $$
 
-也就是说：**误差等于被丢掉的那些奇异值的「能量」**。只要 $\sigma_{k+1}, \sigma_{k+2}, \ldots$ 都很小，$A_k$ 就几乎是 $A$ 本身。
+也就是说：**误差等于被丢掉的那些奇异值的「能量」**。只要 $\sigma_{k+1}, \sigma_{k+2}, \ldots$ 都很小， $A_k$ 就几乎是 $A$ 本身。
 
-这意味着我们可以把矩阵按「重要性」排序地拆开：$\sigma_1$ 对应最重要、最「有能量」的方向，$\sigma_n$ 对应最不重要的方向。**截断小奇异值，就是扔掉信息含量最低的部分**——这正是降维、压缩、主成分分析（PCA）共同的数学根源。
+这意味着我们可以把矩阵按「重要性」排序地拆开： $\sigma_1$ 对应最重要、最「有能量」的方向， $\sigma_n$ 对应最不重要的方向。**截断小奇异值，就是扔掉信息含量最低的部分**——这正是降维、压缩、主成分分析（PCA）共同的数学根源。
 
 下面这张图示意了「奇异值谱」如何指导压缩决策：
 
@@ -310,48 +310,48 @@ $$
 
 这是本章最重要、也最直接的钩子。LoRA（Low-Rank Adaptation）是当前大模型微调的事实标准。它的核心假设极其简单：
 
-> **微调时，权重的更新量 $\Delta W$ 是「低秩」的——即便 $W$ 本身是个 $d\times d$ 的大矩阵，$\Delta W$ 的有效信息维度其实很小。**
+> **微调时，权重的更新量 $\Delta W$ 是「低秩」的——即便 $W$ 本身是个 $d\times d$ 的大矩阵， $\Delta W$ 的有效信息维度其实很小。**
 
-基于这个假设，LoRA 不直接学 $\Delta W$，而是用两个小矩阵的乘积来近似它：
-
-$$
-\Delta W \;\approx\; B\,A, \qquad B \in \mathbb{R}^{d\times r},\ A \in \mathbb{R}^{r\times d}, \quad r \ll d
-$$
-
-参数量从 $d^2$ 降到 $2dr$。以 zllm 默认配置 $d = 768$、LoRA 秩 $r = 16$ 为例：
+基于这个假设，LoRA 不直接学 $\Delta W$ ，而是用两个小矩阵的乘积来近似它：
 
 $$
-d^2 = 768^2 = 589\,824 \;\longrightarrow\; 2dr = 2\times 768\times 16 = 24\,576
+\Delta W  \approx  B A, \qquad B \in \mathbb{R}^{d\times r},\ A \in \mathbb{R}^{r\times d}, \quad r \ll d
 $$
 
-**参数量降到原来的约 $4.2\%$（压缩近 24 倍）**，却能逼近全参数微调的效果。
+参数量从 $d^2$ 降到 $2dr$ 。以 zllm 默认配置 $d = 768$ 、LoRA 秩 $r = 16$ 为例：
+
+$$
+d^2 = 768^2 = 589 824  \longrightarrow  2dr = 2\times 768\times 16 = 24 576
+$$
+
+**参数量降到原来的约 $4.2\%$ （压缩近 24 倍）**，却能逼近全参数微调的效果。
 
 这背后正是本章的两条理论：
 
 1. **SVD 低秩近似**：若 $\Delta W$ 的奇异值谱是「长尾」（少数几个大奇异值 + 一堆小奇异值），那么用一个秩 $r$ 的矩阵就能很好地近似它——这正是 Eckart-Young 定理的实战版本。
-2. **秩 = 有效信息维度**：$BA$ 的秩不超过 $r$，相当于我们**主动把学习限制在一个 $r$ 维子空间里**，既省参数又起正则化作用。
+2. **秩 = 有效信息维度**： $BA$ 的秩不超过 $r$ ，相当于我们**主动把学习限制在一个 $r$ 维子空间里**，既省参数又起正则化作用。
 
-> **一句话记住 LoRA：用 $B_{d\times r}A_{r\times d}$ 代替 $\Delta W_{d\times d}$，把可学参数从 $d^2$ 压到 $2dr$——这就是 SVD 低秩近似的工程化。** 等读 Ch 34 时，你会看到这套理论如何变成几十行 PyTorch 代码。
+> **一句话记住 LoRA：用 $B_{d\times r}A_{r\times d}$ 代替 $\Delta W_{d\times d}$ ，把可学参数从 $d^2$ 压到 $2dr$ ——这就是 SVD 低秩近似的工程化。** 等读 Ch 34 时，你会看到这套理论如何变成几十行 PyTorch 代码。
 
 ### 钩子二：注意力 = 信息投影到子空间（Ch 12、Ch 22）
 
-注意力的 $Q = \mathbf{x}W_Q$、$K = \mathbf{x}W_K$、$V = \mathbf{x}W_V$ 三步，本质是把隐藏向量**投影**到三个不同的子空间里。把 $W_Q, W_K, W_V$ 看成投影矩阵（不一定是正交投影，但是「线性投影」），本章的几何语言就能直接用上：
+注意力的 $Q = \mathbf{x}W_Q$ 、 $K = \mathbf{x}W_K$ 、 $V = \mathbf{x}W_V$ 三步，本质是把隐藏向量**投影**到三个不同的子空间里。把 $W_Q, W_K, W_V$ 看成投影矩阵（不一定是正交投影，但是「线性投影」），本章的几何语言就能直接用上：
 
 - **查询子空间 / 键子空间**：决定「哪些词该关注哪些词」，相关度通过点积（Ch 01）计算；
 - **值子空间**：决定「被关注后传递的内容」；
 - **残差连接 + 子空间**：残差路径让原始信息完整地流过每一层，注意力只在「子空间内」做增量调整——这就是「残差子空间」的直觉。
 
-更进一步，多头注意力（Ch 22）把隐藏向量投影到 $h$ 个**低维子空间**（每个头维度 $d/h$），各自独立做注意力——这本质上是一种**结构化的降维**，和本章「秩与子空间」的思想一脉相承。
+更进一步，多头注意力（Ch 22）把隐藏向量投影到 $h$ 个**低维子空间**（每个头维度 $d/h$ ），各自独立做注意力——这本质上是一种**结构化的降维**，和本章「秩与子空间」的思想一脉相承。
 
 ### 钩子三：RoPE = 用正交矩阵做旋转（Ch 21）
 
-旋转位置编码（RoPE）把「位置 $m$」编码成一个**正交旋转矩阵** $R_m$，作用在查询和键上：
+旋转位置编码（RoPE）把「位置 $m$ 」编码成一个**正交旋转矩阵** $R_m$ ，作用在查询和键上：
 
 $$
-\mathbf{q}_m \;\longrightarrow\; R_m \mathbf{q}_m, \qquad R_m^\top R_m = I
+\mathbf{q}_m  \longrightarrow  R_m \mathbf{q}_m, \qquad R_m^\top R_m = I
 $$
 
-为什么用正交矩阵？因为 $R_m^\top R_n = R_{n-m}$，**两个旋转的相对关系只依赖位置差 $n-m$**——这正是「相对位置编码」的数学根源。本章学透了「正交矩阵 = 纯旋转、保长度」，Ch 21 就只剩实现细节要学。
+为什么用正交矩阵？因为 $R_m^\top R_n = R_{n-m}$ ，**两个旋转的相对关系只依赖位置差 $n-m$**——这正是「相对位置编码」的数学根源。本章学透了「正交矩阵 = 纯旋转、保长度」，Ch 21 就只剩实现细节要学。
 
 ### 钩子四：主成分与降维思想（贯穿全书）
 
@@ -367,11 +367,11 @@ SVD 的截断形式 $A_k$ 就是**主成分分析（Principal Component Analysis
 
 让我们把这一章浓缩成几条可以随身携带的结论：
 
-1. **特征分解**：$A\mathbf{v}=\lambda\mathbf{v}$，特征方程 $\det(A-\lambda I)=0$。对一般可对角化方阵 $A=Q\Lambda Q^{-1}$；**实对称矩阵**更特殊，$A=Q\Lambda Q^\top$，特征值全实数、特征向量可正交归一。
-2. **SVD**：任意 $A\in\mathbb{R}^{m\times n}$ 都能写成 $A=U\Sigma V^\top$；几何上 = **旋转 → 沿轴缩放 → 旋转**。$\sigma_i$ 衡量各方向的「能量」。
-3. **秩**：$\mathrm{rank}(A)$ = 独立信息维度 = 非零奇异值个数。**低秩 ⟺ 可压缩 ⟺ 信息冗余**。
-4. **Eckart-Young 定理**：截断 SVD $A_k = \sum_{i=1}^k\sigma_i\mathbf{u}_i\mathbf{v}_i^\top$ 是最佳秩 $k$ 近似；误差 $\|A-A_k\|_2 = \sigma_{k+1}$。
-5. **正交与投影**：$\mathbf{x}^\top\mathbf{y}=0$ ⟺ 几何垂直；正交矩阵 $Q^\top Q=I$ 只旋转不拉伸；投影矩阵 $P=A(A^\top A)^{-1}A^\top$ 把向量映到 $A$ 的列空间，满足 $P^2=P$。
+1. **特征分解**： $A\mathbf{v}=\lambda\mathbf{v}$ ，特征方程 $\det(A-\lambda I)=0$ 。对一般可对角化方阵 $A=Q\Lambda Q^{-1}$ ；**实对称矩阵**更特殊， $A=Q\Lambda Q^\top$ ，特征值全实数、特征向量可正交归一。
+2. **SVD**：任意 $A\in\mathbb{R}^{m\times n}$ 都能写成 $A=U\Sigma V^\top$ ；几何上 = **旋转 → 沿轴缩放 → 旋转**。 $\sigma_i$ 衡量各方向的「能量」。
+3. **秩**： $\mathrm{rank}(A)$ = 独立信息维度 = 非零奇异值个数。**低秩 ⟺ 可压缩 ⟺ 信息冗余**。
+4. **Eckart-Young 定理**：截断 SVD $`A_k = \sum_{i=1}^k\sigma_i\mathbf{u}_i\mathbf{v}_i^\top`$ 是最佳秩 $k$ 近似；误差 $\VertA-A_k\Vert_2 = \sigma_{k+1}$ 。
+5. **正交与投影**： $\mathbf{x}^\top\mathbf{y}=0$ ⟺ 几何垂直；正交矩阵 $Q^\top Q=I$ 只旋转不拉伸；投影矩阵 $P=A(A^\top A)^{-1}A^\top$ 把向量映到 $A$ 的列空间，满足 $P^2=P$ 。
 
 > **前方预告。** 本章把矩阵拆成了「方向 + 缩放」，但 LLM 里到处都是**不确定性**：下一个 token 是什么？模型预测有多可信？训练 loss 为什么用交叉熵？这些问题的语言不再是线性代数，而是**概率论**。Ch 03《概率论基础》会引入随机变量、分布、期望、方差，为后面的 softmax、交叉熵、采样解码铺好最后一块数学地砖。
 
@@ -380,8 +380,8 @@ SVD 的截断形式 $A_k$ 就是**主成分分析（Principal Component Analysis
 > 写出答案前，建议先在脑子里画图，再用公式验证。
 
 1. **概念题**：对称矩阵 $A=Q\Lambda Q^\top$ 里的 $Q$ 是正交矩阵。请用一句话解释「为什么对称矩阵的特征向量可以选成两两正交」，并据此说明 $Q^\top Q = I$ 的几何含义。（提示：联系 Ch 01 的「正交 ⟺ 点积为零」。）
-2. **计算题**：设 $A = \begin{pmatrix} 3 & 0 \\ 0 & 1 \end{pmatrix}$。求它的特征值、特征向量，写出它的 SVD 的 $U, \Sigma, V$ 三个矩阵。再设 $B = \begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$，说明 $B$ 有没有实特征值，并写出它的 SVD——你能直观看出「SVD 比特征分解更通用」的原因吗？
-3. **应用题**：zllm 默认 $d=768$，若对某一层的权重 $W\in\mathbb{R}^{768\times 768}$ 做 LoRA，取秩 $r=16$。计算参数量从 $d^2$ 降到 $2dr$ 的压缩比；并说明：如果 $W$ 的奇异值谱是「平坦」的（所有 $\sigma_i$ 几乎相等），LoRA 还会有效吗？为什么？（提示：联系 Eckart-Young 定理。）
+2. **计算题**：设 $`A = \begin{pmatrix} 3 & 0 \cr 0 & 1 \end{pmatrix}`$ 。求它的特征值、特征向量，写出它的 SVD 的 $U, \Sigma, V$ 三个矩阵。再设 $`B = \begin{pmatrix} 0 & 1 \cr -1 & 0 \end{pmatrix}`$ ，说明 $B$ 有没有实特征值，并写出它的 SVD——你能直观看出「SVD 比特征分解更通用」的原因吗？
+3. **应用题**：zllm 默认 $d=768$ ，若对某一层的权重 $W\in\mathbb{R}^{768\times 768}$ 做 LoRA，取秩 $r=16$ 。计算参数量从 $d^2$ 降到 $2dr$ 的压缩比；并说明：如果 $W$ 的奇异值谱是「平坦」的（所有 $\sigma_i$ 几乎相等），LoRA 还会有效吗？为什么？（提示：联系 Eckart-Young 定理。）
 
 ---
 
