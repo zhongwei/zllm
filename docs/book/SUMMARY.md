@@ -4,7 +4,7 @@
 
 ## Part 0 序言
 
-- [Ch 00 关于本书](part-0-preface/ch00-about-book.md)
+- [Ch 00 关于本书](part-0-preface/ch00-about.md) ✅
 
 ## Part I 数学基础
 
