@@ -37,8 +37,8 @@ status: draft
 $$
 \mathbf{x} =
 \begin{pmatrix}
-36.5 \\
-120 \\
+36.5 \cr
+120 \cr
 8
 \end{pmatrix}
 \in \mathbb{R}^3
@@ -93,9 +93,9 @@ graph LR
 
 $$
 \mathbf{x} = \begin{pmatrix} 
-x_1 \\ 
-x_2 \\ 
-\vdots \\ 
+x_1 \cr 
+x_2 \cr 
+\vdots \cr 
 x_n 
 \end{pmatrix} \in \mathbb{R}^n
 $$
@@ -140,15 +140,15 @@ $$
 向量的**范数**度量它的「长度」或「大小」。最常用的是 $L_p$ 范数族：
 
 $$
-\|\mathbf{x}\|_p  =  \left( \sum_{i=1}^{n} |x_i|^p \right)^{1/p}, \qquad p \geq 1
+\Vert\mathbf{x}\Vert_p  =  \left( \sum_{i=1}^{n} |x_i|^p \right)^{1/p}, \qquad p \geq 1
 $$
 
 三个特例在 LLM 里反复出现：
 
 $$
-\|\mathbf{x}\|_1 = \sum_{i=1}^{n} |x_i|, \qquad
-\|\mathbf{x}\|_2 = \sqrt{\sum_{i=1}^{n} x_i^2}, \qquad
-\|\mathbf{x}\|_\infty = \max_{i} |x_i|
+\Vert\mathbf{x}\Vert_1 = \sum_{i=1}^{n} |x_i|, \qquad
+\Vert\mathbf{x}\Vert_2 = \sqrt{\sum_{i=1}^{n} x_i^2}, \qquad
+\Vert\mathbf{x}\Vert_\infty = \max_{i} |x_i|
 $$
 
 - $L_2$ 范数是「日常意义的长度」——欧氏距离；
@@ -162,7 +162,7 @@ PyTorch 里 `x.norm(p)` 直接给出 $L_p$ 范数；RMSNorm（Ch 20）用到的�
 有了点积和 $L_2$ 范数，就能定义两个非零向量之间的夹角 $\theta \in [0, \pi]$ ：
 
 $$
-\cos\theta  =  \frac{\mathbf{x} \cdot \mathbf{y}}{\|\mathbf{x}\|_2  \|\mathbf{y}\|_2}
+\cos\theta  =  \frac{\mathbf{x} \cdot \mathbf{y}}{\Vert\mathbf{x}\Vert_2  \Vert\mathbf{y}\Vert_2}
 $$
 
 把 $\cos\theta$ 本身当作相似度指标，就是**余弦相似度（cosine similarity）**：它落在 $[-1, 1]$ 区间，越接近 $1$ 表示两向量方向越一致、越接近 $-1$ 表示方向越相反、为 $0$ 表示正交（毫不相关）。它只看方向、不看长度，因此在比较词义时比直接用点积更稳健——这也是语义检索和「词向量类比」（如「国王 − 男人 + 女人 ≈ 女王」）的理论基础。
@@ -176,29 +176,29 @@ $$
 先回顾余弦定理。对两个向量 $\mathbf{x}, \mathbf{y}$ ，它们差向量的长度满足：
 
 $$
-\|\mathbf{x} - \mathbf{y}\|^2 = \|\mathbf{x}\|^2 + \|\mathbf{y}\|^2 - 2 \|\mathbf{x}\| \|\mathbf{y}\|\cos\theta
+\Vert\mathbf{x} - \mathbf{y}\Vert^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta
 $$
 
 另一方面，直接展开左边（逐元素）：
 
 $$
-\|\mathbf{x} - \mathbf{y}\|^2 = \sum_i (x_i - y_i)^2 = \|\mathbf{x}\|^2 + \|\mathbf{y}\|^2 - 2 \sum_i x_i y_i
+\Vert\mathbf{x} - \mathbf{y}\Vert^2 = \sum_i (x_i - y_i)^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \sum_i x_i y_i
 $$
 
 比较两式，立刻得到点积的几何形式：
 
 $$
-\boxed{ \mathbf{x} \cdot \mathbf{y}  =  \|\mathbf{x}\| \|\mathbf{y}\|\cos\theta }
+\boxed{ \mathbf{x} \cdot \mathbf{y}  =  \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta }
 $$
 
 这个等式有三层含义，请逐条品味：
 
-1. **点积 = 一个向量的长度 × 另一个向量在它方向上的投影长度**。把 $\|\mathbf{y}\|\cos\theta$ 看作 $\mathbf{y}$ 在 $\mathbf{x}$ 上的投影，点积就成了「 $\mathbf{x}$ 的长度 × $\mathbf{y}$ 的投影」。
+1. **点积 = 一个向量的长度 × 另一个向量在它方向上的投影长度**。把 $\Vert\mathbf{y}\Vert\cos\theta$ 看作 $\mathbf{y}$ 在 $\mathbf{x}$ 上的投影，点积就成了「 $\mathbf{x}$ 的长度 × $\mathbf{y}$ 的投影」。
 2. **正交 ⟺ 点积为零**。当 $\theta = 90^\circ$ 时 $\cos\theta = 0$ ，于是 $\mathbf{x}\cdot\mathbf{y}=0$ 。几何上「垂直」，代数上「点积为零」，两者是同一件事——这是后面理解「无关」「解耦」的根基。
 3. **柯西–施瓦茨不等式**。因为 $|\cos\theta| \leq 1$ ，所以
 
 $$
-|\mathbf{x}\cdot\mathbf{y}|  \leq  \|\mathbf{x}\| \|\mathbf{y}\|
+|\mathbf{x}\cdot\mathbf{y}|  \leq  \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert
 $$
 
 等号当且仅当两向量共线（同向或反向）时成立。由此立刻得到：**两个单位向量（长度为 1）的点积取值范围是 $[-1, 1]$**——这正是余弦相似度的值域。
@@ -220,7 +220,7 @@ $$
    关系：x · y = ‖x‖·(‖y‖·cosθ) = ‖x‖·(投影长度)
 ```
 
-一个直观的推论：当 $\mathbf{y}$ 与 $\mathbf{x}$ 同向（ $\theta=0$ ）时点积最大、为 $\|\mathbf{x}\|\|\mathbf{y}\|$ ；反向（ $\theta=\pi$ ）时最小、为 $-\|\mathbf{x}\|\|\mathbf{y}\|$ 。**点积天然就是「方向一致性」的度量**——这正是注意力机制用它来衡量「词与词有多相关」的原因（Ch 12）。
+一个直观的推论：当 $\mathbf{y}$ 与 $\mathbf{x}$ 同向（ $\theta=0$ ）时点积最大、为 $\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ ；反向（ $\theta=\pi$ ）时最小、为 $-\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ 。**点积天然就是「方向一致性」的度量**——这正是注意力机制用它来衡量「词与词有多相关」的原因（Ch 12）。
 
 ### 矩阵乘法 = 线性变换
 
@@ -237,10 +237,10 @@ $$
 最直观的两个例子是**旋转**和**缩放**。在 2 维平面上，逆时针旋转角 $\alpha$ 的矩阵是
 
 $$
-R(\alpha) = \begin{pmatrix} \cos\alpha & -\sin\alpha \\ \sin\alpha & \cos\alpha \end{pmatrix}
+R(\alpha) = \begin{pmatrix} \cos\alpha & -\sin\alpha \cr \sin\alpha & \cos\alpha \end{pmatrix}
 $$
 
-它把任何向量原地旋转 $\alpha$ 、长度不变（正交矩阵的标志）；而 $\begin{pmatrix} 2 & 0 \\ 0 & 2 \end{pmatrix}$ 则把整个平面均匀放大 2 倍。LLM 里每一层做的 `x @ W`，本质上就是「把语义向量旋转、拉伸到另一组坐标轴上」，**权重矩阵 $W$ 编码的就是这次变换的几何规则**。
+它把任何向量原地旋转 $\alpha$ 、长度不变（正交矩阵的标志）；而 $\begin{pmatrix} 2 & 0 \cr 0 & 2 \end{pmatrix}$ 则把整个平面均匀放大 2 倍。LLM 里每一层做的 `x @ W`，本质上就是「把语义向量旋转、拉伸到另一组坐标轴上」，**权重矩阵 $W$ 编码的就是这次变换的几何规则**。
 
 ```
    变换前                          变换后 (旋转 + 缩放)
@@ -260,20 +260,20 @@ $$
 理解了几何，我们再回到代数，亲手算一个 $2\times2$ 的例子，把求和公式 $(AB)_{ij}=\sum_k A_{ik}B_{kj}$ 落实到每一格。设
 
 $$
-A = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}, \qquad B = \begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix}
+A = \begin{pmatrix} 1 & 2 \cr 3 & 4 \end{pmatrix}, \qquad B = \begin{pmatrix} 5 & 6 \cr 7 & 8 \end{pmatrix}
 $$
 
 逐格计算 $C = AB$ （每一格都是「 $A$ 的某行点乘 $B$ 的某列」）：
 
 $$
 \begin{aligned}
-C_{11} &= 1\cdot 5 + 2\cdot 7 = 19 \\
-C_{12} &= 1\cdot 6 + 2\cdot 8 = 22 \\
-C_{21} &= 3\cdot 5 + 4\cdot 7 = 43 \\
+C_{11} &= 1\cdot 5 + 2\cdot 7 = 19 \cr
+C_{12} &= 1\cdot 6 + 2\cdot 8 = 22 \cr
+C_{21} &= 3\cdot 5 + 4\cdot 7 = 43 \cr
 C_{22} &= 3\cdot 6 + 4\cdot 8 = 50
 \end{aligned}
 \qquad\Longrightarrow\qquad
-AB = \begin{pmatrix} 19 & 22 \\ 43 & 50 \end{pmatrix}
+AB = \begin{pmatrix} 19 & 22 \cr 43 & 50 \end{pmatrix}
 $$
 
 把这个过程对照成代码，就是 `A @ B` 或 `torch.matmul(A, B)`。**一次 `@` 调用，背后是上百万次「行点乘列」**——这正是 GPU 擅长并行的地方，也是 Ch 08（张量计算与 PyTorch 自动微分）会展开讲的内容。
@@ -325,10 +325,10 @@ LLM 里的几乎每一个可学习参数，都以矩阵（或张量）的形式�
 让我们把这一章浓缩成几条可以随身携带的结论：
 
 1. **维度阶梯**：标量（0 维）→ 向量（1 维）→ 矩阵（2 维）→ 张量（≥3 维）。PyTorch 里它们统一叫张量，区别只在 `ndim`。
-2. **点积**： $\mathbf{x}\cdot\mathbf{y} = \sum_i x_i y_i = \|\mathbf{x}\|\|\mathbf{y}\|\cos\theta$ 。它既是「逐位相乘求和」的代数运算，也是「长度 × 投影」的几何度量；**正交 ⟺ 点积为零**。
+2. **点积**： $\mathbf{x}\cdot\mathbf{y} = \sum_i x_i y_i = \Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta$ 。它既是「逐位相乘求和」的代数运算，也是「长度 × 投影」的几何度量；**正交 ⟺ 点积为零**。
 3. **矩阵乘法**： $(AB)_{ij} = \sum_k A_{ik}B_{kj}$ ，口诀「行 × 列 做点积」。它同时是「批量点积」和「线性变换」，**一般不可交换**。
 4. **范数**： $L_1$ （稀疏）、 $L_2$ （长度）、 $L_\infty$ （最大分量）；归一化、梯度裁剪都靠它。
-5. **余弦相似度**： $\cos\theta = \dfrac{\mathbf{x}\cdot\mathbf{y}}{\|\mathbf{x}\|\|\mathbf{y}\|} \in [-1,1]$ ，只比方向不比长度，是语义检索与词向量类比的基础。
+5. **余弦相似度**： $\cos\theta = \dfrac{\mathbf{x}\cdot\mathbf{y}}{\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert} \in [-1,1]$ ，只比方向不比长度，是语义检索与词向量类比的基础。
 
 > **前方预告。** 本章只讲了「怎么算」，没讲「怎么拆」。Ch 02《线性代数：分解与几何》会接着把矩阵拆开看——特征值分解、奇异值分解（SVD）——它们能告诉我们一个变换「沿哪些方向缩放、缩放多少」，是理解主成分、低秩近似（LoRA，Ch 34）的钥匙。
 
@@ -336,7 +336,7 @@ LLM 里的几乎每一个可学习参数，都以矩阵（或张量）的形式�
 
 > 写出答案前，建议先在脑子里画图，再用公式验证。
 
-1. **范围题**：两个**单位向量**（ $\|\mathbf{x}\|=\|\mathbf{y}\|=1$ ）的点积 $\mathbf{x}\cdot\mathbf{y}$ 取值范围是多少？在什么情况下取到上界、什么情况下取到下界？
+1. **范围题**：两个**单位向量**（ $\Vert\mathbf{x}\Vert=\Vert\mathbf{y}\Vert=1$ ）的点积 $\mathbf{x}\cdot\mathbf{y}$ 取值范围是多少？在什么情况下取到上界、什么情况下取到下界？
 2. **几何题**：设 $\mathbf{x}=(1,2)^\top$ 、 $\mathbf{y}=(-2,1)^\top$ 。计算 $\mathbf{x}\cdot\mathbf{y}$ ，并据此说明这两个向量在几何上是什么关系。如果把它们看成两个 token 的嵌入，余弦相似度告诉你什么？
 3. **代码题**：在 PyTorch 里取两个形状均为 `[4, 768]` 的张量 `A` 和 `B`，分别计算 `A @ B.T` 和 `A * B`，说出两者形状、含义的区别。哪一种对应注意力的 $QK^T$ ？哪一种是逐元素乘法？
 
