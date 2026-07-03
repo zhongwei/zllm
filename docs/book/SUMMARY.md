@@ -19,13 +19,13 @@
 
 ## Part II 深度学习与 Transformer 理论
 
-- [Ch 09 神经网络基础](part-2-transformer/ch09-nn-basics.md)
-- [Ch 10 反向传播与训练动力学](part-2-transformer/ch10-backprop-training-dynamics.md)
-- [Ch 11 序列建模：从 RNN/LSTM 到瓶颈](part-2-transformer/ch11-sequence-rnn-lstm.md)
-- [Ch 12 注意力机制](part-2-transformer/ch12-attention.md)
-- [Ch 13 Transformer 架构详解](part-2-transformer/ch13-transformer.md)
-- [Ch 14 解码策略理论](part-2-transformer/ch14-decoding-strategy.md)
-- [Ch 15 现代语言模型全景](part-2-transformer/ch15-modern-llm-landscape.md)
+- [Ch 09 神经网络基础](part-2-dl-transformer/ch09-neural-network-basics.md)
+- [Ch 10 反向传播与训练动力学](part-2-dl-transformer/ch10-backprop-training-dynamics.md)
+- [Ch 11 序列建模：从 RNN/LSTM 到瓶颈](part-2-dl-transformer/ch11-sequence-modeling-rnn.md)
+- [Ch 12 注意力机制](part-2-dl-transformer/ch12-attention.md)
+- [Ch 13 Transformer 架构详解](part-2-dl-transformer/ch13-transformer-architecture.md)
+- [Ch 14 解码策略理论](part-2-dl-transformer/ch14-decoding-theory.md)
+- [Ch 15 现代语言模型全景](part-2-dl-transformer/ch15-llm-landscape.md)
 
 ## Part III 基石与分词（M1 + M2）
 
