@@ -52,7 +52,7 @@
 | IV · 模型架构 | 20 | RMSNorm 归一化 | M3 | ✅ |
 |  | 21 | RoPE 旋转位置编码 + YaRN | M3 | ✅ |
 |  | 22 | GQA 注意力 + QK-Norm + KV Cache | M3 | ✅ |
-|  | 23 | SwiGLU 前馈网络 | M4 | ☐ |
+|  | 23 | SwiGLU 前馈网络 | M4 | ✅ |
 |  | 24 | MoE 混合专家 | M4 | ☐ |
 |  | 25 | Block + Backbone 组装 | M4 | ☐ |
 |  | 26 | CausalLM 头 + Weight Tying + Loss | M4 | ☐ |
