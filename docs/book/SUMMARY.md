@@ -15,7 +15,7 @@
 - [Ch 05 信息论](part-1-math/ch05-information-theory.md)
 - [Ch 06 最优化基础](part-1-math/ch06-optimization.md)
 - [Ch 07 微积分与链式法则](part-1-math/ch07-calculus-chain-rule.md)
-- [Ch 08 张量计算与 PyTorch 自动微分](part-1-math/ch08-tensor-autograd.md)
+- [Ch 08 张量计算与 PyTorch 自动微分](part-1-math/ch08-autograd.md)
 
 ## Part II 深度学习与 Transformer 理论
 
