@@ -30,8 +30,8 @@
 ## Part III 基石与分词（M1 + M2）
 
 - [Ch 16 项目初始化与开发环境](part-3-tokenizer/ch16-project-setup.md)
-- [Ch 17 分词理论：BPE/WordPiece/SentencePiece](part-3-tokenizer/ch17-tokenizer-theory.md)
-- [Ch 18 教学版 BPE 实现](part-3-tokenizer/ch18-bpe-implementation.md)
+- [Ch 17 分词理论：BPE/WordPiece/SentencePiece](part-3-tokenizer/ch17-tokenization-theory.md)
+- [Ch 18 教学版 BPE 实现](part-3-tokenizer/ch18-bpe-teaching-impl.md)
 - [Ch 19 生产版 Tokenizer + 特殊 Token + Chat Template](part-3-tokenizer/ch19-production-tokenizer.md)
 
 ## Part IV 模型架构（M3 + M4）

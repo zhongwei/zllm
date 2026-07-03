@@ -65,7 +65,7 @@ docs/book/
 |-------|------|-----------|------|
 | 1 | Part 0 + Part I（序言 + 数学基础） | Task 1–10（含索引/骨架） | 本次会话详细撰写 |
 | 2 | Part II（DL/Transformer 理论） | 待追加 | 后续会话 |
-| 3 | Part III（M1+M2 分词） | 待追加 | 后续会话 |
+| 3 | Part III（M1+M2 分词） | 已追加（Task 18–21） | 进行中 |
 | 4 | Part IV（M3+M4 模型架构） | 待追加 | 后续会话 |
 | 5 | Part V（M5+M6+M7 数据与训练） | 待追加 | 后续会话 |
 | 6 | Part VI（M8-M11 微调与对齐） | 待追加 | 后续会话 |
@@ -599,11 +599,230 @@ git commit -m "docs(book): write Ch08 tensors and PyTorch autograd (completes Pa
 
 ---
 
-## Phase 3–7 详细任务（待后续会话追加）
+## Phase 3 详细任务（Part III，Ch 16–19，实战篇开篇）
 
-> 占位说明（计划本身的进度标记，非内容占位）：以下 Phase 将在后续会话按同样 Task 粒度追加。Phase 3 起为实战章，Task 增加 `grep` 校验引用的 zllm 源码/测试行号真实存在的步骤。
+**范围：** Ch 16–Ch 19（4 章）。里程碑 M1（项目初始化）+ M2（分词器）。本 Phase 起为**实战章**（模板见 spec 3.2），必须引用真实的 zllm 源码/测试 `file:line`。每个 Task 完成后，校验步骤增加：`grep -cE "\.py:[0-9]"` 必须 > 0（Ch 17 纯理论章除外），且所有引用的文件:行号必须真实存在（用 `read`/`grep` 抽查）。
 
-- **Phase 3（Part III，Ch 16–19，4 章）**：M1+M2。引用 `zllm/tokenizer/*.py`、`tests/m01_foundations`、`tests/m02_tokenizer`。
+**前置事实（Phase 3 全部任务共用，源自 2026-07-03 探源，确保 file:line 准确）：**
+
+- `zllm/config.py`（73 行）：`ZLLMConfig.__init__` 在 `config.py:15-69`；GQA（`num_attention_heads=8`/`num_key_value_heads=4` 在 `config.py:20-21`）；π 缩放 `intermediate_size = ceil(hidden_size*π/64)*64` 在 `config.py:48-52`（hidden=768 → 2368）；`head_dim` property 在 `config.py:71-73`（= 768//8 = 96）；MoE 参数 `config.py:29-35`；`tie_word_embeddings=True`、`rope_theta=1000000.0` 在 `config.py:26-27`。
+- `zllm/__init__.py`：`from zllm.config import ZLLMConfig`、`__version__ = "0.0.1"`。
+- `tests/conftest.py`：`device` fixture `conftest.py:7-10`；`small_config`（dim=64,2 层）`conftest.py:13-25`；`default_config`（dim=768,8 层,vocab=6400）`conftest.py:28-33`。
+- `tests/m01_foundations/test_002_import.py`：`test_zllm_importable`（`__version__=="0.0.1"`）`:4-7`；`test_config_importable` `:10-12`。
+- `tests/m01_foundations/test_003_fixtures.py`：GQA 断言 `:22-24`；π 缩放断言 `:27-31`（`math.ceil(768*π/64)*64`）；`head_dim==96` `:34-35`。
+- `zllm/tokenizer/bpe.py`（99 行）：`byte_level_encode` `:8-14`；`get_pair_counts` `:17-27`；`merge` `:30-44`；`encode` `:47-56`；`decode`（含递归 `expand`）`:59-75`；`train_bpe` `:78-99`（`num_merges=vocab_size-256`，`new_id=256+i`，`max(counts,...)`）。
+- `zllm/tokenizer/trainer.py`（57 行）：`train_tokenizer` `:18-43`（`Tokenizer(BPE())`、`ByteLevel` pre-tokenizer `:31`、`ByteLevelDecoder` `:33`、`BpeTrainer(special_tokens=ALL_SPECIAL_TOKENS, initial_alphabet=ByteLevel.alphabet())` `:34-38`、`train_from_iterator` `:39`、保存 `tokenizer.json` `:42`）；`load_tokenizer` `:46-57`。
+- `zllm/tokenizer/special_tokens.py`（52 行）：`SPECIAL_TOKENS` 列表 `:12-34`（im_start/im_end/pad/vision/toolcall `📞`/reasoning）；`BUFFER_TOKENS = [<|buffer1..8|>]` `:37`；`ALL_SPECIAL_TOKENS` `:40`；常量 `IM_START` 等 `:43-52`。
+- `zllm/tokenizer/chat_template.py`（94 行）：`render_messages` `:25-72`（tools 注入 system `:46-55`、open_thinking 包裹 `:64-65`、add_generation_prompt `:69-70`）；Jinja2 `CHAT_TEMPLATE` `:76-94`。
+- `zllm/tokenizer/adapter.py`（78 行）：`TokenizerAdapter` `:10-65`（bos/eos/pad id `:13-18`、`__call__` 加 special token `:44-52`、`apply_chat_template` `:54-65`）；`wrap` `:74-78`。
+- `tests/m02_tokenizer/`：`test_026_bpe_core.py`（TestByteLevelEncode/TestGetPairCounts/TestMerge/TestTrainBPE）、`test_030_special_tokens.py`（test_no_duplicates `:24-25`、toolcall `📞` `:39-44`）、`test_035_production_tokenizer.py`（corpus fixture `:11-20`、special token 单 token `:45-54`、roundtrip `:72-80`、压缩 `:99-103`）、`test_041_encode_decode.py`（TestEncode/TestDecode/TestRoundtrip）、`test_044_chat_template.py`（generation prompt `:53-56`、open_thinking `:65-71`、tools `:87-93`）、`test_050_integration.py`（全管线 `:25-34`）。
+- 依赖/环境：`pyproject.toml`（`requires-python>=3.14`、`torch>=2.7`、`tokenizers>=0.21`、`transformers>=4.52`）；安装 `pip install -e ".[dev]"`；运行 `pytest`（428 测试）。
+
+---
+
+### Task 18: Ch 16 项目初始化与开发环境（M1）
+
+**Files:**
+- Create: `docs/book/part-3-tokenizer/ch16-project-setup.md`
+- Modify: `docs/book/README.md`（Ch 16 行 ☐→✅）
+- Read-only refs: `zllm/config.py`、`zllm/__init__.py`、`tests/conftest.py`、`tests/m01_foundations/test_002_import.py`、`tests/m01_foundations/test_003_fixtures.py`、`README.md`、`pyproject.toml`
+
+**Interfaces:**
+- Consumes: Ch 08（张量/PyTorch）、Ch 13（Transformer 架构，需解释 config 里每个超参的由来）、Ch 15（全景，config 对齐 Qwen3）
+- Produces: 实战章首篇，定调「原理回顾→代码摘录→测试→pytest 验证」节奏；后续 Ch 17–19 的前置环境；为 Ch 20（RMSNorm，会用 `small_config`/`default_config`）铺路
+
+- [ ] **Step 1: 创建 front-matter + 6 节实战模板**
+
+YAML front-matter（7 键）：`part:3, chapter:16, title:项目初始化与开发环境, milestone:M1, source:zllm/config.py, tests:tests/m01_foundations, status:draft`。6 节按实战模板（spec 3.2）：学习目标 / 原理回顾 / 代码实现 / 对应单元测试 / 动手验证 / 小结+下章预告。
+
+- [ ] **Step 2: 第 1–2 节 学习目标 + 原理回顾**
+
+学习目标：装好环境、读懂 `ZLLMConfig` 每个参数、跑通 M1 测试。原理回顾：精简回引 Ch 13（Transformer 超参：层数/头数/维度）+ Ch 15（对齐 Qwen3），说明 config 就是把 Transformer 架构参数化。≥1 Mermaid：config 参数 → 架构组件映射图（vocab→embedding、hidden→各层、layers→深度、GQA 头数→注意力）。
+
+- [ ] **Step 3: 第 3 节 代码实现（核心摘录 + file:line）**
+
+摘录 `ZLLMConfig.__init__` 签名（`config.py:15-39`，5–20 行）并逐参数解释：`vocab_size=6400`、`hidden_size=768`、`num_hidden_layers=8`、GQA（`num_attention_heads=8`/`num_key_value_heads=4`，2:1）、`rope_theta=1e6`、`tie_word_embeddings=True`。重点讲 π 缩放（`config.py:48-52`，`ceil(hidden_size*π/64)*64` → 2368，对齐 64 倍数提升 Tensor Core）。摘录 `head_dim` property（`config.py:71-73`）。每段摘录后跟引用行如「完整实现见 `zllm/config.py:48`」。
+
+- [ ] **Step 4: 第 4 节 对应单元测试（file:line）**
+
+讲 `tests/conftest.py` 的三个 fixture（device `:7-10`、small_config `:13-25`、default_config `:28-33`）。讲 `test_002_import.py:4-7`（`__version__`）、`test_003_fixtures.py` 的 GQA 断言（`:22-24`）、π 缩放断言（`:27-31`）、head_dim（`:34-35`）。引用行格式「对应测试 `tests/m01_foundations/test_003_fixtures.py:27`」。
+
+- [ ] **Step 5: 第 5 节 动手验证（pytest + 预期输出）**
+
+```bash
+pip install -e ".[dev]"
+pytest tests/m01_foundations/ -v
+```
+预期输出：4 个 test 全 PASSED。配一句说明：这 4 个测试是「地基」，确保包可导入、config 默认值正确、fixture 可用。
+
+- [ ] **Step 6: 第 6 节 小结 + 下章预告**
+
+小结：环境就绪、config 读懂。下章预告：进入分词——Ch 17 分词理论（BPE/WordPiece/SentencePiece）。
+
+- [ ] **Step 7: 校验 + commit**
+
+校验：front-matter 7 键；`grep -cE "\.py:[0-9]"` ≥ 5；引用的 file:line 全部真实（抽查 config.py:48、test_003_fixtures.py:27）；无 TBD/TODO；README Ch 16 → ✅。Commit: `docs(book): write Ch16 project setup and environment (M1)`。
+
+---
+
+### Task 19: Ch 17 分词理论：BPE/WordPiece/SentencePiece
+
+**Files:**
+- Create: `docs/book/part-3-tokenizer/ch17-tokenization-theory.md`
+- Modify: `docs/book/README.md`（Ch 17 行 ☐→✅）
+- Read-only refs: 仅 `zllm/tokenizer/bpe.py`、`trainer.py` 作「将在 Ch 18/19 实现」的前向钩子（不展开 file:line）
+
+**Interfaces:**
+- Consumes: Ch 03（概率/频率）、Ch 05（熵/编码——子词是「压缩」）
+- Produces: 为 Ch 18（bpe.py）和 Ch 19（trainer.py）提供算法理论；说明 zllm 为何选 BPE
+
+**注：** 本章是 Part III 里唯一的**理论/原理章**（无独立源码文件，类比 Part VI 的 Ch 35「RLHF 总论」）。用「原理」为主的 6 节结构，不强制 file:line。
+
+- [ ] **Step 1: front-matter + 6 节**
+
+YAML：`part:3, chapter:17, title:分词理论：BPE/WordPiece/SentencePiece, milestone:M2, source:null, tests:null, status:draft`。
+
+- [ ] **Step 2: 学习目标 + 直觉**
+
+讲清三件事：为什么要分词（文本→token id 序列）、字符级/词级/子词级的取舍（OOV 问题）、子词为何胜出。≥1 Mermaid：文本→分词→token id 流水线。
+
+- [ ] **Step 3: 三种算法（LaTeX 推导）**
+
+- **BPE**：从字符（字节）起，每步贪心合并最高频相邻对。形式：$(a^*,b^*)=\arg\max_{(a,b)} f(a,b)$，$new\_id\leftarrow 256+k$。
+- **WordPiece**：按似然增益打分 $s(A,B)=\dfrac{f(AB)}{f(A)\cdot f(B)}$，选使语言模型似然提升最大的对合并（BERT 用）。
+- **Unigram / SentencePiece**：反向——从大词表逐步删除使总似然下降最小的 token；SentencePiece 是把 BPE/Unigram 做成语言无关（直接吃原始字节/字符，不预切空格）。
+配 ≥1 ASCII：三种算法对「low/lowest/newest」的分词对比。
+
+- [ ] **Step 4: 对比 + 为何选 BPE**
+
+表格：确定性 / 训练方向 / 是否需预分词 / 压缩率 / 实现复杂度。说明 zllm 选 BPE 的理由：确定性、易教学、HF tokenizers 原生支持、与 Qwen3/LLaMA 一致。
+
+- [ ] **Step 5: 与项目联系（前向钩子）**
+
+钩子：Ch 18 从零实现 BPE（`bpe.py` 的 `train_bpe`/`merge`/`encode`）；Ch 19 用 HF tokenizers 生产级实现（`trainer.py`）+ 特殊 token + chat template。回引 Ch 05（子词 = 更短编码 = 更低交叉熵目标长度）。
+
+- [ ] **Step 6: 小结 + 思考题 + 下章预告**
+
+3 思考题（如：BPE 对未登录中文为何不崩？WordPiece 和 BPE 在合并判据上的本质区别？）。预告 Ch 18。
+
+- [ ] **Step 7: 校验 + commit**
+
+校验：≥3 个 `$$`；≥1 mermaid；无 TBD；README Ch 17 → ✅。Commit: `docs(book): write Ch17 tokenization theory (BPE/WordPiece/SentencePiece)`。
+
+---
+
+### Task 20: Ch 18 教学版 BPE 实现（M2-a）
+
+**Files:**
+- Create: `docs/book/part-3-tokenizer/ch18-bpe-teaching-impl.md`
+- Modify: `docs/book/README.md`（Ch 18 行 ☐→✅）
+- Read-only refs: `zllm/tokenizer/bpe.py`、`tests/m02_tokenizer/test_026_bpe_core.py`、`tests/m02_tokenizer/test_041_encode_decode.py`
+
+**Interfaces:**
+- Consumes: Ch 17（BPE 理论：合并最高频对）、Ch 05（字节/编码）
+- Produces: 读懂 `bpe.py` 全部 6 个函数；为 Ch 19（生产版）做对比铺垫
+
+- [ ] **Step 1: front-matter + 6 节**
+
+YAML：`part:3, chapter:18, title:教学版 BPE 实现, milestone:M2, source:zllm/tokenizer/bpe.py, tests:tests/m02_tokenizer/test_026_bpe_core.py, status:draft`。
+
+- [ ] **Step 2: 原理回顾**
+
+精简回引 Ch 17 的 BPE 算法（合并最高频对）。≥1 Mermaid：`train_bpe` 主循环（统计对→选最高频→合并→分配 new_id→重复）。
+
+- [ ] **Step 3: 代码实现（6 函数逐一摘录 + file:line）**
+
+- `byte_level_encode`（`bpe.py:8-14`）：`list(text.encode("utf-8"))`，解释为何字节级（无 OOV，中文 3 字节）。
+- `get_pair_counts`（`bpe.py:17-27`）：扫描相邻对。
+- `merge`（`bpe.py:30-44`）：从左到右，已合并不重复参与——配 ASCII 讲 `[1,2,1,2]→[99,99]`。
+- `train_bpe`（`bpe.py:78-99`）：`num_merges=vocab_size-256`，`new_id=256+i`，`max(counts,...)`。
+- `encode`（`bpe.py:47-56`）：按 new_id 升序逐条应用 merge。
+- `decode`（`bpe.py:59-75`）：递归 `expand` 展开回字节。
+每段 5–20 行摘录 + 引用行。
+
+- [ ] **Step 4: 对应单元测试（file:line）**
+
+讲 `test_026_bpe_core.py` 四组测试意图：TestByteLevelEncode（中文 3 字节 `:19-24`）、TestGetPairCounts（最高频对 `:53-55`）、TestMerge（相邻不重复合并 `:65-67`、重叠对 `:69-71`）、TestTrainBPE（首合并是最高频 `(97,98)` `:81-86`）。讲 `test_041_encode_decode.py` TestRoundtrip（`:49-61`，中英混合往返）。引用行格式准确。
+
+- [ ] **Step 5: 动手验证**
+
+```bash
+pytest tests/m02_tokenizer/test_026_bpe_core.py tests/m02_tokenizer/test_041_encode_decode.py -v
+```
+预期：全 PASSED。配一段交互（可选）：在 Python 里 `train_bpe(["abab"], vocab_size=258)` 看 merges。
+
+- [ ] **Step 6: 小结 + 下章预告**
+
+小结：纯 Python BPE 读懂了，但大规模语料太慢。预告 Ch 19：生产级 HF tokenizers 实现。
+
+- [ ] **Step 7: 校验 + commit**
+
+校验：`grep -cE "\.py:[0-9]"` ≥ 6（6 个函数各一引用）；抽查 `bpe.py:78`、`test_026_bpe_core.py:65`、`test_041_encode_decode.py:49` 真实；无 TBD；README Ch 18 → ✅。Commit: `docs(book): write Ch18 teaching BPE implementation (M2-a)`。
+
+---
+
+### Task 21: Ch 19 生产版 Tokenizer + 特殊 Token + Chat Template（M2-b）
+
+**Files:**
+- Create: `docs/book/part-3-tokenizer/ch19-production-tokenizer.md`
+- Modify: `docs/book/README.md`（Ch 19 行 ☐→✅，Part III 完成）
+- Read-only refs: `zllm/tokenizer/{trainer,special_tokens,chat_template,adapter}.py`、`tests/m02_tokenizer/{test_030_special_tokens,test_035_production_tokenizer,test_044_chat_template,test_050_integration}.py`
+
+**Interfaces:**
+- Consumes: Ch 17（BPE 理论）、Ch 18（教学版，对比）、Ch 15（对话格式 im_start/im_end）
+- Produces: Part III 收官；为 Ch 27（TokenizerAdapter 在数据流水线）、Ch 33（SFT 用 chat template）、Ch 40（Agent RL 用 toolcall token）铺路
+
+- [ ] **Step 1: front-matter + 6 节**
+
+YAML：`part:3, chapter:19, title:生产版 Tokenizer + 特殊 Token + Chat Template, milestone:M2, source:zllm/tokenizer/trainer.py, tests:tests/m02_tokenizer/test_035_production_tokenizer.py, status:draft`。
+
+- [ ] **Step 2: 原理回顾 + 四大组件总览**
+
+回引 Ch 18 教学版（慢），引出生产版四大件：训练器（trainer）、特殊 token（special_tokens）、对话模板（chat_template）、适配器（adapter）。≥1 Mermaid：`train_tokenizer → special_tokens 注入 → chat_template 渲染 → adapter 包装 → 供训练/推理调用`。
+
+- [ ] **Step 3: 代码实现（4 文件摘录 + file:line）**
+
+- **trainer**：`train_tokenizer`（`trainer.py:18-43`，`Tokenizer(BPE())`、`ByteLevel` pre-tokenizer `:31`、`BpeTrainer(special_tokens=ALL_SPECIAL_TOKENS, initial_alphabet=ByteLevel.alphabet())` `:34-38`、`train_from_iterator` `:39`、存 `tokenizer.json` `:42`）；`load_tokenizer`（`:46-57`）。
+- **special_tokens**：`SPECIAL_TOKENS` 列表（`special_tokens.py:12-34`，对话边界/pad/多模态预留/toolcall `📞`/reasoning）；`BUFFER_TOKENS`（`:37`，8 个预留位）；`ALL_SPECIAL_TOKENS`（`:40`）。
+- **chat_template**：`render_messages`（`chat_template.py:25-72`，tools 注入 system `:46-55`、open_thinking 包裹 `:64-65`、add_generation_prompt `:69-70`）；Jinja2 `CHAT_TEMPLATE`（`:76-94`）。
+- **adapter**：`TokenizerAdapter`（`adapter.py:10-65`，bos/eos/pad id `:13-18`、`__call__` 加 special `:44-52`、`apply_chat_template` `:54-65`）；`wrap`（`:74-78`）。
+每文件 5–20 行摘录 + 引用。
+
+- [ ] **Step 4: 对应单元测试（file:line）**
+
+讲 4 个测试文件意图：`test_030_special_tokens.py`（无重复 `:24-25`、toolcall `📞` `:39-44`、buffer 计数 `:52-53`）；`test_035_production_tokenizer.py`（special token 单 token `:45-54`、roundtrip 中文 `:72-75`、压缩 `:99-103`）；`test_044_chat_template.py`（generation prompt `:53-56`、open_thinking `:65-71`、tools `:87-93`）；`test_050_integration.py`（全管线 train→save→load→render→encode→decode `:25-34`）。
+
+- [ ] **Step 5: 动手验证**
+
+```bash
+pytest tests/m02_tokenizer/ -v
+```
+预期：M2 全部测试 PASSED。配一段说明：特殊 token ID 占词表前部（`test_035:56-59`，`vocab["<|im_start|>"] < 50`）。
+
+- [ ] **Step 6: 小结 + 下章预告 + Part III 收官**
+
+小结：tokenizer 管线全通。Part III 收官语：从 config 到 tokenizer，基石铺好。下章预告：Part IV Ch 20（RMSNorm）开始搭模型。
+
+- [ ] **Step 7: 校验 + commit**
+
+校验：`grep -cE "\.py:[0-9]"` ≥ 8（4 文件各 ≥2 引用）；抽查 `trainer.py:34`、`special_tokens.py:12`、`chat_template.py:46`、`adapter.py:54`、`test_044_chat_template.py:65`、`test_050_integration.py:25` 真实；无 TBD；README Ch 19 → ✅（Part III 全 ✅）。Commit: `docs(book): write Ch19 production tokenizer + special tokens + chat template (M2-b)`。
+
+---
+
+### Phase 3 完工标准（DoD）
+
+- Ch 16–19 全部写完，README 第 16–19 行全 ✅。
+- 实战章（16/18/19）`grep -cE "\.py:[0-9]"` ≥ 5/6/8；Ch 17（理论章）≥3 `$$`。
+- 全 Phase 无 TBD/TODO/占位符。
+- 所有引用的 zllm file:line 经 `read`/`grep` 抽查真实存在（不可臆造行号）。
+- Phase 3 完成后合并 main，更新本计划第 68 行进度表为「已完成」。
+
+---
+
+## Phase 4–7 详细任务（待后续会话追加）
+
+> 占位说明（计划本身的进度标记，非内容占位）：以下 Phase 将在后续会话按同样 Task 粒度追加。
+
 - **Phase 4（Part IV，Ch 20–26，7 章）**：M3+M4。引用 `zllm/model/*.py`、`tests/m03_model_components`、`tests/m04_model_assembly`。
 - **Phase 5（Part V，Ch 27–32，6 章）**：M5+M6+M7。
 - **Phase 6（Part VI，Ch 33–40，8 章）**：M8-M11。
