@@ -47,7 +47,7 @@
 |  | 15 | 现代语言模型全景 | — | ✅ |
 | III · 基石与分词 | 16 | 项目初始化与开发环境 | M1 | ✅ |
 |  | 17 | 分词理论：BPE/WordPiece/SentencePiece | M2 | ✅ |
-|  | 18 | 教学版 BPE 实现 | M2 | ☐ |
+|  | 18 | 教学版 BPE 实现 | M2 | ✅ |
 |  | 19 | 生产版 Tokenizer + 特殊 Token + Chat Template | M2 | ☐ |
 | IV · 模型架构 | 20 | RMSNorm 归一化 | M3 | ☐ |
 |  | 21 | RoPE 旋转位置编码 + YaRN | M3 | ☐ |
