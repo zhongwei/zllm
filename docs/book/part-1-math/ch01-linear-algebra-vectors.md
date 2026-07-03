@@ -240,7 +240,7 @@ $$
 R(\alpha) = \begin{pmatrix} \cos\alpha & -\sin\alpha \cr \sin\alpha & \cos\alpha \end{pmatrix}
 $$
 
-它把任何向量原地旋转 $\alpha$ 、长度不变（正交矩阵的标志）；而 $\begin{pmatrix} 2 & 0 \cr 0 & 2 \end{pmatrix}$ 则把整个平面均匀放大 2 倍。LLM 里每一层做的 `x @ W`，本质上就是「把语义向量旋转、拉伸到另一组坐标轴上」，**权重矩阵 $W$ 编码的就是这次变换的几何规则**。
+它把任何向量原地旋转 $\alpha$ 、长度不变（正交矩阵的标志）；而 $`\begin{pmatrix} 2 & 0 \cr 0 & 2 \end{pmatrix}`$ 则把整个平面均匀放大 2 倍。LLM 里每一层做的 `x @ W`，本质上就是「把语义向量旋转、拉伸到另一组坐标轴上」，**权重矩阵 $W$ 编码的就是这次变换的几何规则**。
 
 ```
    变换前                          变换后 (旋转 + 缩放)
