@@ -446,23 +446,165 @@ git commit -m "docs(book): write Ch08 tensors and PyTorch autograd (completes Pa
 
 ---
 
-## Phase 1 完成标准（DoD）
+## Phase 1 完成标准（DoD）✅ 已完成（已合并 main）
 
 - `docs/book/README.md`：Part 0 + Part I 全部 9 章 ☐→✅。
 - `docs/book/SUMMARY.md`：9 个链接全部指向已存在文件。
 - 每章满足理论章 6 段模板；含 ≥1 个 Mermaid 图；LaTeX 公式语法正确；每章有「与本项目联系」钩子。
 - 无 TBD/TODO 占位符（`grep -rniE "TBD|TODO|FIXME|待定|占位" docs/book/` 为空）。
-- 9 个提交（Task 2–10 各一，Task 1 为骨架）。
+- 10 个提交（Task 1 骨架 + Task 2–10 各一章）；总计 ~3218 行，已逐章控制器复查通过。
 
 ---
 
-## Phase 2–7 详细任务（待后续会话追加）
+# Phase 2：深度学习与 Transformer 理论（Part II）
 
-> 占位说明：以下 Phase 将在后续会话中按同样的 Task 粒度（每章一 Task，含实战章的 file:line 引用校验步骤）追加到本节。本节非内容占位，而是计划本身的增量进度标记。
+**范围：** Ch 09–Ch 15（纯理论，7 章）。完成后读者掌握从 MLP 到 Transformer 的完整理论，可进入 Part III 实战。所有章均为**理论章模板**（不引用 zllm file:line，只在「与本项目联系」节做前向钩子）。
 
-- **Phase 2（Part II，Ch 09–15，7 章）**：DL/Transformer 理论。每章 Task 含「与项目联系」钩子指向 Ch 20+ 的对应模块。
-- **Phase 3（Part III，Ch 16–19，4 章）**：M1+M2。实战章开始，Task 增加步骤：`grep` 校验引用的 `zllm/tokenizer/*.py` 与 `tests/m02_tokenizer/*` 行号真实存在。
-- **Phase 4（Part IV，Ch 20–26，7 章）**：M3+M4 模型架构。引用 `zllm/model/*.py`、`tests/m03_model_components/*`、`tests/m04_model_assembly/*`。
+**撰写循环：** 与 Phase 1 相同（front-matter + 6 段 → Mermaid/LaTeX → 钩子 → 校验 → README 勾选 → 提交）。
+
+---
+
+### Task 11: Ch 09 神经网络基础
+
+**Files:**
+- Create: `docs/book/part-2-dl-transformer/ch09-neural-network-basics.md`
+
+**Interfaces:**
+- Consumes: Ch 01（矩阵乘法=线性变换）、Ch 06（梯度下降）、Ch 07（链式法则）、Ch 08（autograd）。
+- Produces: MLP/激活函数/损失函数理论；Ch 10（反传）依赖本章网络结构，Ch 23（SwiGLU）回引激活函数。
+
+- [ ] **Step 1: front-matter（part:2 chapter:9）+ 6 段骨架**
+- [ ] **Step 2: 直觉（Mermaid）** —— 神经元=加权求和+激活；MLP=多层堆叠的函数复合。Mermaid 画一个 3 层 MLP。
+- [ ] **Step 3: 数学定义（LaTeX）** —— 线性层 $\mathbf{h}=W\mathbf{x}+\mathbf{b}$；激活 sigmoid/tanh/ReLU $\max(0,x)$/SiLU $x\sigma(x)$；损失：MSE（回归）、交叉熵（分类，回引 Ch 05）。
+- [ ] **Step 4: 推导与几何（图示）** —— 每个激活函数的形状与梯度（sigmoid 梯度消失、ReLU 死神经元、SiLU 平滑）；为什么需要非线性激活（否则多层仍等价单层线性）。
+- [ ] **Step 5: 与本项目联系（钩子）** —— **Ch 23 SwiGLU** 用 SiLU 做门控（$FFN(x)=down(silu(gate(x))\cdot up(x))$）；**Ch 26 CausalLM** 用交叉熵损失；MLP 是 Transformer FFN 的前身。
+- [ ] **Step 6: 校验 + 勾选 Ch09 + 提交** `docs(book): write Ch09 neural network basics`
+
+---
+
+### Task 12: Ch 10 反向传播与训练动力学
+
+**Files:**
+- Create: `docs/book/part-2-dl-transformer/ch10-backprop-training-dynamics.md`
+
+**Interfaces:**
+- Consumes: Ch 07（链式法则）、Ch 08（autograd）、Ch 09（MLP）。
+- Produces: 反传推导 + 初始化 + 正则化；后续所有训练章（Ch 31/33）依赖。
+
+- [ ] **Step 1: front-matter（part:2 chapter:10）+ 骨架**
+- [ ] **Step 2: 直觉（Mermaid）** —— 反传=链式法则在计算图上的高效调度（前向存中间值，反向逐节点求导）。Mermaid 画前向/反向计算图。
+- [ ] **Step 3: 数学定义（LaTeX）** —— 逐层梯度公式；权重初始化 Xavier $Var(W)=1/n_{in}$、He $Var(W)=2/n_{in}$；正则化 $L_2$、Dropout。
+- [ ] **Step 4: 推导与几何（图示）** —— 手推一个 2 层 MLP 的反传全过程（forward 存 $a^{(l)}$，backward 算 $\delta^{(l)}$）；解释 Xavier/He 为何稳定（保持各层激活/梯度方差）。
+- [ ] **Step 5: 与本项目联系（钩子）** —— 初始化动机呼应 Ch 04 方差；**Ch 31 预训练** 每步 `loss.backward()`；Dropout 在注意力（Ch 22）出现；残差连接（Ch 25）缓解梯度消失（呼应 Ch 07 的 +1）。
+- [ ] **Step 6: 校验 + 勾选 Ch10 + 提交** `docs(book): write Ch10 backprop and training dynamics`
+
+---
+
+### Task 13: Ch 11 序列建模：从 RNN/LSTM 到瓶颈
+
+**Files:**
+- Create: `docs/book/part-2-dl-transformer/ch11-sequence-modeling-rnn.md`
+
+**Interfaces:**
+- Consumes: Ch 09–10。
+- Produces: 序列建模动机与瓶颈，为 Ch 12 注意力铺路。
+
+- [ ] **Step 1: front-matter（part:2 chapter:11）+ 骨架**
+- [ ] **Step 2: 直觉（Mermaid）** —— 语言是序列；RNN 逐步传递隐状态。Mermaid 画 RNN 时间展开图。
+- [ ] **Step 3: 数学定义（LaTeX）** —— RNN $\mathbf{h}_t=\tanh(W_h\mathbf{h}_{t-1}+W_x\mathbf{x}_t)$；LSTM 门控（输入/遗忘/输出门）；梯度随时间步连乘。
+- [ ] **Step 4: 推导与几何（图示）** —— RNN 的 BPTT 梯度连乘 → 梯度消失/爆炸；LSTM 门控如何缓解；**核心瓶颈**：无法并行（时序依赖）+ 长程依赖弱。
+- [ ] **Step 5: 与本项目联系（钩子）** —— 这些瓶颈正是 Transformer/注意力（Ch 12）要解决的：并行 + 长程依赖；zllm 完全不用 RNN，是 decoder-only Transformer。
+- [ ] **Step 6: 校验 + 勾选 Ch11 + 提交** `docs(book): write Ch11 sequence modeling - RNN/LSTM`
+
+---
+
+### Task 14: Ch 12 注意力机制
+
+**Files:**
+- Create: `docs/book/part-2-dl-transformer/ch12-attention.md`
+
+**Interfaces:**
+- Consumes: Ch 01（点积/矩阵乘法）、Ch 03（softmax）、Ch 05（缩放动机）、Ch 11（RNN 瓶颈）。
+- Produces: 注意力核心理论；Ch 22（GQA）实战回引。
+
+- [ ] **Step 1: front-matter（part:2 chapter:12）+ 骨架**
+- [ ] **Step 2: 直觉（Mermaid）** —— 注意力=「查询词去检索相关的键值对」。Mermaid 画 Q/K/V 检索示意。
+- [ ] **Step 3: 数学定义（LaTeX）** —— 缩放点积注意力 $\text{Attention}(Q,K,V)=\mathrm{softmax}(\frac{QK^\top}{\sqrt{d_k}})V$；多头注意力（投影到 $h$ 个子空间分别做）。
+- [ ] **Step 4: 推导与几何（图示）** —— 为什么除以 $\sqrt{d_k}$（点积方差随维度增长，softmax 饱和，回引 Ch 03/05）；逐对相关度矩阵的可视化。
+- [ ] **Step 5: 与本项目联系（钩子）** —— **Ch 22 GQA**（8 Q 头/4 KV 头）、**QK-Norm**、**KV Cache**；多头→分组查询；Flash Attention（Ch 22）。
+- [ ] **Step 6: 校验 + 勾选 Ch12 + 提交** `docs(book): write Ch12 attention mechanism`
+
+---
+
+### Task 15: Ch 13 Transformer 架构详解
+
+**Files:**
+- Create: `docs/book/part-2-dl-transformer/ch13-transformer-architecture.md`
+
+**Interfaces:**
+- Consumes: Ch 09（FFN）、Ch 12（注意力）。
+- Produces: 完整 Transformer 架构；Ch 25（Block 组装）回引。
+
+- [ ] **Step 1: front-matter（part:2 chapter:13）+ 骨架**
+- [ ] **Step 2: 直觉（Mermaid）** —— Transformer=注意力+FFN+残差+归一化的堆叠。Mermaid 画原始 Encoder/Decoder Block。
+- [ ] **Step 3: 数学定义（LaTeX）** —— Pre-Norm vs Post-Norm；残差 $x'=x+\text{Sublayer}(Norm(x))$；Position Encoding；Encoder-Decoder 交叉注意力。
+- [ ] **Step 4: 推导与几何（图示）** —— 原始论文 "Attention Is All You Need" 架构图逐模块拆解；为什么 decoder-only 成为主流（GPT 路线）。
+- [ ] **Step 5: 与本项目联系（钩子）** —— zllm 是 **decoder-only + Pre-Norm**（Ch 25 Block）；用 RoPE 替代绝对位置编码（Ch 21）；RMSNorm 替代 LayerNorm（Ch 20）。
+- [ ] **Step 6: 校验 + 勾选 Ch13 + 提交** `docs(book): write Ch13 transformer architecture`
+
+---
+
+### Task 16: Ch 14 解码策略理论
+
+**Files:**
+- Create: `docs/book/part-2-dl-transformer/ch14-decoding-theory.md`
+
+**Interfaces:**
+- Consumes: Ch 03（概率分布/softmax）、Ch 05（熵）。
+- Produces: 解码理论；Ch 41（解码实现）回引。
+
+- [ ] **Step 1: front-matter（part:2 chapter:14）+ 骨架**
+- [ ] **Step 2: 直觉（Mermaid）** —— 从分布到文本：贪心 vs 采样的权衡（质量 vs 多样性）。
+- [ ] **Step 3: 数学定义（LaTeX）** —— greedy=argmax；temperature $p_i=\mathrm{softmax}(z_i/T)$；top-k、top-p（nucleus）$ \sum_{i\in S}p_i\ge p$；beam search（简述）；repetition penalty。
+- [ ] **Step 4: 推导与几何（图示）** —— T 如何改变分布尖锐度（回引 Ch 03/05）；top-k vs top-p 的自适应差别（概率集中时少取/分散时多取）；熵与多样性的关系。
+- [ ] **Step 5: 与本项目联系（钩子）** —— **Ch 41 解码实现**（zllm 默认 temperature=0.85, top_p=0.95, top_k=50）；采样在 GRPO/PPO rollout（Ch 37/38）里用于生成多个 response。
+- [ ] **Step 6: 校验 + 勾选 Ch14 + 提交** `docs(book): write Ch14 decoding strategy theory`
+
+---
+
+### Task 17: Ch 15 现代语言模型全景
+
+**Files:**
+- Create: `docs/book/part-2-dl-transformer/ch15-llm-landscape.md`
+
+**Interfaces:**
+- Consumes: Ch 13（Transformer）、Ch 05（NTP/CE）。
+- Produces: 现代 LLM 全景，Part II 收官，过渡到 Part III 实战。
+
+- [ ] **Step 1: front-matter（part:2 chapter:15）+ 骨架**
+- [ ] **Step 2: 直觉（Mermaid）** —— GPT 演进时间线（GPT-1→4 / Llama / Qwen）；decoder-only 成主流。Mermaid 画演进 + 训练三阶段（pretrain→SFT→align）。
+- [ ] **Step 3: 数学定义（LaTeX）** —— NTP 目标 $\mathcal{L}=-\sum_t\log P(x_t|x_{<t})$；Scaling Law $\mathcal{L}(N)\approx (N_c/N)^{\alpha}$；涌现能力（简述）。
+- [ ] **Step 4: 推导与几何（图示）** —— Scaling Law 幂律曲线；参数/数据/算力的权衡；为什么 decoder-only + NTP 胜出。
+- [ ] **Step 5: 与本项目联系（钩子）** —— zllm 对齐 **Qwen3/minimind-3**（GQA/RoPE/SwiGLU/MoE/Weight Tying），~64M 参数；缩放版完整管线 pretrain→SFT→{LoRA/DPO/PPO/GRPO}→serving；为 Part III（Ch 16 项目初始化）开篇。
+- [ ] **Step 6: 校验 + 勾选 Ch15 + 提交** `docs(book): write Ch15 modern LLM landscape`
+
+---
+
+## Phase 2 完成标准（DoD）
+
+- `docs/book/README.md`：Part II 全部 7 章（Ch 09–15）☐→✅。
+- 创建 `docs/book/part-2-dl-transformer/` 目录及 7 个章节文件。
+- 每章理论章 6 段模板；≥1 Mermaid；≥3 `$$`；含「与本项目联系」钩子；无占位符。
+- 7 个提交（Task 11–17 各一）。
+
+---
+
+## Phase 3–7 详细任务（待后续会话追加）
+
+> 占位说明（计划本身的进度标记，非内容占位）：以下 Phase 将在后续会话按同样 Task 粒度追加。Phase 3 起为实战章，Task 增加 `grep` 校验引用的 zllm 源码/测试行号真实存在的步骤。
+
+- **Phase 3（Part III，Ch 16–19，4 章）**：M1+M2。引用 `zllm/tokenizer/*.py`、`tests/m01_foundations`、`tests/m02_tokenizer`。
+- **Phase 4（Part IV，Ch 20–26，7 章）**：M3+M4。引用 `zllm/model/*.py`、`tests/m03_model_components`、`tests/m04_model_assembly`。
 - **Phase 5（Part V，Ch 27–32，6 章）**：M5+M6+M7。
 - **Phase 6（Part VI，Ch 33–40，8 章）**：M8-M11。
 - **Phase 7（Part VII + 附录，Ch 41–43 + 附录 A-D）**：M12。
