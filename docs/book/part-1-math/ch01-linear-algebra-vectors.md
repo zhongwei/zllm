@@ -197,9 +197,19 @@ PyTorch 里 `x.norm(p)` 直接给出 $L_p$ 范数；RMSNorm（Ch 20）用到的�
 - $\cos\theta = 0$ ：夹角 $90^\circ$ ，两向量**正交**（毫不相关）；
 - $\cos\theta = -1$ ：夹角 $180^\circ$ ，两向量**方向完全相反**（反向平行）。
 
-现在的关键问题是：我们手头只有向量 $\mathbf{x}, \mathbf{y}$ 的坐标，怎么算出 $\cos\theta$ ？
+现在的关键问题是：我们手头只有向量 $\mathbf{x}, \mathbf{y}$ 的坐标，怎么算出 $\cos\theta$ ？答案是借助**余弦定理**。
 
-**推导借助余弦定理**。设两个向量 $\mathbf{x}, \mathbf{y}$ 的夹角为 $\theta$ ，它们差向量的长度满足：
+**余弦定理**。对任意三角形，若两条边长为 $a$、$b$ ，它们的夹角为 $C$ ，则第三条边 $c$ 满足：
+
+$$
+\boxed{c^2 = a^2 + b^2 - 2ab\cos C}
+$$
+
+当 $C=90^\circ$ 时 $\cos C=0$ ，它退化为勾股定理 $c^2=a^2+b^2$ ——所以余弦定理是勾股定理的推广。
+
+把向量 $\mathbf{x}, \mathbf{y}$ 的起点放在同一点，它们终点之间的连线就是 $\mathbf{x}-\mathbf{y}$ ，于是 $\Vert\mathbf{x}\Vert$、$\Vert\mathbf{y}\Vert$、$\Vert\mathbf{x}-\mathbf{y}\Vert$ 三条边围成一个三角形，$\mathbf{x}$ 与 $\mathbf{y}$ 的夹角 $\theta$ 正是其中那个夹角。直接套用余弦定理：
+
+![向量三角形与余弦定理](figs/ch01-vector-triangle-cosine-law.svg)
 
 $$
 \Vert\mathbf{x} - \mathbf{y}\Vert^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta
