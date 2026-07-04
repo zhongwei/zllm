@@ -177,7 +177,7 @@ $$
 
 ![范数几何意义](figs/ch01-norm-geometry_anim.svg)
 
-几何图像揭示了一个关键：**范数本质是「从原点到向量终点的路径长度」，但「路径」的定义不同**——$L_2$ 走直线、$L_1$ 走坐标轴、$L_\infty$ 只看最远的那一步。
+几何图像揭示了一个关键：**范数本质是「从原点到向量终点的路径长度」，但「路径」的定义不同** —— $L_2$ 走直线、 $L_1$ 走坐标轴、 $L_\infty$ 只看最远的那一步。
 
 PyTorch 里 `x.norm(p)` 直接给出 $L_p$ 范数；RMSNorm（Ch 20）用到的「均方根」其实就和 $L_2$ 范数只差一个常数因子。
 
@@ -199,7 +199,7 @@ PyTorch 里 `x.norm(p)` 直接给出 $L_p$ 范数；RMSNorm（Ch 20）用到的�
 
 现在的关键问题是：我们手头只有向量 $\mathbf{x}, \mathbf{y}$ 的坐标，怎么算出 $\cos\theta$ ？答案是借助**余弦定理**。
 
-**余弦定理**。对任意三角形，若两条边长为 $a$、$b$ ，它们的夹角为 $C$ ，则第三条边 $c$ 满足：
+**余弦定理**。对任意三角形，若两条边长为 $a$、 $b$ ，它们的夹角为 $C$ ，则第三条边 $c$ 满足：
 
 $$
 \boxed{c^2 = a^2 + b^2 - 2ab\cos C}
@@ -207,7 +207,7 @@ $$
 
 当 $C=90^\circ$ 时 $\cos C=0$ ，它退化为勾股定理 $c^2=a^2+b^2$ ——所以余弦定理是勾股定理的推广。
 
-把向量 $\mathbf{x}, \mathbf{y}$ 的起点放在同一点，它们终点之间的连线就是 $\mathbf{x}-\mathbf{y}$ ，于是 $\Vert\mathbf{x}\Vert$、$\Vert\mathbf{y}\Vert$、$\Vert\mathbf{x}-\mathbf{y}\Vert$ 三条边围成一个三角形，$\mathbf{x}$ 与 $\mathbf{y}$ 的夹角 $\theta$ 正是其中那个夹角。直接套用余弦定理：
+把向量 $\mathbf{x}, \mathbf{y}$ 的起点放在同一点，它们终点之间的连线就是 $\mathbf{x}-\mathbf{y}$ ，于是 $\Vert\mathbf{x}\Vert$、 $\Vert\mathbf{y}\Vert$、 $\Vert\mathbf{x}-\mathbf{y}\Vert$ 三条边围成一个三角形， $\mathbf{x}$ 与 $\mathbf{y}$ 的夹角 $\theta$ 正是其中那个夹角。直接套用余弦定理：
 
 ![向量三角形与余弦定理](figs/ch01-vector-triangle-cosine-law.svg)
 
