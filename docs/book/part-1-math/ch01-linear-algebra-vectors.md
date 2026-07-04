@@ -257,41 +257,54 @@ $$
 
 ### 点积 = 投影长度
 
-先回顾余弦定理。对两个向量 $\mathbf{x}, \mathbf{y}$ ，它们差向量的长度满足：
+§1.3 已经推出了点积的几何形式 $\mathbf{x}\cdot\mathbf{y}=\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta$ 。这一节换一个角度看它：不谈夹角，只谈**投影**。
+
+把向量 $\mathbf{y}$ 沿 $\mathbf{x}$ 的方向「拍扁」，得到它在 $\mathbf{x}$ 方向上的分量 $\Vert\mathbf{y}\Vert\cos\theta$ 。这是一个带正负号的标量——沿 $\mathbf{x}$ 正方向为正、反方向为负——叫作 $\mathbf{y}$ 在 $\mathbf{x}$ 上的**有向投影长度**。于是点积可以读作：
 
 $$
-\Vert\mathbf{x} - \mathbf{y}\Vert^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta
+\boxed{ \; \mathbf{x}\cdot\mathbf{y} \;=\; \Vert\mathbf{x}\Vert \times (\text{$\mathbf{y}$ 在 $\mathbf{x}$ 方向上的有向投影长度}) \; }
 $$
 
-另一方面，直接展开左边（逐元素）：
+换谁都一样：点积也可以写成 $\Vert\mathbf{y}\Vert \times (\mathbf{x}\text{ 在 }\mathbf{y}\text{ 方向上的投影})$ ，它不分「谁投到谁」。
 
-$$
-\Vert\mathbf{x} - \mathbf{y}\Vert^2 = \sum_i (x_i - y_i)^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \sum_i x_i y_i
-$$
+投影的正负，正好对应 §1.3 开头讲过的三种夹角：
 
-比较两式，立刻得到点积的几何形式：
+| 夹角 | $\mathbf{y}$ 的有向投影 | 点积 $\mathbf{x}\cdot\mathbf{y}$ |
+|---|:---:|:---:|
+| 锐角（ $\theta<90^\circ$ ） | $>0$ | $>0$ |
+| 直角（ $\theta=90^\circ$ ） | $=0$ | $=0$ |
+| 钝角（ $\theta>90^\circ$ ） | $<0$ | $<0$ |
 
-$$
-\boxed{ \mathbf{x} \cdot \mathbf{y}  =  \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta }
-$$
-
-这个等式有三层含义，请逐条品味：
-
-1. **点积 = 一个向量的长度 × 另一个向量在它方向上的投影长度**。把 $\Vert\mathbf{y}\Vert\cos\theta$ 看作 $\mathbf{y}$ 在 $\mathbf{x}$ 上的投影，点积就成了「 $\mathbf{x}$ 的长度 × $\mathbf{y}$ 的投影」。
-2. **正交 ⟺ 点积为零**。当 $\theta = 90^\circ$ 时 $\cos\theta = 0$ ，于是 $\mathbf{x}\cdot\mathbf{y}=0$ 。几何上「垂直」，代数上「点积为零」，两者是同一件事——这是后面理解「无关」「解耦」的根基。
-3. **柯西–施瓦茨不等式**。因为 $|\cos\theta| \leq 1$ ，所以
-
-$$
-|\mathbf{x}\cdot\mathbf{y}|  \leq  \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert
-$$
-
-等号当且仅当两向量共线（同向或反向）时成立。由此立刻得到：**两个单位向量（长度为 1）的点积取值范围是 $[-1, 1]$**——这正是余弦相似度的值域。
+直角那一档尤其重要：**几何上「垂直」，代数上「点积为零」，两者是同一件事**（ $\theta=90^\circ\Rightarrow\cos\theta=0\Rightarrow\mathbf{x}\cdot\mathbf{y}=0$ ）。这就是后面理解「无关」「解耦」的根基。
 
 下面这张示意图把「投影」和「夹角」的关系画出来（为清晰起见画在 2 维平面）：
 
 ![点积 = 投影长度](figs/ch01-dot-product-projection_anim.svg)
 
-一个直观的推论：当 $\mathbf{y}$ 与 $\mathbf{x}$ 同向（ $\theta=0$ ）时点积最大、为 $\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ ；反向（ $\theta=\pi$ ）时最小、为 $-\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ 。**点积天然就是「方向一致性」的度量**——这正是注意力机制用它来衡量「词与词有多相关」的原因（Ch 12）。
+可以看到，随着夹角 $\theta$ 从锐变钝，有向投影从正变负，点积也跟着同号变化。两个极端最容易记： $\mathbf{y}$ 与 $\mathbf{x}$ **同向**（ $\theta=0$ ）时点积最大、为 $\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ ；**反向**（ $\theta=\pi$ ）时最小、为 $-\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ 。**点积天然就是「方向一致性」的度量**——这正是注意力机制用它来衡量「词与词有多相关」的原因（Ch 12）。
+
+那么这个上下界是严格的吗？由下面这条不等式一锤定音。
+
+### 柯西–施瓦茨不等式
+
+**柯西–施瓦茨不等式（Cauchy–Schwarz inequality）**：
+
+$$
+\boxed{ \; |\mathbf{x}\cdot\mathbf{y}| \;\leq\; \Vert\mathbf{x}\Vert\,\Vert\mathbf{y}\Vert \; }
+$$
+
+等号当且仅当两向量**共线**（同向或反向）时成立。
+
+**证明只需一行**：把 §1.3 的恒等式 $\mathbf{x}\cdot\mathbf{y}=\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta$ 代入，再用基本事实 $|\cos\theta|\leq 1$ ，立刻得到 $|\mathbf{x}\cdot\mathbf{y}|\leq\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ ；等号对应 $|\cos\theta|=1$ ，即 $\theta\in\{0,\pi\}$ ，正是两向量共线。
+
+**几何读法**：不等式两边除以 $\Vert\mathbf{x}\Vert$ ，得到 $|\Vert\mathbf{y}\Vert\cos\theta|\leq\Vert\mathbf{y}\Vert$ ——一个向量在任一方向上的**投影长度，绝不会超过它自身的长度**。柯西–施瓦茨本质上就是这句话的代数化身。
+
+**两条直接推论**：
+
+- 把 $\mathbf{x},\mathbf{y}$ 都取成**单位向量**（ $\Vert\mathbf{x}\Vert=\Vert\mathbf{y}\Vert=1$ ），点积落在 $[-1,1]$ ——这正是 §1.3 余弦相似度值域 $[-1,1]$ 的代数依据。
+- 前文刚看到的「同向取最大、反向取最小」，其严格上下界正是 $\pm\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ 。
+
+**它不只是个摆设**：Ch 06（最优化）会用它严格证明**「负梯度是最速下降方向」**——在单位步长 $\Vert\mathbf{d}\Vert=1$ 的约束下， $\nabla f(\theta)^\top\mathbf{d}\ge -\Vert\nabla f(\theta)\Vert$ ，等号当 $\mathbf{d}$ 取负梯度方向时成立。换句话说，要让损失下降最快，朝负梯度走是数学上最优的——而这条结论的根基，正是柯西–施瓦茨。
 
 ### 矩阵乘法 = 线性变换
 
