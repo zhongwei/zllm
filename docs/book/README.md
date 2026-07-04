@@ -66,7 +66,7 @@
 |  | 34 | LoRA 低秩适配 | M9 | ✅ |
 |  | 35 | RLHF 框架与对齐总论 | M10 | ✅ |
 |  | 36 | DPO 直接偏好优化 | M10 | ✅ |
-|  | 37 | PPO + GAE + Critic | M10 | ☐ |
+|  | 37 | PPO + GAE + Critic | M10 | ✅ |
 |  | 38 | GRPO + CISPO | M10 | ☐ |
 |  | 39 | 知识蒸馏 | M11 | ☐ |
 |  | 40 | Agent RL 工具调用 | M11 | ☐ |
