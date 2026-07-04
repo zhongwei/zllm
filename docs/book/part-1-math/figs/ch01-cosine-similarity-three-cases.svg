@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 260" width="720" height="260" font-family="Cambria, Georgia, 'Times New Roman', serif">
+  <title>余弦相似度三种情形</title>
+  <desc>三个迷你坐标系并列：锐角(cos&gt;0 方向相近)、直角(cos=0 正交)、钝角(cos&lt;0 方向偏离)。</desc>
+  <style>
+    .axis{color:#cbd5e1}.x{color:#2563eb}.y{color:#ea580c}.arc{color:#6b7280}.ink{color:#1f2937}.lbl{color:#374151}.dim{color:#6b7280}.pos{color:#059669}.zero{color:#6b7280}.neg{color:#dc2626}
+    @media (prefers-color-scheme: dark){
+      .axis{color:#475569}.x{color:#60a5fa}.y{color:#fb923c}.arc{color:#94a3b8}.ink{color:#e5e7eb}.lbl{color:#e5e7eb}.dim{color:#9ca3af}.pos{color:#34d399}.zero{color:#9ca3af}.neg{color:#f87171}
+    }
+  </style>
+  <defs>
+    <marker id="ax1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path class="x" d="M0,0 L8,3 L0,6 Z" fill="currentColor"/></marker>
+    <marker id="ay1" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path class="y" d="M0,0 L8,3 L0,6 Z" fill="currentColor"/></marker>
+  </defs>
+
+  <text class="lbl" x="360" y="28" font-size="15" fill="currentColor" text-anchor="middle" font-weight="600">夹角决定方向相似度</text>
+
+  <!-- Panel 1: acute, O=(110,200), x→(210,200), y at 45°→(181,129) -->
+  <g id="panel-acute">
+    <line class="axis" x1="60" y1="200" x2="225" y2="200" stroke="currentColor" stroke-width="1"/>
+    <line class="x" x1="110" y1="200" x2="210" y2="200" stroke="currentColor" stroke-width="2.6" marker-end="url(#ax1)"/>
+    <line class="y" x1="110" y1="200" x2="181" y2="129" stroke="currentColor" stroke-width="2.6" marker-end="url(#ay1)"/>
+    <path class="arc" d="M140,200 A30,30 0 0,0 131.21,178.79" fill="none" stroke="currentColor" stroke-width="1.3"/>
+    <text class="lbl" x="132" y="194" font-size="13" font-style="italic" fill="currentColor">θ</text>
+    <text class="x" x="214" y="196" font-size="14" font-style="italic" fill="currentColor">x</text>
+    <text class="y" x="186" y="124" font-size="14" font-style="italic" fill="currentColor">y</text>
+    <circle class="ink" cx="110" cy="200" r="2.6" fill="currentColor"/>
+    <text class="dim" x="100" y="216" font-size="11" fill="currentColor">O</text>
+    <text class="lbl" x="142" y="76" font-size="12" fill="currentColor" text-anchor="middle">锐角 θ &lt; 90°</text>
+    <text class="pos" x="142" y="240" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">cos θ ≈ 0.7 &gt; 0</text>
+    <text class="pos" x="142" y="256" font-size="12" fill="currentColor" text-anchor="middle">方向相近</text>
+  </g>
+
+  <!-- Panel 2: right angle, O=(360,200), x→(460,200), y up→(360,100) -->
+  <g id="panel-right">
+    <line class="axis" x1="310" y1="200" x2="475" y2="200" stroke="currentColor" stroke-width="1"/>
+    <line class="x" x1="360" y1="200" x2="460" y2="200" stroke="currentColor" stroke-width="2.6" marker-end="url(#ax1)"/>
+    <line class="y" x1="360" y1="200" x2="360" y2="100" stroke="currentColor" stroke-width="2.6" marker-end="url(#ay1)"/>
+    <path class="arc" d="M390,200 A30,30 0 0,0 360,170" fill="none" stroke="currentColor" stroke-width="1.3"/>
+    <text class="lbl" x="382" y="192" font-size="13" font-style="italic" fill="currentColor">θ</text>
+    <text class="x" x="464" y="196" font-size="14" font-style="italic" fill="currentColor">x</text>
+    <text class="y" x="365" y="96" font-size="14" font-style="italic" fill="currentColor">y</text>
+    <circle class="ink" cx="360" cy="200" r="2.6" fill="currentColor"/>
+    <text class="dim" x="350" y="216" font-size="11" fill="currentColor">O</text>
+    <text class="lbl" x="392" y="76" font-size="12" fill="currentColor" text-anchor="middle">直角 θ = 90°</text>
+    <text class="zero" x="392" y="240" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">cos θ = 0</text>
+    <text class="zero" x="392" y="256" font-size="12" fill="currentColor" text-anchor="middle">正交 / 无关</text>
+  </g>
+
+  <!-- Panel 3: obtuse, O=(600,200), x→(700,200), y at 135°→(529,129) -->
+  <g id="panel-obtuse">
+    <line class="axis" x1="490" y1="200" x2="710" y2="200" stroke="currentColor" stroke-width="1"/>
+    <line class="x" x1="600" y1="200" x2="700" y2="200" stroke="currentColor" stroke-width="2.6" marker-end="url(#ax1)"/>
+    <line class="y" x1="600" y1="200" x2="529" y2="129" stroke="currentColor" stroke-width="2.6" marker-end="url(#ay1)"/>
+    <path class="arc" d="M630,200 A30,30 0 0,1 578.79,178.79" fill="none" stroke="currentColor" stroke-width="1.3"/>
+    <text class="lbl" x="600" y="178" font-size="13" font-style="italic" fill="currentColor">θ</text>
+    <text class="x" x="704" y="196" font-size="14" font-style="italic" fill="currentColor">x</text>
+    <text class="y" x="514" y="124" font-size="14" font-style="italic" fill="currentColor">y</text>
+    <circle class="ink" cx="600" cy="200" r="2.6" fill="currentColor"/>
+    <text class="dim" x="590" y="216" font-size="11" fill="currentColor">O</text>
+    <text class="lbl" x="610" y="76" font-size="12" fill="currentColor" text-anchor="middle">钝角 θ &gt; 90°</text>
+    <text class="neg" x="610" y="240" font-size="13" fill="currentColor" text-anchor="middle" font-weight="600">cos θ ≈ −0.7 &lt; 0</text>
+    <text class="neg" x="610" y="256" font-size="12" fill="currentColor" text-anchor="middle">方向偏离 / 相反</text>
+  </g>
+</svg>
