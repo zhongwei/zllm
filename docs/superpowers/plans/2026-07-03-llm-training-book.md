@@ -50,7 +50,7 @@ docs/book/
 ├── part-3-tokenizer/            # Phase 3 追加
 ├── part-4-architecture/         # Phase 4 追加
 ├── part-5-training/             # Phase 5 追加
-├── part-6-finetune-alignment/   # Phase 6 追加
+├── part-6-alignment/             # Phase 6 追加
 ├── part-7-serving/              # Phase 7 追加
 └── appendices/                  # Phase 7 追加
 ```
@@ -68,7 +68,7 @@ docs/book/
 | 3 | Part III（M1+M2 分词） | 已追加（Task 18–21） | 进行中 |
 | 4 | Part IV（M3+M4 模型架构） | 已追加（Task 22–28） | 已完成 |
 | 5 | Part V（M5+M6+M7 数据与训练） | 已追加（Task 29–34） | 已完成 |
-| 6 | Part VI（M8-M11 微调与对齐） | 待追加 | 后续会话 |
+| 6 | Part VI（M8-M11 微调与对齐） | 已追加（Task 35–42） | 进行中 |
 | 7 | Part VII + 附录（M12 推理部署 + 附录） | 待追加 | 后续会话 |
 
 ---
@@ -918,5 +918,55 @@ Create `part-5-training/ch32-pretraining-practice.md`。YAML `source:zllm/traini
 - 每章 `grep -cE "\.py:[0-9]"` 达标（见各 Task）。
 - 全 Phase 无 TBD/TODO/占位符；所有引用 file:line 经 `sed -n` 抽查真实。
 - Phase 5 完成后更新本计划进度表第 70 行为「已完成」。
-- **Phase 6（Part VI，Ch 33–40，8 章）**：M8-M11。引用 `zllm/training/{full_sft,dpo,ppo,grpo,distillation,agent_rl}.py`、`zllm/model/lora.py`、`tests/m08_sft`…`tests/m11_distill_agent`。
+- **Phase 6（Part VI，Ch 33–40，8 章）**：M8-M11。引用 `zllm/training/{full_sft,dpo,ppo,grpo,distillation,agent_rl,lora_sft}.py`、`zllm/model/lora.py`、`tests/m08_sft`、`tests/m09_lora`、`tests/m10_alignment`、`tests/m11_distill_agent`。
+
+### 前置事实块（Phase 6 引用源，已逐行核实）
+
+**`zllm/model/lora.py`（130 行）**：`LoRA` 类 `:21-39`（A 降维 `:33`、B 升维 `:34`、A 高斯 `:35`、**B 零初始化** `:36`、`forward = B(A(x))` `:38-39`）；`apply_lora` `:42-60`（只注入方阵 `in==out` `:52`、monkey-patch `forward(x) = original + lora(x)` `:57-60`）；`freeze_non_lora` `:69-79`（非 lora `requires_grad=False`）；`save_lora` `:82-94`（只存 A/B）；`load_lora` `:97-112`；**`merge_lora`** `:115-130`（`W_merged = W + B@A` `:128-129`）。
+
+**`zllm/training/full_sft.py`（112 行）**：`SFTConfig` `:22-40`（**lr=1e-5**（预训练 1/50）`:25`、max_seq_len=768 `:30`、from_weight='pretrain' `:37`、save_weight='full_sft' `:36`）；`train_epoch` `:43-112`（与 pretrain 同结构，用 SFTDataset + SFTConfig）。
+
+**`zllm/training/lora_sft.py`（96 行）**：`LoRAConfig` `:19-37`（**lr=1e-4**（full_sft 的 10 倍）`:22`、rank=16 `:23`、epochs=10 `:20`、from_weight='full_sft' `:35`）；`train_epoch` `:40-96`（**梯度裁剪只作用于 lora_params** `:72/91`）。
+
+**`zllm/training/dpo.py`（162 行）**：`logits_to_log_probs` `:20-31`（log_softmax + gather）；**`dpo_loss`** `:34-61`（`(ref·policy).sum(mask)` `:48-49`、前半 chosen 后半 rejected `:52-55`、`logits = π_logratios - ref_logratios` `:57-59`、`loss = -logsigmoid(β·logits)` `:60`）；`train_epoch` `:86-162`（双模型 policy+ref `:99-100`、ref no_grad `:121-122`、cat chosen+rejected `:112-114`）。
+
+**`zllm/training/ppo.py`（157 行）**：`CriticModel` `:29-44`（继承 ZLLMForCausalLM、value_head Linear(hidden,1) `:38`、forward 返回 values `:40-44`）；**`compute_gae`** `:47-81`（`δ_t = r + γV_{t+1} - V_t` `:70`、`A = δ + γλ·last_gae` `:71`、标准化 `:75-78`、returns = adv + values `:80`）；`ppo_policy_loss` `:84-103`（ratio=exp(new-old) `:99`、`min(ratio·A, clip·A)` `:100-102`）；`ppo_value_loss` `:106-125`（clipped value loss）；`PPOConfig` `:128-157`（clip_epsilon=0.2 `:134`、vf_coef=0.5 `:135`、kl_coef=0.02 `:136`、gamma=1.0/lam=0.95 `:137-138`）。
+
+**`zllm/training/grpo.py`（133 行）**：`per_token_kl` `:24-37`（`exp(ref-policy) - (ref-policy) - 1` `:36`）；**`compute_group_advantages`** `:40-56`（组内 `(r - mean)/std` `:56`）；`grpo_loss` `:59-85`（ratio clip [1-ε,1+ε] `:80`、`min - β·KL` `:84`）；**`cispo_loss`** `:88-106`（单边裁剪 `clamp(ratio, max=ε_high)` `:103`、`clamped·adv·policy_logp` `:105`）；`GRPOConfig` `:109-133`（num_generations=6 `:118`、loss_type='cispo' `:117`、epsilon_high=5.0 `:116`）。
+
+**`zllm/training/distillation.py`（164 行）**：**`distillation_loss`** `:21-38`（teacher softmax/T `:34`、student log_softmax/T `:36`、KL `:37`、**×T²** `:38`）；`DistillConfig` `:42-61`（alpha=0.5 `:46`、temperature=1.5 `:47`、lr=5e-6 `:45`）；`train_epoch` `:64-164`（**loss = α·CE + (1-α)·distill + aux** `:133`、teacher eval+freeze `:87-89`、词表对齐 `:110-111`）。
+
+**`zllm/training/agent_rl.py`（165 行）**：`TOOLS` 6 个工具 `:21-28`；`MOCK_RESULTS` 模拟执行 `:36-43`；`execute_tool` `:46-62`；`parse_tool_calls` `:65-85`（正则提取 ```json``` `:77`）；`validate_gt_in_text` `:88-98`；**`calculate_agent_reward`** `:101-142`（长度 `:120-123`、工具正确 `:125-130`、GT 匹配 `:132-133`、n-gram 重复惩罚 `:135-140`）；`AgentConfig` `:145-165`（max_turns=3 `:150`）。
+
+**测试**：`test_208_sft_loss`（labels only assistant `:68`、pad masked `:86`、loss 下降 `:99`、过拟合 `:116`、SFT vs pretrain `:132`）；`test_222_lora_module`（A 高斯/B 零 `:31/36`、init=0 不改输出 `:40/83`、方阵注入 `:71`、非方阵不注入 `:77`、参数量<10% `:125`）；`test_231_save_load_merge`（save only lora `:37`、load 恢复 `:47`、merge 一致 `:85`、lora train loss 下降 `:126`、只有 lora 有梯度 `:165`）；`test_240_dpo`（log_probs shape `:26`、chosen 优势 loss 低 `:56`、梯度流 `:67`、train epoch `:129`、loss 下降 `:140`）；`test_246_ppo`（critic shape `:27`、GAE 零奖励零优势 `:50`、正奖励正优势 `:58`、returns=adv+val `:67`、标准化 `:75`、clip `:86`、value loss `:104`）；`test_258_grpo`（KL 同分布=0 `:16`、group 标准化 mean=0 `:35`、高奖励高优势 `:43`、clip `:81`、cispo 单边 `:96`）；`test_272_distillation`（相同=0 `:25`、T 越大越平滑 `:43`、梯度流 `:50`、alpha 平衡 `:66`、train 下降 `:110`、无教师纯 CE `:124`）；`test_280_agent_rl`（6 工具 `:24`、execute `:45`、parse `:76`、validate `:107`、reward `:121`、config `:145`）。
+
+### Task 35: Ch 33 监督微调 SFT + Label Masking（M8）
+Create `part-6-alignment/ch33-sft-label-masking.md`。YAML `source:zllm/training/full_sft.py,tests:tests/m08_sft/test_208_sft_loss.py`。原理：回引 Ch 28（SFTDataset label masking）+ Ch 32（预训练平台期转 SFT），讲 SFT 与预训练的三个差异（lr 1/50、只对 assistant 算 loss、加载预训练权重）。Mermaid 画 label masking 对比。代码：`SFTConfig` `:22-40`（lr=1e-5、from_weight='pretrain'）、`train_epoch` `:43-112`（与 pretrain 同结构）。重点：label masking 让模型学「回答」而非「复述问题」、lr 大幅降低避免遗忘预训练知识、from_weight='pretrain' 接力。测试 test_208（labels only assistant `:68`、loss 下降 `:99`、过拟合 `:116`、SFT<random `:132`）。pytest test_208。校验 `grep "\.py:[0-9]"`≥5。README Ch33→✅。
+
+### Task 36: Ch 34 LoRA 低秩适配（M9）
+Create `part-6-alignment/ch34-lora.md`。YAML `source:zllm/model/lora.py,tests:tests/m09_lora/test_222_lora_module.py`。原理：回引 Ch 15（参数效率）+ Ch 07（低秩分解 SVD），讲 LoRA 的 ΔW=B@A 低秩分解、B 零初始化保证初始不改输出、只注入方阵（q_proj/o_proj）。LaTeX 推导 ΔW=BA 的参数量节省。Mermaid 画注入+合并流程。代码：`LoRA` 类 `:21-39`、`apply_lora` `:42-60`、`freeze_non_lora` `:69-79`、`save/load/merge_lora` `:82-130`。重点：B 零初始化、只注入方阵、参数量<10%、merge 后 W+BA 推理一致、lr 比 full_sft 高 10 倍。测试 test_222（A 高斯/B 零 `:31/36`、init=0 `:83`、参数<10% `:125`）+ test_231（merge 一致 `:85`、train loss 下降 `:126`、只有 lora 有梯度 `:165`）。pytest test_222 test_231。校验 `grep "\.py:[0-9]"`≥8。README Ch34→✅。
+
+### Task 37: Ch 35 RLHF 框架与对齐总论（背景理论）
+Create `part-6-alignment/ch35-rlhf-framework.md`。**理论章**（无独立源码文件）。YAML `source:none,tests:none`。原理：讲 RLHF 三阶段（SFT→RM→PPO）经典框架、DPO 绕过 RM 的简化、GRPO 群体相对优势去 Critic、对齐的目标（让模型有用/无害/诚实）。Mermaid 画 RLHF vs DPO vs GRPO 对比图。LaTeX 推导 RLHF 目标 $\max \mathbb{E}[r(x,y)] - \beta\text{KL}(\pi\|\pi_{\text{ref}})$ 与 DPO 的等价转化。重点：对齐税、奖励黑客、KL 惩罚防偏离。无 file:line 要求（理论章）。README Ch35→✅。
+
+### Task 38: Ch 36 DPO 直接偏好优化（M10-a）
+Create `part-6-alignment/ch36-dpo.md`。YAML `source:zllm/training/dpo.py,tests:tests/m10_alignment/test_240_dpo.py`。原理：回引 Ch 35（DPO 绕过 RM），讲双模型架构（policy 训练 + reference 冻结）、 Bradley-Terry 偏好模型、loss=-logsigmoid(β·(π_θ(c)/π_ref(c) - π_θ(r)/π_ref(r)))。LaTeX 推导 DPO loss 从 RLHF 目标的闭式解。代码：`logits_to_log_probs` `:20-31`、**`dpo_loss`** `:34-61`（chosen/rejected 拼接 `:52-55`、logsigmoid `:60`）、`train_epoch` `:86-162`（ref no_grad `:121`）。重点：β 温度参数、lr=4e-8 极低（防灾难遗忘）、ref 锚定防漂移。测试 test_240（log_probs `:26`、chosen 优势 `:56`、梯度流 `:67`、loss 下降 `:140`）。pytest test_240。校验 `grep "\.py:[0-9]"`≥6。README Ch36→✅。
+
+### Task 39: Ch 37 PPO + GAE + Critic（M10-b）
+Create `part-6-alignment/ch37-ppo-gae-critic.md`。YAML `source:zllm/training/ppo.py,tests:tests/m10_alignment/test_246_ppo.py`。原理：回引 Ch 35（RLHF 经典 PPO），讲 Actor-Critic 双模型、GAE 优势估计、clipped surrogate loss、value function loss。LaTeX 推导 GAE 的 δ_t 和 A_t 递推、PPO clip 公式。代码：`CriticModel` `:29-44`（共享 backbone + value_head）、**`compute_gae`** `:47-81`（δ→A 递推 `:70-71`、标准化 `:75-78`）、`ppo_policy_loss` `:84-103`（ratio clip）、`ppo_value_loss` `:106-125`。重点：GAE 的 λ 平衡偏差/方差、clip 防策略崩溃、value loss 也 clip、vf_coef=0.5 权衡。测试 test_246（critic shape `:27`、GAE `:50/58/67`、clip `:86`、value `:104`）。pytest test_246。校验 `grep "\.py:[0-9]"`≥7。README Ch37→✅。
+
+### Task 40: Ch 38 GRPO + CISPO（M10-c）
+Create `part-6-alignment/ch38-grpo-cispo.md`。YAML `source:zllm/training/grpo.py,tests:tests/m10_alignment/test_258_grpo.py`。原理：回引 Ch 35（GRPO 去 Critic）+ Ch 37（PPO 对比），讲群体相对优势（同 prompt 生成 N 个 response 组内标准化）、KL 惩罚、CISPO 单边裁剪。LaTeX 推导 group advantage 和 KL。Mermaid 画 GRPO 流程（prompt→N 生成→组内排序→reward）。代码：`per_token_kl` `:24-37`、**`compute_group_advantages`** `:40-56`、`grpo_loss` `:59-85`（双边 clip）、**`cispo_loss`** `:88-106`（单边 clip `:103`）。重点：去 Critic 省一半模型、num_generations=6、CISPO 允许低概率 token 进一步降低（鼓励修剪低质内容）。测试 test_258（KL=0 `:16`、group mean=0 `:35`、高奖励高优势 `:43`、clip `:81`、cispo `:96`）。pytest test_258。校验 `grep "\.py:[0-9]"`≥6。README Ch38→✅。
+
+### Task 41: Ch 39 知识蒸馏（M11-a）
+Create `part-6-alignment/ch39-distillation.md`。YAML `source:zllm/training/distillation.py,tests:tests/m11_distill_agent/test_272_distillation.py`。原理：回引 Ch 06（softmax 温度）+ Ch 05（KL 散度），讲软标签暗知识、温度 T 使分布平滑暴露类间关系、loss=α·CE+(1-α)·T²·KL。LaTeX 推导蒸馏 loss。Mermaid 画 teacher→student 传递。代码：**`distillation_loss`** `:21-38`（teacher softmax/T、student log_softmax/T、KL、×T²）、`train_epoch` `:64-164`（α·CE+(1-α)·distill `:133`、teacher freeze `:87-89`、词表对齐 `:110-111`）。重点：T² 补偿梯度尺度、α 平衡硬/软标签、词表对齐（teacher/student vocab 可能不同）。测试 test_272（相同=0 `:25`、T 大平滑 `:43`、梯度流 `:50`、alpha `:66`、train 下降 `:110`、无教师纯CE `:124`）。pytest test_272。校验 `grep "\.py:[0-9]"`≥5。README Ch39→✅。
+
+### Task 42: Ch 40 Agent RL 工具调用（M11-b）
+Create `part-6-alignment/ch40-agent-rl-tools.md`。YAML `source:zllm/training/agent_rl.py,tests:tests/m11_distill_agent/test_280_agent_rl.py`。原理：回引 Ch 28（AgentRLDataset）+ Ch 35（RL），讲 Agent 的多轮工具调用循环（生成→解析→执行→反馈→再生成）、多维度奖励（长度/工具正确/GT 匹配/重复惩罚）。Mermaid 画 Agent 多轮交互流程。代码：`TOOLS` `:21-28`、`execute_tool` `:46-62`、`parse_tool_calls` `:65-85`、**`calculate_agent_reward`** `:101-142`（四维度）。重点：工具调用的 JSON 格式解析、奖励设计的多目标平衡、max_turns=3 多轮交互。测试 test_280（6 工具 `:24`、execute `:45`、parse `:76`、validate `:107`、reward `:121`）。pytest test_280。校验 `grep "\.py:[0-9]"`≥5。Part VI 收官。README Ch40→✅。
+
+### Phase 6 完工标准（DoD）
+- Ch 33–40 全部写完，README 第 33–40 行全 ✅（Part VI 完成）。
+- 每章 `grep -cE "\.py:[0-9]"` 达标（见各 Task；Ch 35 理论章豁免）。
+- 全 Phase 无 TBD/TODO/占位符；所有引用 file:line 经 `sed -n` 抽查真实。
+- Phase 6 完成后更新本计划进度表第 71 行为「已完成」。
 - **Phase 7（Part VII + 附录，Ch 41–43 + 附录 A-D）**：M12。引用 `zllm/serving/{generate,api_server,cli}.py`、`tests/m12_serving`。
