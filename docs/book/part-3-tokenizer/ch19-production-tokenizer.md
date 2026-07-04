@@ -108,7 +108,7 @@ BUFFER_TOKENS = [f"<|buffer{i}|>" for i in range(1, 9)]   # 8 个预留位
 ALL_SPECIAL_TOKENS = SPECIAL_TOKENS + BUFFER_TOKENS
 ```
 
-zllm 的特殊 token（`special_tokens.py:12-34`）分四类，对齐 Qwen3 / minimind-3：
+zllm 的特殊 token（`special_tokens.py:12-34`）分五类，对齐 Qwen3 / minimind-3：
 
 - **对话边界**：`<|im_start|>` / `<|im_end|>` 标记每轮对话的起止——这是 chat template 的基石。
 - **多模态预留**：`<|vision_*|>` 等（当前不实现，但保留 id 槽位以兼容未来）。
@@ -143,7 +143,7 @@ def render_messages(messages, tools=None, open_thinking=False,
 2. **`open_thinking`**（`:64-65`）：用思考链标签包裹 assistant 内容，对应推理模式。
 3. **`add_generation_prompt`**（`:69-70`）：在末尾追加 `<|im_start|>assistant\n`，告诉模型「现在轮到你了」——这是**推理时**的关键，模型从这里开始续写回答。
 
-另外还有一个 Jinja2 版本 `CHAT_TEMPLATE`（`:76-94`），逻辑相同，供 `PreTrainedTokenizerFast.chat_template` 用，兼容 Transformers 生态。
+另外还有一个 Jinja2 版本 `CHAT_TEMPLATE`（`:76-94`），**逻辑相近但不支持 `tools` 注入**（只渲染 messages + `open_thinking` + `add_generation_prompt`）；Agent RL（Ch 40）必须用 `render_messages` 才能把工具描述注入 system 块。它供 `PreTrainedTokenizerFast.chat_template` 用，兼容 Transformers 生态。
 
 > 对应测试 `tests/m02_tokenizer/test_044_chat_template.py:53` 验证 `add_generation_prompt=True` 时文本以 `<|im_start|>assistant\n` 结尾，`:65` 验证 `open_thinking` 包裹 assistant，`:87` 验证 tools 注入 system。
 
