@@ -43,7 +43,7 @@ $$
 **RMSNorm** 砍掉了「减均值」和偏置 $\beta$，只用**均方根（Root Mean Square）**做缩放：
 
 $$
-\boxed{\;\text{RMSNorm}(x) \;=\; \frac{x}{\text{RMS}(x) + \epsilon}\odot\gamma, \qquad \text{RMS}(x)=\sqrt{\frac{1}{d}\sum_i x_i^2}\;}
+\boxed{\;\text{RMSNorm}(x) \;=\; \frac{x}{\sqrt{\text{mean}(x^2) + \epsilon}}\odot\gamma, \qquad \text{mean}(x^2)=\frac{1}{d}\sum_i x_i^2\;}
 $$
 
 ```mermaid
@@ -98,7 +98,7 @@ def forward(self, x: torch.Tensor) -> torch.Tensor:
 
 两个方法分工明确（`norms.py:17-21`）：
 
-- **`norm(x)`**（`:17-18`）：只做归一化（**不乘 weight**）。对应公式里的 $\frac{x}{\text{RMS}(x)+\epsilon}=x\cdot\text{rsqrt}(\text{mean}(x^2)+\epsilon)$。`mean(-1, keepdim=True)` 在最后一维（隐藏维度）上求均方，保持维度以便广播。
+- **`norm(x)`**（`:17-18`）：只做归一化（**不乘 weight**）。对应公式里的 $\frac{x}{\sqrt{\text{mean}(x^2)+\epsilon}}=x\cdot\text{rsqrt}(\text{mean}(x^2)+\epsilon)$。`mean(-1, keepdim=True)` 在最后一维（隐藏维度）上求均方，保持维度以便广播。
 - **`forward(x)`**（`:20-21`）：归一化后乘 `weight`，并负责**精度管理**。
 
 ### 20.3.3 为什么内部用 float32
@@ -156,7 +156,7 @@ print('weight:', norm.weight)   # 全 1
 本章要点：
 
 1. **归一化**是深网络可训练的前提，把每层激活拉回稳定尺度。
-2. **RMSNorm** = $\frac{x}{\text{RMS}(x)+\epsilon}\odot\gamma$，比 LayerNorm 省「减均值」和偏置，更快、效果相当。
+2. **RMSNorm** = $\frac{x}{\sqrt{\text{mean}(x^2)+\epsilon}}\odot\gamma$，比 LayerNorm 省「减均值」和偏置，更快、效果相当。
 3. **实现**：`norm()` 只归一化、`forward()` 再乘 weight 并管理精度；**内部 float32 计算防溢出**。
 4. **恒等初始化**（weight=1）让训练初期接近恒等映射，稳定起步。
 
