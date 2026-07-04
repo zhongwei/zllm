@@ -51,14 +51,14 @@ graph LR
 | **Greedy** | `temperature=0` | argmax，确定性，易重复 |
 | **Temperature** | `temperature>0` | logits/T，T大更随机 |
 | **Top-K** | `top_k>0` | 只从概率最高的 K 个里采样 |
-| **Top-P** | `top_p>0` | 只从累计概率 ≤ P 的最小集合里采样 |
+| **Top-P** | `top_p>0` | 只从累计概率首次达到/超过 P 的最小集合里采样 |
 | **Repetition** | `repetition_penalty>1` | 已出现 token 降概率 |
 
 它们可以组合使用——比如 `temperature=0.85 + top_p=0.95` 是 zllm 的默认组合。
 
-### 41.2.3 Temperature（回引 Ch 06）
+### 41.2.3 Temperature（回引 Ch 03 / Ch 05）
 
-Ch 06 讲过 softmax 温度。解码时 `logits / T` 再 softmax：T < 1 → 分布更尖锐（倾向高概率）；T > 1 → 分布更平坦（更随机）。T=0 退化成 greedy（argmax）。
+Ch 03 讲过 softmax、Ch 05 讲过温度缩放（蒸馏里用 $T^2$ 加权 KL）。解码时 `logits / T` 再 softmax：T < 1 → 分布更尖锐（倾向高概率）；T > 1 → 分布更平坦（更随机）。T=0 退化成 greedy（argmax）。
 
 ### 41.2.4 Top-K vs Top-P
 
@@ -221,7 +221,7 @@ print('采样:', generate(model, ids, max_new_tokens=5, temperature=0.85, top_p=
 1. **自回归生成**：forward → 取 logits[-1] → 选 token → 拼回去 → 循环。
 2. **Greedy**（temp=0）：argmax，确定性但易重复。
 3. **Temperature**：logits/T，T 大更随机。
-4. **Top-K**：固定 K 个候选；**Top-P**：动态集合（累计概率 ≤ P），自适应。
+4. **Top-K**：固定 K 个候选；**Top-P**：动态集合（累计概率首次达到 P），自适应。
 5. **Repetition penalty**：正除负乘，统一降低已出现 token 概率。
 
 > **一句话带走**：5 种解码策略从 greedy 到 top-p——greedy 稳但死、采样活但散，temperature+top_p 是多样性与质量的平衡。
