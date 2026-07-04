@@ -44,9 +44,9 @@ status: draft
 
 - 总参数量：约 64M（密集）/ 约 64M-A（MoE，active 更少）
 - embedding + lm_head（Weight Tying）：6400 × 768 ≈ 4.9M
-- 每层 attention：约 4.7M
+- 每层 attention：约 1.77M（GQA：q=768²，k/v=768·384 各一，o=768²）
 - 每层 FFN（SwiGLU）：约 5.6M
-- 8 层合计：约 82M（含 embedding），可训练约 64M
+- 8 层合计（attention + FFN）：约 59M；加 embedding 约 4.9M，总计约 64M
 
 ## B.2 训练阶段超参对比
 
