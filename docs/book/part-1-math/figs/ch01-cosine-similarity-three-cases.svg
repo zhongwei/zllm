@@ -52,7 +52,7 @@
     <line class="axis" x1="490" y1="200" x2="710" y2="200" stroke="currentColor" stroke-width="1"/>
     <line class="x" x1="600" y1="200" x2="700" y2="200" stroke="currentColor" stroke-width="2.6" marker-end="url(#ax1)"/>
     <line class="y" x1="600" y1="200" x2="529" y2="129" stroke="currentColor" stroke-width="2.6" marker-end="url(#ay1)"/>
-    <path class="arc" d="M630,200 A30,30 0 0,1 578.79,178.79" fill="none" stroke="currentColor" stroke-width="1.3"/>
+    <path class="arc" d="M630,200 A30,30 0 0,0 578.79,178.79" fill="none" stroke="currentColor" stroke-width="1.3"/>
     <text class="lbl" x="600" y="178" font-size="13" font-style="italic" fill="currentColor">θ</text>
     <text class="x" x="704" y="196" font-size="14" font-style="italic" fill="currentColor">x</text>
     <text class="y" x="514" y="124" font-size="14" font-style="italic" fill="currentColor">y</text>
