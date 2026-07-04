@@ -30,7 +30,8 @@ status: draft
 
 | 论文 | 作者 | 年份 | 贡献 | 相关章节 |
 |------|------|------|------|---------|
-| Adam: A Method for Stochastic Optimization | Kingma & Ba | 2014 | AdamW 优化器 | Ch 11 |
+| Adam: A Method for Stochastic Optimization | Kingma & Ba | 2014 | Adam 优化器 | Ch 06 |
+| Decoupled Weight Decay Regularization | Loshchilov & Huter | 2019 | AdamW 优化器（zllm 实际用） | Ch 06, 29 |
 | On the Difficulty of Training Recurrent Neural Networks | Pascanu et al. | 2013 | 梯度裁剪 | Ch 10, 30 |
 | MixPrecision Training | Micikevicius et al. | 2017 | 混合精度训练（AMP） | Ch 30 |
 | FlashAttention | Dao et al. | 2022 | Flash Attention，减少 HBM 读写 | Ch 22 |
