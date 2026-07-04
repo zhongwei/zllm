@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 380" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">
+  <title>范数几何意义（动画）</title>
+  <desc>展示 L1、L2、L∞ 范数在二维平面上的几何意义</desc>
+  <style>
+    .axis{color:#475569} .l1{color:#fb923c} .l2{color:#60a5fa} .linf{color:#a78bfa}
+    .gray{color:#64748b} .ink{color:#e5e7eb} .lbl{color:#e5e7eb} .dim{color:#9ca3af}
+    .grid-line{color:#374151} .path-l1{color:#fb923c} .path-l2{color:#60a5fa}
+  </style>
+  
+  <defs>
+    <!-- 箭头标记 -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" class="ink"/>
+    </marker>
+    <marker id="arrowhead-l2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="currentColor" class="l2"/>
+    </marker>
+    
+    <!-- 网格 -->
+    <pattern id="smallGrid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="currentColor" stroke-width="0.5" class="grid-line" opacity="0.3"/>
+    </pattern>
+  </defs>
+  
+  <!-- 背景 -->
+  <rect width="100%" height="100%" fill="#1e293b" class="gray"/>
+  
+  <!-- 标题 -->
+  <text class="lbl" x="250" y="30" font-size="16" font-weight="600" fill="currentColor" text-anchor="middle">
+    向量 x = (3, 4) 的三种范数几何意义
+  </text>
+  
+  <!-- 坐标系区域 -->
+  <g transform="translate(80, 60)">
+    <!-- 网格背景 -->
+    <rect width="280" height="240" fill="url(#smallGrid)" class="grid-line"/>
+    
+    <!-- 坐标轴 -->
+    <line x1="0" y1="200" x2="280" y2="200" stroke="currentColor" stroke-width="1.5" class="axis" marker-end="url(#arrowhead)"/>
+    <line x1="40" y1="240" x2="40" y2="0" stroke="currentColor" stroke-width="1.5" class="axis" marker-end="url(#arrowhead)"/>
+    
+    <!-- 轴标签 -->
+    <text class="dim" x="270" y="215" font-size="12" fill="currentColor">x</text>
+    <text class="dim" x="25" y="15" font-size="12" fill="currentColor">y</text>
+    
+    <!-- 刻度 -->
+    <text class="dim" x="160" y="215" font-size="10" fill="currentColor" text-anchor="middle">4</text>
+    <text class="dim" x="280" y="215" font-size="10" fill="currentColor" text-anchor="middle">6</text>
+    <text class="dim" x="25" y="120" font-size="10" fill="currentColor" text-anchor="end">4</text>
+    <text class="dim" x="25" y="40" font-size="10" fill="currentColor" text-anchor="end">8</text>
+    
+    <!-- 向量 (3, 4) -->
+    <line x1="40" y1="200" x2="160" y2="80" stroke="currentColor" stroke-width="3" class="l2" marker-end="url(#arrowhead-l2)" opacity="0">
+      <animate attributeName="opacity" values="0;1;1;1;1;1;1;1;1;1;1;1;1;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+    </line>
+    <circle cx="160" cy="80" r="3" fill="currentColor" class="l2" opacity="0">
+      <animate attributeName="opacity" values="0;1;1;1;1;1;1;1;1;1;1;1;1;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+    </circle>
+    <text class="l2" x="175" y="75" font-size="11" fill="currentColor" opacity="0">
+      (3, 4)
+      <animate attributeName="opacity" values="0;1;1;1;1;1;1;1;1;1;1;1;1;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+    </text>
+    
+    <!-- ==================== L2 范数：直线距离 ==================== -->
+    <g id="l2-display">
+      <!-- L2 距离线（已在向量中体现） -->
+      <!-- L2 标注 -->
+      <text class="l2" x="90" y="145" font-size="13" font-weight="bold" fill="currentColor" opacity="0">
+        L₂ = 5
+        <animate attributeName="opacity" values="0;0;1;1;0;0;0;0;0;0;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </text>
+      <text class="dim" x="90" y="165" font-size="10" fill="currentColor" opacity="0">
+        (直线距离)
+        <animate attributeName="opacity" values="0;0;1;1;0;0;0;0;0;0;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </text>
+    </g>
+    
+    <!-- ==================== L1 范数：曼哈顿路径 ==================== -->
+    <g id="l1-display">
+      <!-- 水平段：原点到 (3, 0) -->
+      <line x1="40" y1="200" x2="160" y2="200" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 3" class="l1" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-dashoffset" values="40;0;0;0;0;0;0;0;0;0;0;0;0;40" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </line>
+      <!-- 垂直段：(3, 0) 到 (3, 4) -->
+      <line x1="160" y1="200" x2="160" y2="80" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 3" class="l1" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;1;0;0;0;0;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+        <animate attributeName="stroke-dashoffset" values="120;120;120;120;120;0;0;0;0;0;0;0;0;120" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </line>
+      
+      <!-- L1 标注 -->
+      <text class="l1" x="185" y="145" font-size="13" font-weight="bold" fill="currentColor" opacity="0">
+        L₁ = 7
+        <animate attributeName="opacity" values="0;0;0;0;0;0;1;1;0;0;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </text>
+      <text class="dim" x="185" y="165" font-size="10" fill="currentColor" opacity="0">
+        (曼哈顿路径)
+        <animate attributeName="opacity" values="0;0;0;0;0;0;1;1;0;0;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </text>
+      
+      <!-- 转折点 -->
+      <circle cx="160" cy="200" r="4" fill="currentColor" class="l1" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;1;1;0;0;0;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+    
+    <!-- ==================== L∞ 范数：最大坐标 ==================== -->
+    <g id="linf-display">
+      <!-- 高亮最大坐标分量 -->
+      <!-- 水平参考线 y = 4 -->
+      <line x1="40" y1="80" x2="280" y2="80" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" class="linf" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </line>
+      <!-- L∞ 标注框 -->
+      <rect x="185" y="72" width="50" height="20" fill="currentColor" fill-opacity="0.15" stroke="currentColor" stroke-width="1" class="linf" rx="3" opacity="0">
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </rect>
+      <text class="linf" x="210" y="87" font-size="12" font-weight="bold" fill="currentColor" text-anchor="middle" opacity="0">
+        L∞ = 4
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </text>
+      <text class="dim" x="210" y="110" font-size="10" fill="currentColor" text-anchor="middle" opacity="0">
+        (max|xᵢ|)
+        <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1;0;0;0;0" keyTimes="0;0.15;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+      </text>
+      
+      <!-- 坐标分量标注 -->
+      <!-- x = 3 -->
+      <line x1="160" y1="200" x2="160" y2="205" stroke="currentColor" stroke-width="1" class="dim"/>
+      <text class="dim" x="160" y="218" font-size="10" fill="currentColor" text-anchor="middle">3</text>
+      <!-- y = 4 -->
+      <text class="dim" x="30" y="84" font-size="10" fill="currentColor" text-anchor="end">4</text>
+    </g>
+  </g>
+  
+  <!-- 右侧图例 -->
+  <g transform="translate(380, 80)">
+    <text class="lbl" x="50" y="0" font-size="13" font-weight="600" fill="currentColor" text-anchor="middle">图例</text>
+    
+    <!-- L2 -->
+    <line x1="0" y1="30" x2="30" y2="30" stroke="currentColor" stroke-width="2.5" class="l2"/>
+    <text class="dim" x="40" y="34" font-size="11" fill="currentColor">L₂ 欧氏距离</text>
+    
+    <!-- L1 -->
+    <line x1="0" y1="60" x2="30" y2="60" stroke="currentColor" stroke-width="2.5" stroke-dasharray="6 3" class="l1"/>
+    <text class="dim" x="40" y="64" font-size="11" fill="currentColor">L₁ 曼哈顿</text>
+    
+    <!-- L∞ -->
+    <line x1="0" y1="90" x2="30" y2="90" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3" class="linf"/>
+    <text class="dim" x="40" y="94" font-size="11" fill="currentColor">L∞ 最大分量</text>
+  </g>
+  
+  <!-- 底部说明 -->
+  <text class="dim" x="250" y="360" font-size="11" fill="currentColor" text-anchor="middle" font-style="italic" opacity="0">
+    同一点，不同路径 → 不同「长度」定义
+    <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;1;1" keyTimes="0;0.08;0.16;0.24;0.32;0.4;0.48;0.56;0.64;0.72;0.8;0.88;0.92;1" dur="12s" repeatCount="indefinite"/>
+  </text>
+  
+  <!-- 时序指示器 -->
+  <g transform="translate(380, 200)">
+    <rect x="0" y="0" width="100" height="120" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-width="0.5" class="gray" rx="5"/>
+    <text class="dim" x="50" y="20" font-size="10" fill="currentColor" text-anchor="middle">当前阶段</text>
+    
+    <!-- 阶段指示 -->
+    <text class="l2" x="50" y="45" font-size="11" fill="currentColor" text-anchor="middle" opacity="0">
+      ● L₂ 展示
+      <animate attributeName="opacity" values="1;1;0;0;0;0;0;0;0;0;0;0;0;1" keyTimes="0;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;0.99;1" dur="12s" repeatCount="indefinite"/>
+    </text>
+    <text class="l1" x="50" y="70" font-size="11" fill="currentColor" text-anchor="middle" opacity="0">
+      ● L₁ 展示
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0;0;0;0" keyTimes="0;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+    </text>
+    <text class="linf" x="50" y="95" font-size="11" fill="currentColor" text-anchor="middle" opacity="0">
+      ● L∞ 展示
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1;0;0;0;0" keyTimes="0;0.17;0.33;0.35;0.5;0.52;0.67;0.69;0.84;0.86;0.92;0.94;1" dur="12s" repeatCount="indefinite"/>
+    </text>
+  </g>
+</svg>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 320" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>范数计算过程（动画）</title>
+  <desc>逐步展示 L1、L2、L∞ 范数的计算过程</desc>
+  <style>
+    :root {
+      --axis: #cbd5e1; --l1: #ea580c; --l2: #2563eb; --linf: #7c3aed;
+      --gray: #9ca3af; --ink: #1f2937; --lbl: #374151; --dim: #6b7280;
+      --op: #374151;   --abs: #059669;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --axis: #475569; --l1: #fb923c; --l2: #60a5fa; --linf: #a78bfa;
+        --gray: #64748b; --ink: #e5e7eb; --lbl: #e5e7eb; --dim: #9ca3af;
+        --op: #e5e7eb;   --abs: #34d399;
+      }
+    }
+    
+    /* 颜色映射 */
+    .l1 { fill: var(--l1); }
+    .l2 { fill: var(--l2); }
+    .linf { fill: var(--linf); }
+    .gray { stroke: var(--gray); fill: var(--gray); }
+    .ink { fill: var(--ink); }
+    .lbl { fill: var(--lbl); }
+    .dim { fill: var(--dim); }
+    .op { fill: var(--op); }
+    .abs { fill: var(--abs); }
+
+    /* 通用文本样式 */
+    text { fill: var(--ink); text-anchor: middle; }
+    .bold { font-weight: bold; }
+    .italic { font-style: italic; }
+    .w600 { font-weight: 600; }
+
+    /* 动画关键帧 */
+    @keyframes fade1 { 0%, 100% { opacity: 0; } 10%, 90% { opacity: 1; } }
+    @keyframes fade2 { 0%, 10%, 100% { opacity: 0; } 20%, 90% { opacity: 1; } }
+    @keyframes fade3 { 0%, 20%, 100% { opacity: 0; } 30%, 90% { opacity: 1; } }
+    @keyframes fade4 { 0%, 30%, 100% { opacity: 0; } 40%, 90% { opacity: 1; } }
+    @keyframes fade5 { 0%, 50%, 100% { opacity: 0; } 60%, 90% { opacity: 1; } }
+    @keyframes fade6 { 0%, 60%, 100% { opacity: 0; } 70%, 90% { opacity: 1; } }
+
+    .a1 { animation: fade1 10s infinite; opacity: 0; }
+    .a2 { animation: fade2 10s infinite; opacity: 0; }
+    .a3 { animation: fade3 10s infinite; opacity: 0; }
+    .a4 { animation: fade4 10s infinite; opacity: 0; }
+    .a5 { animation: fade5 10s infinite; opacity: 0; }
+    .a6 { animation: fade6 10s infinite; opacity: 0; }
+  </style>
+
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#94a3b8" stroke-width="0.3" opacity="0.2"/>
+    </pattern>
+    <pattern id="grid-dark" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#475569" stroke-width="0.3" opacity="0.15"/>
+    </pattern>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="100%" height="100%" fill="#f8fafc" class="bg-light"/>
+  <rect width="100%" height="100%" fill="url(#grid)" class="bg-light"/>
+  
+  <style>
+    .bg-light { display: block; }
+    .bg-dark { display: none; }
+    @media (prefers-color-scheme: dark) {
+      .bg-light { display: none; }
+      .bg-dark { display: block; }
+    }
+  </style>
+  
+  <rect width="100%" height="100%" fill="#1e293b" class="bg-dark"/>
+  <rect width="100%" height="100%" fill="url(#grid-dark)" class="bg-dark"/>
+
+  <!-- 顶部向量定义 -->
+  <text class="lbl w600" x="350" y="35" font-size="16">
+    向量 x = [3, 4]<tspan baseline-shift="super" font-size="10">T</tspan>
+  </text>
+
+  <!-- 分割线 -->
+  <path d="M 233 55 v 225 M 466 55 v 225" fill="none" class="gray" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.4"/>
+
+  <!-- ==================== 左列：L1 范数 ==================== -->
+  <g transform="translate(116, 0)">
+    <text class="l1 w600" y="75" font-size="15">L₁ 范数</text>
+    <text class="dim" y="95" font-size="12">(曼哈顿距离)</text>
+    
+    <text y="125" font-size="14" class="a1">
+      <tspan class="op">‖</tspan><tspan class="ink italic">x</tspan><tspan class="op">‖₁ = </tspan><tspan class="abs">|</tspan><tspan class="l1">x₁</tspan><tspan class="abs">|</tspan><tspan class="op"> + </tspan><tspan class="abs">|</tspan><tspan class="l1">x₂</tspan><tspan class="abs">|</tspan>
+    </text>
+    <text y="160" font-size="16" class="a2">
+      <tspan class="op">= </tspan><tspan class="abs">|</tspan><tspan class="l1 bold">3</tspan><tspan class="abs">|</tspan><tspan class="op"> + </tspan><tspan class="abs">|</tspan><tspan class="l1 bold">4</tspan><tspan class="abs">|</tspan>
+    </text>
+    <text y="195" font-size="18" class="a3">
+      <tspan class="op">= </tspan><tspan class="l1 bold">3</tspan><tspan class="op"> + </tspan><tspan class="l1 bold">4</tspan>
+    </text>
+    <text y="235" font-size="24" class="a4 bold">
+      <tspan class="op">= </tspan><tspan class="l1">7</tspan>
+    </text>
+    <text class="dim italic a5" y="275" font-size="11">绝对值之和</text>
+  </g>
+
+  <!-- ==================== 中列：L2 范数 ==================== -->
+  <g transform="translate(350, 0)">
+    <text class="l2 w600" y="75" font-size="15">L₂ 范数</text>
+    <text class="dim" y="95" font-size="12">(欧氏距离)</text>
+    
+    <!-- 重点优化：去掉了括号，使用 text-decoration="overline" 添加顶部括线 -->
+    <text y="125" font-size="14" class="a1">
+      <tspan class="op">‖</tspan><tspan class="ink italic">x</tspan><tspan class="op">‖₂ = √</tspan><tspan class="op" text-decoration="overline"><tspan class="l2">x₁</tspan><tspan class="op">² + </tspan><tspan class="l2">x₂</tspan><tspan class="op">²</tspan></tspan>
+    </text>
+    <text y="160" font-size="16" class="a2">
+      <tspan class="op">= √</tspan><tspan class="op" text-decoration="overline"><tspan class="l2 bold">3</tspan><tspan class="op">² + </tspan><tspan class="l2 bold">4</tspan><tspan class="op">²</tspan></tspan>
+    </text>
+    <text y="195" font-size="18" class="a3">
+      <tspan class="op">= √</tspan><tspan class="op" text-decoration="overline"><tspan class="l2 bold">9</tspan><tspan class="op"> + </tspan><tspan class="l2 bold">16</tspan></tspan>
+    </text>
+    <text y="235" font-size="20" class="a4 bold">
+      <tspan class="op">= √</tspan><tspan class="op" text-decoration="overline"><tspan class="l2">25</tspan></tspan>
+    </text>
+    <text y="275" font-size="24" class="a5 bold">
+      <tspan class="op">= </tspan><tspan class="l2">5</tspan>
+    </text>
+  </g>
+
+  <!-- ==================== 右列：L∞ 范数 ==================== -->
+  <g transform="translate(583, 0)">
+    <text class="linf w600" y="75" font-size="15">L<tspan baseline-shift="sub" font-size="10">∞</tspan> 范数</text>
+    <text class="dim" y="95" font-size="12">(最大分量)</text>
+    
+    <text y="125" font-size="14" class="a1">
+      <tspan class="op">‖</tspan><tspan class="ink italic">x</tspan><tspan class="op">‖</tspan><tspan baseline-shift="sub" font-size="10">∞</tspan><tspan class="op"> = max(</tspan><tspan class="abs">|</tspan><tspan class="linf">x₁</tspan><tspan class="abs">|</tspan><tspan class="op">, </tspan><tspan class="abs">|</tspan><tspan class="linf">x₂</tspan><tspan class="abs">|</tspan><tspan class="op">)</tspan>
+    </text>
+    <text y="160" font-size="16" class="a2">
+      <tspan class="op">= max(</tspan><tspan class="abs">|</tspan><tspan class="linf bold">3</tspan><tspan class="abs">|</tspan><tspan class="op">, </tspan><tspan class="abs">|</tspan><tspan class="linf bold">4</tspan><tspan class="abs">|</tspan><tspan class="op">)</tspan>
+    </text>
+    <text y="195" font-size="18" class="a3">
+      <tspan class="op">= max(</tspan><tspan class="linf bold">3</tspan><tspan class="op">, </tspan><tspan class="linf bold">4</tspan><tspan class="op">)</tspan>
+    </text>
+    <text y="235" font-size="24" class="a4 bold">
+      <tspan class="op">= </tspan><tspan class="linf">4</tspan>
+    </text>
+    <text class="dim italic a5" y="275" font-size="11">取绝对值最大者</text>
+  </g>
+
+  <!-- 底部总结 -->
+  <text class="dim a6" x="350" y="310" font-size="12">同一向量，不同范数 → 不同「长度」</text>
+
+</svg>
