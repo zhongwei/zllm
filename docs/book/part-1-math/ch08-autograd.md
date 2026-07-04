@@ -294,7 +294,7 @@ input_ids (B, T) ──embed──► x ∈ ℝ^(B×T×768)
 本章假设张量都是 `float32`（32 位浮点）。但在 GPU 上算几十亿参数时，`float32` 太吃显存和带宽。**混合精度（Automatic Mixed Precision, AMP）**用 `bfloat16`（16 位）存中间激活、用 `float32` 存主权重，在几乎不损失精度的情况下把训练速度翻倍、显存减半。它的两个核心组件是 autograd 的直接延伸：
 
 - **`autocast`**：前向时自动把部分算子（矩阵乘、attention）降到 `bfloat16` 执行——**仍由 autograd 录图、反向**，只是张量精度变了。
-- **`GradScaler`**：`bfloat16` 的梯度可能下溢（太小而变成 0），所以先把 loss 放大一个因子再 `backward()`，让梯度落在可表示范围内，更新前再缩回来。
+- **`GradScaler`**：梯度下溢是 **fp16**（5 位指数）的真实风险——梯度太小而变成 0，所以先把 loss 放大一个因子再 `backward()`，让梯度落在可表示范围内，更新前再缩回来。**bf16 有 8 位指数（与 fp32 相同），几乎不下溢**，故 bf16 下 GradScaler 形同虚设；zllm 仍保留该调用以兼容 fp16 路径。
 
 所以 **Ch 30 的 AMP 不是新算法，而是本章 autograd 在低精度下的工程封装**——autocast 改精度、GradScaler 保数值稳定，底层的「建图 + 拓扑逆序回传」完全不变。zllm 默认 `dtype=bfloat16`，这是 LLM 训练的现代标配。
 
