@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 320" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>余弦相似度计算过程（动画）</title>
+  <desc>逐步展示 cos θ = (x·y) / (‖x‖‖y‖) 的计算过程</desc>
+  <style>
+    .x{color:#2563eb}.y{color:#ea580c}.calc{color:#059669}.gray{color:#9ca3af}.lbl{color:#374151}.dim{color:#6b7280}.bracket{color:#64748b}.sum{color:#7c3aed}.op{color:#374151}.norm{color:#dc2626}
+    @media (prefers-color-scheme: dark){
+      .x{color:#60a5fa}.y{color:#fb923c}.calc{color:#34d399}.gray{color:#64748b}.lbl{color:#e5e7eb}.dim{color:#9ca3af}.bracket{color:#94a3b8}.sum{color:#a78bfa}.op{color:#e5e7eb}.norm{color:#f87171}
+    }
+  </style>
+  
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" stroke-width="0.3" class="gray" opacity="0.3"/>
+    </pattern>
+  </defs>
+  
+  <rect width="100%" height="100%" fill="url(#grid)" class="gray"/>
+  
+  <line class="gray" x1="140" y1="30" x2="140" y2="290" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.4"/>
+  <line class="gray" x1="260" y1="30" x2="260" y2="290" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.4"/>
+  
+  <text class="lbl" x="70" y="35" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">x (行向量)</text>
+  <text class="lbl" x="200" y="35" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">y (列向量)</text>
+  <text class="lbl" x="410" y="35" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">计算过程</text>
+  
+  <!-- 左列：行向量 xᵀ = [3, 4] -->
+  <g id="row-vector-x">
+    <path d="M 27 75 L 21 75 L 21 135 L 27 135" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 113 75 L 119 75 L 119 135 L 113 135" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    
+    <circle class="x" cx="45" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;1;0;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0.2;0;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <text class="x" x="45" y="111" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">3</text>
+    
+    <circle class="x" cx="95" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;1;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0.2;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <text class="x" x="95" y="111" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">4</text>
+    
+    <text class="x" x="70" y="165" font-size="14" font-style="italic" fill="currentColor" text-anchor="middle">x<tspan dy="-5" font-size="10" font-style="normal">T</tspan></text>
+  </g>
+  
+  <!-- 中列：列向量 y = [6, 8]ᵀ -->
+  <g id="col-vector-y">
+    <path d="M 183 52 L 177 52 L 177 158 L 183 158" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 217 52 L 223 52 L 223 158 L 217 158" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    
+    <circle class="y" cx="200" cy="70" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;1;0;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0.2;0;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <text class="y" x="200" y="76" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">6</text>
+    
+    <circle class="y" cx="200" cy="140" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;1;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0.2;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    <text class="y" x="200" y="146" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">8</text>
+    
+    <text class="y" x="200" y="185" font-size="14" font-style="italic" fill="currentColor" text-anchor="middle">y</text>
+  </g>
+  
+  <!-- 右列：计算过程 -->
+  <g id="calculation">
+    <!-- 阶段1: 点积计算 -->
+    <text class="dim" x="280" y="55" font-size="12" fill="currentColor" font-weight="600" opacity="0">
+      点积 x·y
+      <animate attributeName="opacity" values="0;1;1;1;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+    
+    <text x="290" y="80" font-size="18" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="x">3</tspan><tspan class="op"> × </tspan><tspan class="y">6</tspan><tspan class="op"> = </tspan><tspan class="calc" font-weight="bold">18</tspan>
+      <animate attributeName="opacity" values="0;1;1;1;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+    
+    <text x="290" y="110" font-size="18" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="x">4</tspan><tspan class="op"> × </tspan><tspan class="y">8</tspan><tspan class="op"> = </tspan><tspan class="calc" font-weight="bold">32</tspan>
+      <animate attributeName="opacity" values="0;0;0;1;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+    
+    <line x1="290" y1="120" x2="420" y2="120" stroke="currentColor" stroke-width="1.5" class="dim" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;1;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </line>
+    
+    <text x="290" y="140" font-size="18" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="calc">18</tspan><tspan class="op"> + </tspan><tspan class="calc">32</tspan><tspan class="op"> = </tspan><tspan class="sum" font-weight="bold">50</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;1;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+    
+    <!-- 阶段2: 范数计算 -->
+    <text class="dim" x="280" y="170" font-size="12" fill="currentColor" font-weight="600" opacity="0">
+      范数
+      <animate attributeName="opacity" values="0;0;0;0;0;1;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+    
+    <text x="290" y="195" font-size="16" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="op">‖</tspan><tspan class="x">x</tspan><tspan class="op">‖ = √(9+16) = </tspan><tspan class="norm" font-weight="bold">5</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;0;1;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+    
+    <text x="290" y="220" font-size="16" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="op">‖</tspan><tspan class="y">y</tspan><tspan class="op">‖ = √(36+64) = </tspan><tspan class="norm" font-weight="bold">10</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;0;1;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+    
+    <!-- 阶段3: 余弦相似度计算 -->
+    <text class="dim" x="280" y="248" font-size="12" fill="currentColor" font-weight="600" opacity="0">
+      余弦相似度
+      <animate attributeName="opacity" values="0;0;0;0;0;0;1;1;1;0;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+    
+    <text x="290" y="273" font-size="16" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="op">cos θ = 50 / (5×10) = </tspan><tspan class="sum" font-weight="bold">1</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+    
+    <!-- 最终结论 -->
+    <text x="290" y="305" font-size="15" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="op">∴ </tspan><tspan class="x">x</tspan><tspan class="op"> 与 </tspan><tspan class="y">y</tspan><tspan class="op"> 方向相同</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;1;0" dur="10s" repeatCount="indefinite"/>
+    </text>
+  </g>
+  
+  <text class="dim" x="280" y="315" font-size="12" fill="currentColor" text-anchor="start" font-style="italic">
+    余弦相似度 = 点积 / (‖x‖‖y‖) ∈ [-1, 1]
+  </text>
+</svg>
