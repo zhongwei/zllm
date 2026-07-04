@@ -3,9 +3,9 @@
   <title>点积计算过程（动画）</title>
   <desc>逐步展示点积 x·y = x₁y₁ + x₂y₂ + x₃y₃ 的计算过程</desc>
   <style>
-    .axis{color:#cbd5e1}.x{color:#2563eb}.y{color:#ea580c}.calc{color:#059669}.gray{color:#9ca3af}.ink{color:#1f2937}.lbl{color:#374151}.dim{color:#6b7280}.bracket{color:#64748b}
+    .axis{color:#cbd5e1}.x{color:#2563eb}.y{color:#ea580c}.calc{color:#059669}.gray{color:#9ca3af}.ink{color:#1f2937}.lbl{color:#374151}.dim{color:#6b7280}.bracket{color:#64748b}.sum{color:#7c3aed}
     @media (prefers-color-scheme: dark){
-      .axis{color:#475569}.x{color:#60a5fa}.y{color:#fb923c}.calc{color:#34d399}.gray{color:#64748b}.ink{color:#e5e7eb}.lbl{color:#e5e7eb}.dim{color:#9ca3af}.bracket{color:#94a3b8}
+      .axis{color:#475569}.x{color:#60a5fa}.y{color:#fb923c}.calc{color:#34d399}.gray{color:#64748b}.ink{color:#e5e7eb}.lbl{color:#e5e7eb}.dim{color:#9ca3af}.bracket{color:#94a3b8}.sum{color:#a78bfa}
     }
   </style>
   
@@ -30,22 +30,22 @@
     
     <!-- x1 with highlight circle -->
     <circle class="x" cx="55" cy="98" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
     <text class="x" x="55" y="105" font-size="26" fill="currentColor" text-anchor="middle">1</text>
     
     <!-- x2 with highlight circle -->
     <circle class="x" cx="85" cy="98" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
     <text class="x" x="85" y="105" font-size="26" fill="currentColor" text-anchor="middle">2</text>
     
     <!-- x3 with highlight circle -->
     <circle class="x" cx="115" cy="98" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
     <text class="x" x="115" y="105" font-size="26" fill="currentColor" text-anchor="middle">3</text>
     
@@ -59,22 +59,22 @@
     
     <!-- y1 with highlight circle -->
     <circle class="y" cx="210" cy="67" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
     <text class="y" x="210" y="75" font-size="26" fill="currentColor" text-anchor="middle">4</text>
     
     <!-- y2 with highlight circle -->
     <circle class="y" cx="210" cy="107" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
     <text class="y" x="210" y="115" font-size="26" fill="currentColor" text-anchor="middle">5</text>
     
     <!-- y3 with highlight circle -->
     <circle class="y" cx="210" cy="147" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
     <text class="y" x="210" y="155" font-size="26" fill="currentColor" text-anchor="middle">6</text>
     
@@ -85,32 +85,33 @@
   <!-- 右列：计算过程 -->
   <g id="calculation">
     <!-- 步骤1: x₁ × y₁ = 4 -->
-    <text class="calc" x="310" y="75" font-size="22" fill="currentColor" opacity="0">
+    <text class="calc" x="310" y="65" font-size="20" fill="currentColor" opacity="0">
       <tspan class="x">1</tspan>×<tspan class="y">4</tspan> = <tspan class="ink">4</tspan>
-      <animate attributeName="opacity" values="0;0;1;1;1;1;1;1;1;1;1" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;1;1;1;1;1;1;1;1;1;1;1" dur="12s" repeatCount="indefinite"/>
     </text>
     
     <!-- 步骤2: x₂ × y₂ = 10 -->
-    <text class="calc" x="310" y="115" font-size="22" fill="currentColor" opacity="0">
+    <text class="calc" x="310" y="95" font-size="20" fill="currentColor" opacity="0">
       <tspan class="x">2</tspan>×<tspan class="y">5</tspan> = <tspan class="ink">10</tspan>
-      <animate attributeName="opacity" values="0;0;0;0;0;1;1;1;1;1;1" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;0;0;1;1;1;1;1;1;1;1" dur="12s" repeatCount="indefinite"/>
     </text>
     
     <!-- 步骤3: x₃ × y₃ = 18 -->
-    <text class="calc" x="310" y="155" font-size="22" fill="currentColor" opacity="0">
+    <text class="calc" x="310" y="125" font-size="20" fill="currentColor" opacity="0">
       <tspan class="x">3</tspan>×<tspan class="y">6</tspan> = <tspan class="ink">18</tspan>
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1;1" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1;1;1;1" dur="12s" repeatCount="indefinite"/>
     </text>
     
-    <!-- 求和线 -->
-    <line class="ink" x1="305" y1="168" x2="480" y2="168" stroke="currentColor" stroke-width="1.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite"/>
-    </line>
+    <!-- 求和过程 -->
+    <text class="sum" x="310" y="165" font-size="22" font-weight="500" fill="currentColor" opacity="0">
+      4 + 10 + 18 = <tspan font-size="26">32</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;1;1;1" dur="12s" repeatCount="indefinite"/>
+    </text>
     
-    <!-- 最终结果 -->
-    <text class="ink" x="310" y="200" font-size="24" font-weight="500" fill="currentColor" opacity="0">
-      x·y = <tspan font-size="28">32</tspan>
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;1" dur="10s" repeatCount="indefinite"/>
+    <!-- 最终结果标签 -->
+    <text class="ink" x="310" y="205" font-size="18" fill="currentColor" opacity="0">
+      ∴ x·y = 32
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;0;0;1" dur="12s" repeatCount="indefinite"/>
     </text>
   </g>
   
