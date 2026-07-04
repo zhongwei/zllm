@@ -26,60 +26,60 @@
   
   <!-- 左列：行向量 x = [1, 2, 3] -->
   <g id="row-vector-x">
-    <text class="bracket" x="25" y="130" font-size="60" fill="currentColor">[</text>
+    <text class="bracket" x="30" y="130" font-size="50" fill="currentColor">[</text>
     
     <!-- x1 with highlight circle -->
-    <circle class="x" cx="55" cy="98" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+    <circle class="x" cx="60" cy="102" r="16" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
       <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
       <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
-    <text class="x" x="55" y="105" font-size="26" fill="currentColor" text-anchor="middle">1</text>
+    <text class="x" x="60" y="108" font-size="22" fill="currentColor" text-anchor="middle">1</text>
     
     <!-- x2 with highlight circle -->
-    <circle class="x" cx="85" cy="98" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+    <circle class="x" cx="90" cy="102" r="16" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
       <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
       <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
-    <text class="x" x="85" y="105" font-size="26" fill="currentColor" text-anchor="middle">2</text>
+    <text class="x" x="90" y="108" font-size="22" fill="currentColor" text-anchor="middle">2</text>
     
     <!-- x3 with highlight circle -->
-    <circle class="x" cx="115" cy="98" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+    <circle class="x" cx="120" cy="102" r="16" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
       <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0;0;0" dur="12s" repeatCount="indefinite"/>
       <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
-    <text class="x" x="115" y="105" font-size="26" fill="currentColor" text-anchor="middle">3</text>
+    <text class="x" x="120" y="108" font-size="22" fill="currentColor" text-anchor="middle">3</text>
     
-    <text class="bracket" x="130" y="130" font-size="60" fill="currentColor">]</text>
-    <text class="x" x="70" y="155" font-size="15" font-style="italic" fill="currentColor" text-anchor="middle">xᵀ</text>
+    <text class="bracket" x="138" y="130" font-size="50" fill="currentColor">]</text>
+    <text class="x" x="85" y="155" font-size="14" font-style="italic" fill="currentColor" text-anchor="middle">xᵀ</text>
   </g>
   
   <!-- 中列：列向量 y = [4, 5, 6]ᵀ -->
   <g id="col-vector-y">
-    <text class="bracket" x="175" y="145" font-size="70" fill="currentColor">[</text>
+    <text class="bracket" x="188" y="140" font-size="56" fill="currentColor">[</text>
     
     <!-- y1 with highlight circle -->
-    <circle class="y" cx="210" cy="67" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+    <circle class="y" cx="210" cy="70" r="16" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
       <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
       <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
-    <text class="y" x="210" y="75" font-size="26" fill="currentColor" text-anchor="middle">4</text>
+    <text class="y" x="210" y="76" font-size="22" fill="currentColor" text-anchor="middle">4</text>
     
     <!-- y2 with highlight circle -->
-    <circle class="y" cx="210" cy="107" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+    <circle class="y" cx="210" cy="102" r="16" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
       <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
       <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
-    <text class="y" x="210" y="115" font-size="26" fill="currentColor" text-anchor="middle">5</text>
+    <text class="y" x="210" y="108" font-size="22" fill="currentColor" text-anchor="middle">5</text>
     
     <!-- y3 with highlight circle -->
-    <circle class="y" cx="210" cy="147" r="18" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+    <circle class="y" cx="210" cy="134" r="16" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
       <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0;0;0" dur="12s" repeatCount="indefinite"/>
       <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0;0;0" dur="12s" repeatCount="indefinite"/>
     </circle>
-    <text class="y" x="210" y="155" font-size="26" fill="currentColor" text-anchor="middle">6</text>
+    <text class="y" x="210" y="140" font-size="22" fill="currentColor" text-anchor="middle">6</text>
     
-    <text class="bracket" x="235" y="145" font-size="70" fill="currentColor">]</text>
-    <text class="y" x="210" y="190" font-size="15" font-style="italic" fill="currentColor" text-anchor="middle">y</text>
+    <text class="bracket" x="228" y="140" font-size="56" fill="currentColor">]</text>
+    <text class="y" x="210" y="175" font-size="14" font-style="italic" fill="currentColor" text-anchor="middle">y</text>
   </g>
   
   <!-- 右列：计算过程 -->
