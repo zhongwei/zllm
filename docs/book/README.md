@@ -69,7 +69,7 @@
 |  | 37 | PPO + GAE + Critic | M10 | ✅ |
 |  | 38 | GRPO + CISPO | M10 | ✅ |
 |  | 39 | 知识蒸馏 | M11 | ✅ |
-|  | 40 | Agent RL 工具调用 | M11 | ☐ |
+|  | 40 | Agent RL 工具调用 | M11 | ✅ |
 | VII · 推理与部署 | 41 | 解码算法实现 | M12 | ☐ |
 |  | 42 | KV Cache 加速推理 | M12 | ☐ |
 |  | 43 | OpenAI 兼容 API + CLI 部署 | M12 | ☐ |
