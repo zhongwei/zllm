@@ -151,7 +151,7 @@ $$
 
 ## 16.4 对应单元测试：M1 的「地基检查」
 
-M1 里程碑只有两个测试文件、4 个测试，但它们是全书的根。先看 `tests/conftest.py` 里三个**所有后续测试都会用到的共享 fixture**。
+M1 里程碑只有两个测试文件、共 8 个测试，但它们是全书的根。先看 `tests/conftest.py` 里三个**所有后续测试都会用到的共享 fixture**。
 
 ### 16.4.1 共享 fixtures
 
@@ -236,7 +236,7 @@ pip install -e ".[dev]"
 pytest tests/m01_foundations/ -v
 ```
 
-预期输出（4 个测试全绿）：
+预期输出（8 个测试全绿）：
 
 ```
 tests/m01_foundations/test_002_import.py::test_zllm_importable PASSED
@@ -250,7 +250,7 @@ tests/m01_foundations/test_003_fixtures.py::test_head_dim PASSED
 ===== 8 passed =====
 ```
 
-> 注意：`pytest tests/m01_foundations/ -v` 实际打印 8 行（含 fixture 校验测试），但它们都属于 M1 的「地基」。如果你想确认整本书的代码都还活着，可以直接跑 `pytest`（全 428 个测试）。
+> 这 8 个测试都属于 M1 的「地基」。想确认整本书的代码都活着，可直接跑 `pytest`（全 428 个测试）。
 
 最后，亲手验证 16.3.3 节的 π 缩放到底算出多少：
 
