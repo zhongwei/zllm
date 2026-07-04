@@ -22,7 +22,9 @@ status: draft
 - 解释多维度奖励的四个维度（长度、工具正确、GT 匹配、重复惩罚）；
 - 看懂 `parse_tool_calls` 如何用正则从文本提取 JSON 工具调用；
 - 理解 `execute_tool` 的模拟环境设计（6 个工具的 mock 数据）；
-- 说清 `validate_gt_in_text` 为什么用模糊匹配而非精确匹配。
+- 说清 `validate_gt_in_text` 用「大小写不敏感的精确子串包含」及其局限（不识别同义改写）。
+
+> **实现范围说明**：本章实现 Agent RL 的核心组件——6 个模拟工具、`parse_tool_calls`、`execute_tool`、`calculate_agent_reward` 与 `AgentConfig`。**生成→解析→执行→反馈→再生成的多轮控制循环不在 zllm 当前代码内**，需读者自行组装或参考社区实现。本章聚焦工具环境与多维奖励的设计。
 
 ## 40.2 原理回顾：Agent 多轮交互
 
@@ -137,7 +139,7 @@ def validate_gt_in_text(gt_text, response):
     return gt_text.lower().strip() in response.lower()
 ```
 
-`validate_gt_in_text`（`:88-98`）：检查 gt 是否**作为子串**出现在 response 中（大小写不敏感）。用模糊匹配而非精确匹配——因为模型可能用不同表述包含正确答案（如「28°C」可能写成「气温28度」... 但这里用精确子串匹配 `28°C in response`）。
+`validate_gt_in_text`（`:88-98`）：检查 gt 是否**作为子串**出现在 response 中——大小写不敏感的精确子串包含（`gt.strip().lower() in response.lower()`）。注意它只匹配**字面**子串，**不识别同义改写**：例如 gt 是「28°C」时，回答写成「气温28度」不会被命中。
 
 > 对应测试 `test_280_agent_rl.py:107`（精确匹配）、`:111`（大小写不敏感）、`:114`（不匹配返回 False）、`:117`（部分匹配）。
 
