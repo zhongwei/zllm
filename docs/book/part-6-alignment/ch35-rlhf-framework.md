@@ -57,10 +57,12 @@ graph LR
 **③ PPO 强化学习**：用 RM 的分数作为奖励，用 PPO 算法优化策略模型。但纯最大化奖励会导致模型「钻空子」（reward hacking）——找到 RM 的漏洞刷高分但回答变差。所以加 **KL 惩罚**：
 
 $$
-\max_{\pi_\theta}\;\mathbb{E}_{y\sim\pi_\theta}\bigl[r_\phi(x,y)\bigr] \;-\; \beta\,\text{KL}\bigl(\pi_\theta(\cdot|x)\,\big\|\,\pi_{\text{ref}}(\cdot|x)\bigr)
+\max_{\pi_\theta}\;\mathbb{E}_{y\sim\pi_\theta}\bigl[r_\phi(x,y)\bigr] \;-\; \beta\,\text{KL}\bigl(\pi_{\text{ref}}(\cdot|x)\,\big\|\,\pi_\theta(\cdot|x)\bigr)
 $$
 
 $\pi_{\text{ref}}$ 是 SFT 后的模型（冻结）。KL 项惩罚 $\pi_\theta$ 偏离 $\pi_{\text{ref}}$ 太远——「你可以变好，但不能变成另一个人」。$\beta$ 控制约束强度。
+
+> **KL 方向说明**：标准 RLHF 文献常写成前向 $\text{KL}(\pi_\theta\,\|\,\pi_{\text{ref}})$；zllm 的实现（Ch 38 GRPO，`grpo.py:36` 的 k3 估计 $e^{(\text{ref}-\text{policy})}-(\text{ref}-\text{policy})-1$）采用**反向** $\text{KL}(\pi_{\text{ref}}\,\|\,\pi_\theta)$。两者特性不同：反向 KL 是 **mode-seeking**（逼策略聚到 ref 的峰），前向是 **mean-matching**。本书公式与代码对齐，统一用反向。
 
 ## 35.4 DPO：绕过 RM 的简化
 
@@ -108,7 +110,7 @@ $$
 | **需要 Critic** | 是 | 否 | 否（群体基线） |
 | **数据格式** | prompt → 采样 | chosen/rejected 对 | prompt → N 生成 |
 | **训练稳定性** | 较差（PPO 敏感） | 好（直接 loss） | 中等 |
-| **显存** | 3 模型（policy+ref+critic+RM） | 2 模型（policy+ref） | 2 模型（policy+ref） |
+| **显存** | 3 模型（policy+ref+critic；RM 离线训练不驻留） | 2 模型（policy+ref） | 2 模型（policy+ref） |
 | **代表应用** | ChatGPT | Zephyr | DeepSeek-R1 |
 
 ## 35.7 核心概念
