@@ -207,6 +207,12 @@ $$
 
 ![点积 = 投影长度](figs/ch01-dot-product-projection_anim.svg)
 
+下面这张动画展示了点积的**具体计算过程**（以 3 维向量为例）：
+
+![点积计算过程](figs/ch01-dot-product-calc_anim.svg)
+
+可以看到，点积就是「对应位置相乘、再求和」——这个简单的操作正是注意力机制的核心。
+
 一个直观的推论：当 $\mathbf{y}$ 与 $\mathbf{x}$ 同向（ $\theta=0$ ）时点积最大、为 $\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ ；反向（ $\theta=\pi$ ）时最小、为 $-\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ 。**点积天然就是「方向一致性」的度量**——这正是注意力机制用它来衡量「词与词有多相关」的原因（Ch 12）。
 
 ### 矩阵乘法 = 线性变换
