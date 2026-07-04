@@ -17,109 +17,104 @@
   
   <rect width="100%" height="100%" fill="url(#grid)" class="gray"/>
   
-  <!-- 分割线调整到更合适的位置 -->
-  <line class="gray" x1="165" y1="30" x2="165" y2="250" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.4"/>
+  <line class="gray" x1="160" y1="30" x2="160" y2="250" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.4"/>
   <line class="gray" x1="280" y1="30" x2="280" y2="250" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.4"/>
   
-  <text class="lbl" x="85" y="35" font-size="14" font-weight="500" fill="currentColor" text-anchor="middle">x (行向量)</text>
-  <text class="lbl" x="225" y="35" font-size="14" font-weight="500" fill="currentColor" text-anchor="middle">y (列向量)</text>
+  <text class="lbl" x="80" y="35" font-size="14" font-weight="500" fill="currentColor" text-anchor="middle">x (行向量)</text>
+  <text class="lbl" x="220" y="35" font-size="14" font-weight="500" fill="currentColor" text-anchor="middle">y (列向量)</text>
   <text class="lbl" x="390" y="35" font-size="14" font-weight="500" fill="currentColor" text-anchor="middle">计算过程</text>
   
-  <!-- 左列：行向量 x = [1, 2, 3]，括号和数字垂直居中 -->
+  <!-- 左列：行向量 xᵀ = [1, 2, 3] -->
+  <!-- 数字在括号中垂直居中：括号font-size=36，数字font-size=18 -->
+  <!-- 括号的baseline在其底部，数字的baseline也在底部 -->
+  <!-- 要让数字视觉居中，括号y = 数字y + 括号高度的一半 - 数字高度的一半 -->
+  <!-- 数字 y=108，括号高度约36，数字高度约14 → 括号 y ≈ 108 + 7 - 0 ≈ 115 -->
   <g id="row-vector-x">
-    <!-- 行向量基准线 y=110，括号高度约40，数字高度约22 -->
-    <!-- 括号 y 位置 = 110 + 22/2 + 40/2 - 40/2 = 110 + 11 = 121 (括号顶部) -->
-    <!-- 实际括号字符的视觉中心在其高度的约40%位置 -->
-    <text class="bracket" x="25" y="120" font-size="40" fill="currentColor">[</text>
+    <text class="bracket" x="20" y="115" font-size="36" fill="currentColor">[</text>
     
-    <!-- 数字垂直居中：括号视觉中心约 y=105，数字 y 也应在 105 -->
-    <!-- x1 -->
-    <circle class="x" cx="50" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+    <circle class="x" cx="50" cy="105" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="x" x="50" y="110" font-size="18" fill="currentColor" text-anchor="middle">1</text>
+    <text class="x" x="50" y="108" font-size="18" fill="currentColor" text-anchor="middle">1</text>
     
-    <!-- x2 -->
-    <circle class="x" cx="75" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+    <circle class="x" cx="75" cy="105" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="x" x="75" y="110" font-size="18" fill="currentColor" text-anchor="middle">2</text>
+    <text class="x" x="75" y="108" font-size="18" fill="currentColor" text-anchor="middle">2</text>
     
-    <!-- x3 -->
-    <circle class="x" cx="100" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0;0" dur="12s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0;0" dur="12s" repeatCount="indefinite"/>
+    <circle class="x" cx="100" cy="105" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="x" x="100" y="110" font-size="18" fill="currentColor" text-anchor="middle">3</text>
+    <text class="x" x="100" y="108" font-size="18" fill="currentColor" text-anchor="middle">3</text>
     
-    <text class="bracket" x="115" y="120" font-size="40" fill="currentColor">]</text>
-    <text class="x" x="70" y="145" font-size="13" font-style="italic" fill="currentColor" text-anchor="middle">xᵀ</text>
+    <text class="bracket" x="115" y="115" font-size="36" fill="currentColor">]</text>
+    <text class="x" x="70" y="140" font-size="13" font-style="italic" fill="currentColor" text-anchor="middle">xᵀ</text>
   </g>
   
-  <!-- 中列：列向量 y = [4, 5, 6]ᵀ，括号和数字水平居中 -->
+  <!-- 中列：列向量 y = [4, 5, 6]ᵀ -->
+  <!-- 数字在括号中水平居中：左括号x=185，右括号x=250，中心x=217.5 -->
+  <!-- 括号高度要包裹3个数字：每个数字高约18，间距约25，总高约90，括号font-size需要更大 -->
   <g id="col-vector-y">
-    <!-- 列向量水平中心 x=225，括号宽度约20，数字宽度约10 -->
-    <!-- 左括号 x = 225 - 20 - 10/2 - 5 = 195 (留间隙) -->
-    <!-- 右括号 x = 225 + 10/2 + 5 = 235 -->
-    <text class="bracket" x="195" y="125" font-size="48" fill="currentColor">[</text>
+    <text class="bracket" x="185" y="140" font-size="90" fill="currentColor">[</text>
     
-    <!-- y1 -->
-    <circle class="y" cx="225" cy="70" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+    <!-- y1: 中心 y=70 -->
+    <circle class="y" cx="217" cy="67" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="y" x="225" y="75" font-size="18" fill="currentColor" text-anchor="middle">4</text>
+    <text class="y" x="217" y="70" font-size="18" fill="currentColor" text-anchor="middle">4</text>
     
-    <!-- y2 -->
-    <circle class="y" cx="225" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0;0" dur="12s" repeatCount="indefinite"/>
+    <!-- y2: 中心 y=105 -->
+    <circle class="y" cx="217" cy="102" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="y" x="225" y="110" font-size="18" fill="currentColor" text-anchor="middle">5</text>
+    <text class="y" x="217" y="105" font-size="18" fill="currentColor" text-anchor="middle">5</text>
     
-    <!-- y3 -->
-    <circle class="y" cx="225" cy="140" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0;0" dur="12s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0;0" dur="12s" repeatCount="indefinite"/>
+    <!-- y3: 中心 y=140 -->
+    <circle class="y" cx="217" cy="137" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="y" x="225" y="145" font-size="18" fill="currentColor" text-anchor="middle">6</text>
+    <text class="y" x="217" y="140" font-size="18" fill="currentColor" text-anchor="middle">6</text>
     
-    <text class="bracket" x="245" y="125" font-size="48" fill="currentColor">]</text>
-    <text class="y" x="225" y="180" font-size="13" font-style="italic" fill="currentColor" text-anchor="middle">y</text>
+    <text class="bracket" x="240" y="140" font-size="90" fill="currentColor">]</text>
+    <text class="y" x="217" y="195" font-size="13" font-style="italic" fill="currentColor" text-anchor="middle">y</text>
   </g>
   
   <!-- 右列：计算过程 -->
   <g id="calculation">
-    <!-- 步骤1: x₁ × y₁ = 4 -->
+    <!-- 步骤1: x₁ × y₁ = 4，缩短显示时间 -->
     <text class="calc" x="300" y="65" font-size="20" fill="currentColor" opacity="0">
       <tspan class="x">1</tspan>×<tspan class="y">4</tspan> = <tspan class="ink">4</tspan>
-      <animate attributeName="opacity" values="0;0;1;1;1;1;1;1;1;1;1;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;1;1;1;1;1;1;1;1" dur="10s" repeatCount="indefinite"/>
     </text>
     
     <!-- 步骤2: x₂ × y₂ = 10 -->
     <text class="calc" x="300" y="95" font-size="20" fill="currentColor" opacity="0">
       <tspan class="x">2</tspan>×<tspan class="y">5</tspan> = <tspan class="ink">10</tspan>
-      <animate attributeName="opacity" values="0;0;0;0;0;1;1;1;1;1;1;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;0;0;1;1;1;1;1" dur="10s" repeatCount="indefinite"/>
     </text>
     
     <!-- 步骤3: x₃ × y₃ = 18 -->
     <text class="calc" x="300" y="125" font-size="20" fill="currentColor" opacity="0">
       <tspan class="x">3</tspan>×<tspan class="y">6</tspan> = <tspan class="ink">18</tspan>
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1;1;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite"/>
     </text>
     
-    <!-- 求和过程 -->
+    <!-- 求和过程：字体比乘稍大 (22 vs 20) -->
     <text class="sum" x="300" y="165" font-size="22" font-weight="500" fill="currentColor" opacity="0">
-      4 + 10 + 18 = <tspan font-size="26">32</tspan>
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;1;1;1" dur="12s" repeatCount="indefinite"/>
+      4 + 10 + 18 = <tspan font-size="24">32</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;1" dur="10s" repeatCount="indefinite"/>
     </text>
     
-    <!-- 最终结果标签，延长显示时间 -->
-    <text class="ink" x="300" y="205" font-size="18" fill="currentColor" opacity="0">
+    <!-- 最终结果：字体最大 (26) -->
+    <text class="ink" x="300" y="210" font-size="26" font-weight="600" fill="currentColor" opacity="0">
       ∴ x·y = 32
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;0;0;1;1" dur="12s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite"/>
     </text>
   </g>
   
