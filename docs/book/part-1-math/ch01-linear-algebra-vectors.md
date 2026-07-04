@@ -183,13 +183,23 @@ PyTorch 里 `x.norm(p)` 直接给出 $L_p$ 范数；RMSNorm（Ch 20）用到的�
 
 ### 向量夹角与余弦相似度
 
-两个向量之间的「方向接近程度」用什么度量？几何直觉告诉我们：看夹角。夹角越小，方向越一致；夹角越大，方向越偏离。
+两个向量之间的「方向接近程度」用什么度量？几何直觉告诉我们：**看夹角**。夹角越小，方向越一致；夹角越大，方向越偏离。按夹角大小可以分成三种情况：
 
-但直接用夹角 $\theta$ 有个问题：它从 $0^\circ$ 增长到 $180^\circ$ ，「越大越不相似」这个直觉和「相似度越大越接近」的习惯相反。更自然的做法是用 $\cos\theta$ ——它恰好把夹角映射到 $[-1, 1]$ 区间，而且方向一致时为 $1$ 、相反时为 $-1$ 、正交时为 $0$ ，完美符合「相似度」的直觉。
+- **夹角小于 90°**（锐角）：两向量方向「朝同一边」，认为**相近 / 相似**；
+- **夹角等于 90°**（直角）：两向量**正交**，方向毫无关联；
+- **夹角大于 90°**（钝角）：两向量方向「背道而驰」，认为**偏离 / 相反**。
 
-问题是：我们手头只有向量 $\mathbf{x}, \mathbf{y}$ 的坐标，怎么算出 $\cos\theta$？
+![余弦相似度三种情形](figs/ch01-cosine-similarity-three-cases.svg)
 
-**推导的关键是余弦定理**。设两个向量 $\mathbf{x}, \mathbf{y}$ 的夹角为 $\theta$ ，它们差向量的长度满足：
+但直接拿夹角 $\theta$ 当相似度有个问题：它从 $0^\circ$ 增长到 $180^\circ$ ，「越大越不相似」这个直觉和「相似度越大越接近」的习惯正好相反。更自然的做法是用 $\cos\theta$ ——它把夹角映射到 $[-1, 1]$ 区间，而且方向一致时为 $1$ 、正交时为 $0$ 、相反时为 $-1$ ，完美符合「相似度」的直觉。这三个标志值正好对应上面三种情形：
+
+- $\cos\theta = 1$ ：夹角 $0^\circ$ ，两向量**方向完全相同**（同向平行）；
+- $\cos\theta = 0$ ：夹角 $90^\circ$ ，两向量**正交**（毫不相关）；
+- $\cos\theta = -1$ ：夹角 $180^\circ$ ，两向量**方向完全相反**（反向平行）。
+
+现在的关键问题是：我们手头只有向量 $\mathbf{x}, \mathbf{y}$ 的坐标，怎么算出 $\cos\theta$ ？
+
+**推导借助余弦定理**。设两个向量 $\mathbf{x}, \mathbf{y}$ 的夹角为 $\theta$ ，它们差向量的长度满足：
 
 $$
 \Vert\mathbf{x} - \mathbf{y}\Vert^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta
@@ -201,7 +211,9 @@ $$
 \Vert\mathbf{x} - \mathbf{y}\Vert^2 = \sum_i (x_i - y_i)^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \sum_i x_i y_i = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2(\mathbf{x}\cdot\mathbf{y})
 $$
 
-比较两式，立刻得到点积与夹角的关系：
+> 比较这两个展开式：右边前两项 $\Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2$ 完全相同，可以消掉；那么含 $\cos\theta$ 的那一项就必须等于含 $\sum_i x_i y_i$ 的那一项，即 $-2\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta = -2(\mathbf{x}\cdot\mathbf{y})$ 。
+
+于是立刻得到点积与夹角的关系：
 
 $$
 \mathbf{x} \cdot \mathbf{y} = \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta
@@ -213,11 +225,7 @@ $$
 \boxed{ \cos\theta = \frac{\mathbf{x} \cdot \mathbf{y}}{\Vert\mathbf{x}\Vert_2 \Vert\mathbf{y}\Vert_2} }
 $$
 
-这就是它叫「余弦相似度」的原因：**它直接算出两个向量夹角的余弦值**。因为 $|\cos\theta| \leq 1$ ，这个值天然落在 $[-1, 1]$ 区间：
-
-- $\cos\theta = 1$ ：夹角 $0^\circ$ ，两向量**方向完全相同**（同向平行）
-- $\cos\theta = 0$ ：夹角 $90^\circ$ ，两向量**正交**（毫不相关）
-- $\cos\theta = -1$ ：夹角 $180^\circ$ ，两向量**方向完全相反**（反向平行）
+因为 $|\cos\theta| \leq 1$ （余弦的基本性质），这个值天然落在 $[-1, 1]$ 区间——这正是它适合当「相似度」的原因。
 
 **为什么不用点积直接当相似度？** 因为点积同时依赖「长度」和「方向」：两个长向量即使方向偏离，点积也可能很大；两个短向量即使方向一致，点积也可能很小。余弦相似度通过除以范数，把长度的影响消掉，只保留方向信息——这正是语义检索想要的：比较「国王」和「女王」的语义距离时，不应该因为某个词的嵌入向量更长而被误导。
 
@@ -225,13 +233,13 @@ $$
 
 ![余弦相似度计算过程](figs/ch01-cosine-similarity-calc_anim.svg)
 
-可以看到，余弦相似度的计算分为三步：先算点积 $\mathbf{x}\cdot\mathbf{y}$ 、再算两个向量的范数 $\Vert\mathbf{x}\Vert$ 和 $\Vert\mathbf{y}\Vert$ 、最后相除。示例中 $\mathbf{x}=(3,4)^\top$ 与 $\mathbf{y}=(6,8)^\top$ 方向相同，得到 $\cos\theta=1$ 。
+可以看到，余弦相似度的计算分为三步：先算点积 $\mathbf{x}\cdot\mathbf{y}$ 、再算两个向量的范数 $\Vert\mathbf{x}\Vert$ 和 $\Vert\mathbf{y}\Vert$ 、最后相除。示例中 $\mathbf{x}=(3,4)^\top$ 与 $\mathbf{y}=(-3,4)^\top$ 夹角约 $74^\circ$ ，得到 $\cos\theta=0.28$ ——方向相近但不一致。
 
 下面这张动画展示了夹角 $\theta$ 与 $\cos\theta$ 的**几何关系**：
 
 ![余弦相似度几何意义](figs/ch01-cosine-similarity-geometry_anim.svg)
 
-可以看到，随着向量 $\mathbf{y}$ 绕原点旋转，夹角 $\theta$ 从 $0^\circ$ 变化到 $180^\circ$ ，余弦相似度从 $1$ 递减到 $-1$ 。这直观展示了「余弦相似度只看方向」的特性——无论向量长度如何，只要夹角相同，相似度就相同。
+可以看到，随着向量 $\mathbf{y}$ 绕原点旋转，夹角 $\theta$ 从 $0^\circ$ 变化到 $180^\circ$ ，余弦相似度从 $1$ 递减到 $-1$ 。这直观展示了「余弦相似度只看方向」的特性——只要夹角相同，相似度就相同，与向量长度无关。
 
 ## 1.4 推导与几何
 
