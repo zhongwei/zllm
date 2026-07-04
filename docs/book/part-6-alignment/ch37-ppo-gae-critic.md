@@ -25,6 +25,8 @@ PPO 是最复杂的对齐方法，涉及四个组件：**Actor**（策略模型�
 - 解释 value loss 也做 clip 的原因；
 - 看懂 CriticModel 如何共享 backbone 但替换 lm_head。
 
+> **实现范围说明**：本章实现 PPO 的核心组件——`CriticModel`、`compute_gae`、`ppo_policy_loss`、`ppo_value_loss` 与 `PPOConfig`。**采样—打分—mini-batch 更新的外层训练循环（rollout、approx_kl 早停）不在 zllm 当前代码内**，需读者自行组装或参考社区实现。本章聚焦损失原语与 GAE 的数学。
+
 ## 37.2 原理回顾：Actor-Critic + GAE
 
 ### 37.2.1 优势函数与 Critic

@@ -24,6 +24,8 @@ Ch 37 的 PPO 需要 Critic 模型估计价值函数——显存翻倍、训练�
 - 理解 KL 惩罚的计算方式（token 级 KL）；
 - 解释 CISPO 单边裁剪与 GRPO 双边 clip 的区别及其意义。
 
+> **实现范围说明**：本章实现 GRPO/CISPO 的核心组件——`compute_group_advantages`、`per_token_kl`、`grpo_loss`、`cispo_loss` 与 `GRPOConfig`。**对同一 prompt 采样 $N$ 个回答、打分、更新的外层训练循环不在 zllm 当前代码内**，需读者自行组装或参考社区实现。本章聚焦损失原语与群体优势的数学。
+
 ## 38.2 原理回顾：群体相对优势
 
 ### 38.2.1 去掉 Critic 的关键（回引 Ch 35/37）
