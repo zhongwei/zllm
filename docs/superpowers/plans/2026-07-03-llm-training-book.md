@@ -51,8 +51,8 @@ docs/book/
 ├── part-4-architecture/         # Phase 4 追加
 ├── part-5-training/             # Phase 5 追加
 ├── part-6-alignment/             # Phase 6 追加
-├── part-7-serving/              # Phase 7 追加
-└── appendices/                  # Phase 7 追加
+├── part-7-deployment/            # Phase 7 追加
+└── appendices/                   # Phase 7 追加
 ```
 
 每个文件单一职责：一章一文件。`README.md` 是唯一的入口与进度看板；`SUMMARY.md` 是导航；`assets/` 集中所有图片避免散落。
@@ -69,7 +69,7 @@ docs/book/
 | 4 | Part IV（M3+M4 模型架构） | 已追加（Task 22–28） | 已完成 |
 | 5 | Part V（M5+M6+M7 数据与训练） | 已追加（Task 29–34） | 已完成 |
 | 6 | Part VI（M8-M11 微调与对齐） | 已追加（Task 35–42） | 已完成 |
-| 7 | Part VII + 附录（M12 推理部署 + 附录） | 待追加 | 后续会话 |
+| 7 | Part VII + 附录（M12 推理部署 + 附录） | 已追加（Task 43–49） | 进行中 |
 
 ---
 
@@ -970,3 +970,40 @@ Create `part-6-alignment/ch40-agent-rl-tools.md`。YAML `source:zllm/training/ag
 - 全 Phase 无 TBD/TODO/占位符；所有引用 file:line 经 `sed -n` 抽查真实。
 - Phase 6 完成后更新本计划进度表第 71 行为「已完成」。
 - **Phase 7（Part VII + 附录，Ch 41–43 + 附录 A-D）**：M12。引用 `zllm/serving/{generate,api_server,cli}.py`、`tests/m12_serving`。
+
+### 前置事实块（Phase 7 引用源，已逐行核实）
+
+**`zllm/serving/generate.py`（133 行）**：**`generate`** `:18-76`（无 cache）：逐步解码 `:41`、logits 取最后一位 `:43`、**repetition_penalty**（正除负乘 `:46-50`）、**temperature=0 greedy** argmax `:52-53`、**top-k** 阈值过滤 `:56-59`、**top-p nucleus** 排序+累计概率+移位 `:60-67`、multinomial 采样 `:69`、eos 停止 `:73`；**`generate_with_cache`** `:79-133`（KV cache）：首次全 prompt `:94-95`、后续只喂 next_token `:97`、past_key_values 传递 `:100`，采样逻辑与 generate 相同。
+
+**`zllm/serving/api_server.py`（72 行）**：`ChatCompletionRequest` dataclass `:16-22`（temperature=0.85 `:19`、top_p=0.95 `:20`、max_tokens=512 `:21`、stream `:22`）；`create_app` `:25-72`（`/v1/models` GET `:29-40`、`/v1/chat/completions` POST `:42-70`、返回 OpenAI 格式 id/object/choices/usage `:50-70`）。
+
+**`zllm/serving/cli.py`（21 行）**：`CLIConfig` dataclass `:7-21`（load_from="model" `:8`、weight="full_sft" `:10`、max_new_tokens=8192 `:15`、temperature=0.85 `:16`、top_p=0.95 `:17`、open_thinking `:18`、historys `:19`、device="cuda" `:21`）。
+
+**测试**：`test_291_generate`（greedy 确定性 `:36`、输出更长 `:42`、max_tokens 限制 `:47`、temperature 随机 `:57`、top-k `:67`、top-p `:72`、eos 停止 `:77`、batch `:84`、**cache 输出一致** `:93`、cache 更快 `:99`、cache+eos `:114`）；`test_295_api_cli`（request 默认值 `:18`、自定义 `:28`、messages 格式 `:40`、app 创建 `:51`、路由存在 `:55`、CLI 默认值 `:63`、state_dict 往返 `:84`）。
+
+### Task 43: Ch 41 解码算法实现（M12-a）
+Create `part-7-deployment/ch41-decoding-algorithm.md`。YAML `source:zllm/serving/generate.py,tests:tests/m12_serving/test_291_generate.py`。原理：回引 Ch 03（softmax 采样）+ Ch 06（温度），讲 5 种解码策略（greedy/temperature/top-k/top-p/repetition_penalty）。Mermaid 画采样决策树。LaTeX 推导 top-p nucleus 的「累计概率最小集合」。代码：**`generate`** `:18-76`（greedy argmax `:52-53`、temp 缩放 `:55`、top-k 阈值 `:56-59`、top-p 排序+移位 `:60-67`、repetition_penalty 正除负乘 `:46-50`、multinomial `:69`）。重点：greedy 确定性 vs 采样多样性、top-k 固定数量 vs top-p 动态集合、repetition_penalty 为什么正负不同处理。测试 test_291（greedy 确定性 `:36`、temp 随机 `:57`、top-k `:67`、top-p `:72`、eos `:77`）。pytest test_291。校验 `grep "\.py:[0-9]"`≥6。README Ch41→✅。
+
+### Task 44: Ch 42 KV Cache 加速推理（M12-b）
+Create `part-7-deployment/ch42-kv-cache-inference.md`。YAML `source:zllm/serving/generate.py,tests:tests/m12_serving/test_291_generate.py`。原理：回引 Ch 22（KV Cache 概念）+ Ch 25（backbone 位置切片），讲 KV cache 如何把 O(n²) 推理降到 O(n)、首次全 prompt 后续单 token。Mermaid 画有/无 cache 的计算量对比。代码：**`generate_with_cache`** `:79-133`（首次全 prompt `:94-95`、后续只喂 next_token `:97`、past_key_values 传递 `:100`）。重点：cache 把重复计算变增量计算、O(n²)→O(n) 的量级提升、为何输出与无 cache 完全一致（数学等价）。测试 test_291（**cache 输出一致** `:93`、cache 更快 `:99`、cache+eos `:114`）。pytest test_291::TestGenerateWithCache。校验 `grep "\.py:[0-9]"`≥4。README Ch42→✅。
+
+### Task 45: Ch 43 OpenAI 兼容 API + CLI 部署（M12-c）
+Create `part-7-deployment/ch43-openai-api-cli.md`。YAML `source:zllm/serving/api_server.py,tests:tests/m12_serving/test_295_api_cli.py`。原理：讲 OpenAI API 格式兼容（/v1/chat/completions + /v1/models）、CLI 交互式推理配置、为什么兼容生态。Mermaid 画 API 架构（Client→FastAPI→Model）。代码：`ChatCompletionRequest` `:16-22`、`create_app` `:25-72`（两个端点）、`CLIConfig` `cli.py:7-21`。重点：OpenAI 格式的 id/object/choices/usage 结构、CLIConfig 的 open_thinking/historys 含义。测试 test_295（request 默认 `:18`、路由 `:55`、CLI `:63`、state_dict 往返 `:84`）。pytest test_295。校验 `grep "\.py:[0-9]"`≥5。Part VII 收官。README Ch43→✅。
+
+### Task 46: 附录 A 命令速查
+Create `appendices/appendix-a-commands.md`。YAML `part:appendix`。内容：全书涉及的命令速查表——tokenizer 训练、预训练、SFT、LoRA、DPO、PPO、GRPO、蒸馏、Agent、API 服务、CLI 的启动命令和关键参数。表格形式，每行命令 + 用途 + 关键 flag。引用训练脚本的 dataclass 默认值（如 PretrainConfig、SFTConfig 等）。无 file:line 要求（附录是汇总）。
+
+### Task 47: 附录 B 超参数表
+Create `appendices/appendix-b-hyperparameters.md`。YAML `part:appendix`。内容：ZLLMConfig 模型架构超参表（hidden_size=768/num_layers=8/num_heads=12/kv_heads=4/head_dim=64/intermediate=2432/vocab=6400/max_pos=2048/rope_theta=10000）+ 各训练阶段超参对比表（预训练/SFT/LoRA/DPO/PPO/GRPO/蒸馏的 lr/batch/accum/epochs/beta/alpha/T）。引用 `zllm/config.py` 和各 Config dataclass。
+
+### Task 48: 附录 C 术语表
+Create `appendices/appendix-c-glossary.md`。YAML `part:appendix`。内容：全书术语中英对照表（按字母排序），如 Attention/Cross-Entropy/GAE/KL散度/KV Cache/LoRA/NTP/PPO/RMSNorm/RoPE/Softmax/Transformer/Weight Tying 等，每条一句话解释。
+
+### Task 49: 附录 D 参考文献
+Create `appendices/appendix-d-references.md`。YAML `part:appendix`。内容：全书引用的论文和资源列表——Attention Is All You Need (Vaswani 2017)、RoPE (Su 2021)、RMSNorm (Zhang 2019)、SwiGLU (Shazeer 2020)、GQA (Ainslie 2023)、LoRA (Hu 2021)、DPO (Rafailov 2023)、PPO (Schulman 2017)、GRPO (Shao 2024)、DeepSeek-R1 (2025)、Knowledge Distillation (Hinton 2015)、YaRN (Peng 2023) 等。每条标题+作者+年份+一句话贡献。
+
+### Phase 7 完工标准（DoD）
+- Ch 41–43 + 附录 A-D 全部写完，README 全部 ✅（全书 43 章 + 4 附录完成）。
+- 每章 `grep -cE "\.py:[0-9]"` 达标（见各 Task；附录豁免）。
+- 全 Phase 无 TBD/TODO/占位符。
+- Phase 7 完成后更新计划进度表第 72 行为「已完成」——全书完成。
