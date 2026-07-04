@@ -54,7 +54,7 @@ $$
 
 ```mermaid
 graph LR
-    A["η₀ (起点)<br/>大步快学"] --> B["η₀/2 (中点)<br/>稳步下降"]
+    A["η₀ (起点)<br/>大步快学"] --> B["0.55·η₀ (中点)<br/>稳步下降"]
     B --> C["0.1·η₀ (终点)<br/>小步精调"]
     style A fill:#ffcdd2
     style C fill:#c8e6c9
