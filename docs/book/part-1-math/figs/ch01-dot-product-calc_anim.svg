@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 280" width="500" height="280" font-family="Cambria, Georgia, 'Times New Roman', serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 280" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol'">
   <title>点积计算过程（动画）</title>
   <desc>逐步展示点积 x·y = x₁y₁ + x₂y₂ + x₃y₃ 的计算过程</desc>
   <style>
-    .axis{color:#cbd5e1}.x{color:#2563eb}.y{color:#ea580c}.calc{color:#059669}.gray{color:#9ca3af}.ink{color:#1f2937}.lbl{color:#374151}.dim{color:#6b7280}.bracket{color:#64748b}.sum{color:#7c3aed}
+    .axis{color:#cbd5e1} .x{color:#2563eb} .y{color:#ea580c} .calc{color:#059669} 
+    .gray{color:#9ca3af} .ink{color:#1f2937} .lbl{color:#374151} .dim{color:#6b7280} 
+    .bracket{color:#64748b} .sum{color:#7c3aed} .op{color:#374151}
     @media (prefers-color-scheme: dark){
-      .axis{color:#475569}.x{color:#60a5fa}.y{color:#fb923c}.calc{color:#34d399}.gray{color:#64748b}.ink{color:#e5e7eb}.lbl{color:#e5e7eb}.dim{color:#9ca3af}.bracket{color:#94a3b8}.sum{color:#a78bfa}
+      .axis{color:#475569} .x{color:#60a5fa} .y{color:#fb923c} .calc{color:#34d399} 
+      .gray{color:#64748b} .ink{color:#e5e7eb} .lbl{color:#e5e7eb} .dim{color:#9ca3af} 
+      .bracket{color:#94a3b8} .sum{color:#a78bfa} .op{color:#e5e7eb}
     }
   </style>
   
@@ -15,110 +19,117 @@
     </pattern>
   </defs>
   
+  <!-- 背景与网格 -->
   <rect width="100%" height="100%" fill="url(#grid)" class="gray"/>
   
+  <!-- 辅助分割线 -->
   <line class="gray" x1="160" y1="30" x2="160" y2="250" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.4"/>
   <line class="gray" x1="280" y1="30" x2="280" y2="250" stroke="currentColor" stroke-width="0.5" stroke-dasharray="4 4" opacity="0.4"/>
   
-  <text class="lbl" x="80" y="35" font-size="14" font-weight="500" fill="currentColor" text-anchor="middle">x (行向量)</text>
-  <text class="lbl" x="220" y="35" font-size="14" font-weight="500" fill="currentColor" text-anchor="middle">y (列向量)</text>
-  <text class="lbl" x="390" y="35" font-size="14" font-weight="500" fill="currentColor" text-anchor="middle">计算过程</text>
+  <!-- 顶部标题 -->
+  <text class="lbl" x="80" y="35" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">x (行向量)</text>
+  <text class="lbl" x="220" y="35" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">y (列向量)</text>
+  <text class="lbl" x="380" y="35" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">计算过程</text>
   
-  <!-- 左列：行向量 xᵀ = [1, 2, 3] -->
-  <!-- 数字在括号中垂直居中：括号font-size=36，数字font-size=18 -->
-  <!-- 括号的baseline在其底部，数字的baseline也在底部 -->
-  <!-- 要让数字视觉居中，括号y = 数字y + 括号高度的一半 - 数字高度的一半 -->
-  <!-- 数字 y=108，括号高度约36，数字高度约14 → 括号 y ≈ 108 + 7 - 0 ≈ 115 -->
+  <!-- ================= 左列：行向量 xᵀ = [1, 2, 3] ================= -->
   <g id="row-vector-x">
-    <text class="bracket" x="20" y="115" font-size="36" fill="currentColor">[</text>
+    <!-- 替换为Path绘制括号，确保在所有字体下完美对齐 -->
+    <path d="M 27 85 L 21 85 L 21 125 L 27 125" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 133 85 L 139 85 L 139 125 L 133 125" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
     
-    <circle class="x" cx="50" cy="105" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    <!-- x1 = 1 -->
+    <circle class="x" cx="45" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;1;0;0;0;0;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0.2;0;0;0;0;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="x" x="50" y="108" font-size="18" fill="currentColor" text-anchor="middle">1</text>
+    <text class="x" x="45" y="111" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">1</text>
     
-    <circle class="x" cx="75" cy="105" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    <!-- x2 = 2 -->
+    <circle class="x" cx="80" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;1;0;0;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0.2;0;0;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="x" x="75" y="108" font-size="18" fill="currentColor" text-anchor="middle">2</text>
+    <text class="x" x="80" y="111" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">2</text>
     
-    <circle class="x" cx="100" cy="105" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0" dur="10s" repeatCount="indefinite"/>
+    <!-- x3 = 3 -->
+    <circle class="x" cx="115" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;0;1;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0;0.2;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="x" x="100" y="108" font-size="18" fill="currentColor" text-anchor="middle">3</text>
+    <text class="x" x="115" y="111" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">3</text>
     
-    <text class="bracket" x="115" y="115" font-size="36" fill="currentColor">]</text>
-    <text class="x" x="70" y="140" font-size="13" font-style="italic" fill="currentColor" text-anchor="middle">xᵀ</text>
+    <text class="x" x="80" y="150" font-size="14" font-style="italic" fill="currentColor" text-anchor="middle">x<tspan dy="-5" font-size="10" font-style="normal">T</tspan></text>
   </g>
   
-  <!-- 中列：列向量 y = [4, 5, 6]ᵀ -->
-  <!-- 数字在括号中水平居中：左括号x=185，右括号x=250，中心x=217.5 -->
-  <!-- 括号高度要包裹3个数字：每个数字高约18，间距约25，总高约90，括号font-size需要更大 -->
+  <!-- ================= 中列：列向量 y = [4, 5, 6]ᵀ ================= -->
   <g id="col-vector-y">
-    <text class="bracket" x="185" y="140" font-size="90" fill="currentColor">[</text>
+    <!-- Path绘制矩阵括号 -->
+    <path d="M 203 52 L 197 52 L 197 158 L 203 158" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 237 52 L 243 52 L 243 158 L 237 158" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
     
-    <!-- y1: 中心 y=70 -->
-    <circle class="y" cx="217" cy="67" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;1;1;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0.2;0.2;0;0;0;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    <!-- y1 = 4 -->
+    <circle class="y" cx="220" cy="70" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;1;0;0;0;0;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0.2;0;0;0;0;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="y" x="217" y="70" font-size="18" fill="currentColor" text-anchor="middle">4</text>
+    <text class="y" x="220" y="76" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">4</text>
     
-    <!-- y2: 中心 y=105 -->
-    <circle class="y" cx="217" cy="102" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;1;1;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0.2;0.2;0;0;0;0;0" dur="10s" repeatCount="indefinite"/>
+    <!-- y2 = 5 -->
+    <circle class="y" cx="220" cy="105" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;1;0;0;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0.2;0;0;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="y" x="217" y="105" font-size="18" fill="currentColor" text-anchor="middle">5</text>
+    <text class="y" x="220" y="111" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">5</text>
     
-    <!-- y3: 中心 y=140 -->
-    <circle class="y" cx="217" cy="137" r="13" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;0;0" dur="10s" repeatCount="indefinite"/>
-      <animate attributeName="fill-opacity" values="0;0;0;0;0;0;0;0.2;0.2;0;0" dur="10s" repeatCount="indefinite"/>
+    <!-- y3 = 6 -->
+    <circle class="y" cx="220" cy="140" r="14" fill="currentColor" fill-opacity="0" stroke="currentColor" stroke-width="2.5" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;0;1;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
+      <animate attributeName="fill-opacity" values="0;0;0;0;0;0.2;0;0;0;0;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </circle>
-    <text class="y" x="217" y="140" font-size="18" fill="currentColor" text-anchor="middle">6</text>
+    <text class="y" x="220" y="146" font-size="18" fill="currentColor" text-anchor="middle" font-weight="500">6</text>
     
-    <text class="bracket" x="240" y="140" font-size="90" fill="currentColor">]</text>
-    <text class="y" x="217" y="195" font-size="13" font-style="italic" fill="currentColor" text-anchor="middle">y</text>
+    <text class="y" x="220" y="180" font-size="14" font-style="italic" fill="currentColor" text-anchor="middle">y</text>
   </g>
   
-  <!-- 右列：计算过程 -->
+  <!-- ================= 右列：计算过程 ================= -->
   <g id="calculation">
-    <!-- 步骤1: x₁ × y₁ = 4，缩短显示时间 -->
-    <text class="calc" x="300" y="65" font-size="20" fill="currentColor" opacity="0">
-      <tspan class="x">1</tspan>×<tspan class="y">4</tspan> = <tspan class="ink">4</tspan>
-      <animate attributeName="opacity" values="0;0;1;1;1;1;1;1;1;1" dur="10s" repeatCount="indefinite"/>
+    <!-- 步骤1: 蓝 × 橙 = 绿 -->
+    <text x="300" y="76" font-size="18" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="x">1</tspan><tspan class="op"> × </tspan><tspan class="y">4</tspan><tspan class="op"> = </tspan><tspan class="calc" font-weight="bold">4</tspan>
+      <animate attributeName="opacity" values="0;1;1;1;1;1;1;1;1;1;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </text>
     
-    <!-- 步骤2: x₂ × y₂ = 10 -->
-    <text class="calc" x="300" y="95" font-size="20" fill="currentColor" opacity="0">
-      <tspan class="x">2</tspan>×<tspan class="y">5</tspan> = <tspan class="ink">10</tspan>
-      <animate attributeName="opacity" values="0;0;0;0;0;1;1;1;1;1" dur="10s" repeatCount="indefinite"/>
+    <!-- 步骤2 -->
+    <text x="300" y="111" font-size="18" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="x">2</tspan><tspan class="op"> × </tspan><tspan class="y">5</tspan><tspan class="op"> = </tspan><tspan class="calc" font-weight="bold">10</tspan>
+      <animate attributeName="opacity" values="0;0;0;1;1;1;1;1;1;1;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </text>
     
-    <!-- 步骤3: x₃ × y₃ = 18 -->
-    <text class="calc" x="300" y="125" font-size="20" fill="currentColor" opacity="0">
-      <tspan class="x">3</tspan>×<tspan class="y">6</tspan> = <tspan class="ink">18</tspan>
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite"/>
+    <!-- 步骤3 -->
+    <text x="300" y="146" font-size="18" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="x">3</tspan><tspan class="op"> × </tspan><tspan class="y">6</tspan><tspan class="op"> = </tspan><tspan class="calc" font-weight="bold">18</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;0;1;1;1;1;1;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
+    </text>
+
+    <!-- 分割线 -->
+    <line x1="300" y1="160" x2="430" y2="160" stroke="currentColor" stroke-width="1.5" class="dim" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;1;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
+    </line>
+    
+    <!-- 求和过程: 绿色相加 = 紫色 -->
+    <text x="300" y="185" font-size="18" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="calc">4</tspan><tspan class="op"> + </tspan><tspan class="calc">10</tspan><tspan class="op"> + </tspan><tspan class="calc">18</tspan><tspan class="op"> = </tspan><tspan class="sum" font-weight="bold">32</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;1;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </text>
     
-    <!-- 求和过程：字体比乘稍大 (22 vs 20) -->
-    <text class="sum" x="300" y="165" font-size="22" font-weight="500" fill="currentColor" opacity="0">
-      4 + 10 + 18 = <tspan font-size="24">32</tspan>
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;1;1;1" dur="10s" repeatCount="indefinite"/>
-    </text>
-    
-    <!-- 最终结果：字体最大 (26) -->
-    <text class="ink" x="300" y="210" font-size="26" font-weight="600" fill="currentColor" opacity="0">
-      ∴ x·y = 32
-      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1" dur="10s" repeatCount="indefinite"/>
+    <!-- 最终结论 -->
+    <text x="300" y="225" font-size="22" font-family="'Times New Roman', Cambria, serif" fill="currentColor" opacity="0">
+      <tspan class="op">∴ </tspan><tspan class="x">x</tspan><tspan class="op">·</tspan><tspan class="y">y</tspan><tspan class="op"> = </tspan><tspan class="sum" font-weight="bold">32</tspan>
+      <animate attributeName="opacity" values="0;0;0;0;0;0;0;0;1;1;0" keyTimes="0;0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1" dur="10s" repeatCount="indefinite"/>
     </text>
   </g>
   
-  <text class="dim" x="250" y="260" font-size="13" fill="currentColor" text-anchor="middle" font-style="italic">
+  <text class="dim" x="250" y="265" font-size="13" fill="currentColor" text-anchor="middle" font-style="italic">
     点积 = 对应元素相乘再求和
   </text>
 </svg>
