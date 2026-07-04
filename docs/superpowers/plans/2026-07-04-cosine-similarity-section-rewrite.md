@@ -90,7 +90,7 @@ Create `docs/book/part-1-math/figs/ch01-cosine-similarity-three-cases.svg` with 
     <line class="axis" x1="490" y1="200" x2="710" y2="200" stroke="currentColor" stroke-width="1"/>
     <line class="x" x1="600" y1="200" x2="700" y2="200" stroke="currentColor" stroke-width="2.6" marker-end="url(#ax1)"/>
     <line class="y" x1="600" y1="200" x2="529" y2="129" stroke="currentColor" stroke-width="2.6" marker-end="url(#ay1)"/>
-    <path class="arc" d="M630,200 A30,30 0 0,1 578.79,178.79" fill="none" stroke="currentColor" stroke-width="1.3"/>
+    <path class="arc" d="M630,200 A30,30 0 0,0 578.79,178.79" fill="none" stroke="currentColor" stroke-width="1.3"/>
     <text class="lbl" x="600" y="178" font-size="13" font-style="italic" fill="currentColor">θ</text>
     <text class="x" x="704" y="196" font-size="14" font-style="italic" fill="currentColor">x</text>
     <text class="y" x="514" y="124" font-size="14" font-style="italic" fill="currentColor">y</text>
@@ -267,7 +267,7 @@ Replace the entire contents of `docs/book/part-1-math/figs/ch01-cosine-similarit
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 320" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
   <title>余弦相似度计算过程（动画）</title>
-  <desc>逐步展示 cos θ = (x·y) / (‖x‖‖y‖) 的计算过程，示例 x=(3,4), y=(-3,4)。</desc>
+  <desc>逐步展示 cos θ = (x·y) / (‖x‖‖y‖) 的计算过程，示例 x=(3,4), y=(−3,4)。</desc>
   <style>
     .x{color:#2563eb}.y{color:#ea580c}.calc{color:#059669}.gray{color:#9ca3af}.lbl{color:#374151}.dim{color:#6b7280}.bracket{color:#64748b}.sum{color:#7c3aed}.op{color:#374151}.norm{color:#dc2626}
     @media (prefers-color-scheme: dark){
