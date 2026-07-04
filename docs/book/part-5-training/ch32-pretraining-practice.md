@@ -90,7 +90,7 @@ LLM 预训练的数据量通常以 **token 数**计量。经验上：
 | ~7B | 1T~2T | Chinchilla 定律：数据量 ≈ 20 × 参数量 |
 | ~70B | 10T+ | 大模型需要更多数据避免过拟合 |
 
-对教学项目 zllm（~64M 参数），1B token 是起点。1B token ÷ 340 token/sample ≈ 300 万条样本。如果 batch_size=32、accum=4（等效 128），跑完 1B token 需要 $10^9 / 128 \approx 800$ 万步——这就是 `total_steps`。
+对教学项目 zllm（~64M 参数），1B token 是起点。1B token ÷ 340 token/sample ≈ 300 万条样本。如果 batch_size=64、accum=4（等效 256），跑完 1B token 需要 $10^9 / 256 \approx 390$ 万步——这就是 `total_steps`。
 
 ### 32.3.2 epoch 数
 
@@ -145,7 +145,7 @@ graph LR
 | 减小 max_seq_len（340→256） | 激活值减小 | 上下文变短 |
 | 梯度 checkpointing | 激活值大减 | 训练慢 ~30%（重算前向） |
 
-zllm 默认 batch=32、accum=4（等效 128），在 24GB 卡上 `max_seq_len=340` 可以跑。显存不够时优先调 batch/accum，其次 seq_len。
+zllm 默认 batch=64、accum=4（等效 256），在 24GB 卡上 `max_seq_len=340` 可以跑。显存不够时优先调 batch/accum，其次 seq_len。
 
 > 相关代码：`PretrainConfig` 的 `batch_size=64`、`accumulation_steps=4`、`max_seq_len=340`（`pretrain.py:19-26`）。`train_epoch` 的累积逻辑见 Ch 31（`pretrain.py:86-99`）。
 
