@@ -188,7 +188,7 @@ $$
 
 整个 MLP 就是 $`f_\theta(\mathbf{x})=\mathbf{h}^{(L)}=\phi_L\circ\mathbf{f}_L\circ\cdots\circ\phi_1\circ\mathbf{f}_1(\mathbf{x})`$ ，其中 $\mathbf{f}_\ell(\cdot)=W^{(\ell)}(\cdot)+\mathbf{b}^{(\ell)}$ 是第 $\ell$ 个线性变换。所有参数 $\theta=\{W^{(\ell)},\mathbf{b}^{(\ell)}\}_{\ell=1}^L$ 都是可学习的。**输出层**（第 $L$ 层）的激活 $\phi_L$ 视任务而定：回归任务常不加激活（直接输出实数），分类任务接 softmax 把 logits 变成概率分布（见损失函数小节）。
 
-MLP 的「层间宽度」 $d_1,d_2,\dots,d_L$ 是超参数。一个常见配置是「先扩张再收缩」：比如 $d_{\text{in}}\to 4d\to d_{\text{out}}$ ——这正是 Transformer FFN（Ch 13、Ch 23）的形状，zllm 里 `intermediate_size=3072` 就是把 $d=768$ 扩张 4 倍。
+MLP 的「层间宽度」 $d_1,d_2,\dots,d_L$ 是超参数。一个常见配置是「先扩张再收缩」：比如 $d_{\text{in}}\to 4d\to d_{\text{out}}$ ——这正是 Transformer FFN（Ch 13、Ch 23）的形状。注意「$4d$」是原始 Transformer 的约定，**zllm 实际采用 π-缩放**：`intermediate_size=2432`（$\lceil 768\pi/64\rceil\times 64$，约 3.17 倍，对齐 64 倍数以提升 Tensor Core 利用率，详见 Ch 16/23）。
 
 ### 损失函数
 
@@ -291,7 +291,7 @@ $$
 \boxed{ \mathrm{FFN}(\mathbf{x})=\mathrm{down}\bigl(\mathrm{SiLU}(\mathrm{gate}(\mathbf{x}))\odot\mathrm{up}(\mathbf{x})\bigr) }
 $$
 
-其中 $\mathrm{up}(\mathbf{x})=W_{\text{up}}\mathbf{x}$ 、 $\mathrm{gate}(\mathbf{x})=W_{\text{gate}}\mathbf{x}$ 是两个并行的线性扩张（把 $d$ 维扩到 $4d$ 维）， $\mathrm{SiLU}(\cdot)$ 是本章定义的 $x\sigma(x)$ ， $\odot$ 是逐元素乘， $\mathrm{down}(\cdot)=W_{\text{down}}(\cdot)$ 是线性收缩（把 $4d$ 维压回 $d$ 维）。
+其中 $\mathrm{up}(\mathbf{x})=W_{\text{up}}\mathbf{x}$ 、 $\mathrm{gate}(\mathbf{x})=W_{\text{gate}}\mathbf{x}$ 是两个并行的线性扩张（把 $d$ 维扩到 $d_{\text{ff}}$ 维，zllm 用 π-缩放取 2432，见上文）， $\mathrm{SiLU}(\cdot)$ 是本章定义的 $x\sigma(x)$ ， $\odot$ 是逐元素乘， $\mathrm{down}(\cdot)=W_{\text{down}}(\cdot)$ 是线性收缩（把 $d_{\text{ff}}$ 维压回 $d$ 维）。
 
 读懂本章你就读懂了 SwiGLU 的 90%：它就是「MLP 的激活函数从 ReLU 换成 SiLU，并多加了一个门控分支」。SiLU 的平滑性 + 门控的「选择性放行」让 FFN 比传统 ReLU-MLP 表达力更强、训练更稳——这是现代 LLM（LLaMA、Mistral、zllm）普遍选 SwiGLU 的原因。Ch 13 会讲 Transformer 整体架构，Ch 23 会逐行拆开 SwiGLU 的实现，到那时你会回来感谢本章打下的激活函数基础。
 
