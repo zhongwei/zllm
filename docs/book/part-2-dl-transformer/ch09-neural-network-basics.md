@@ -122,7 +122,7 @@ graph TD
 
 ## 9.3 数学定义
 
-### 线性层（全连接层）
+### 9.3.1 线性层（全连接层）
 
 设输入 $\mathbf{x}\in\mathbb{R}^{d_{\text{in}}}$ ，权重矩阵 $W\in\mathbb{R}^{d_{\text{out}}\times d_{\text{in}}}$ ，偏置 $\mathbf{b}\in\mathbb{R}^{d_{\text{out}}}$ 。一个**线性层（linear layer）**（又叫**全连接层 fully-connected layer**）定义为：
 
@@ -134,7 +134,7 @@ $$
 
 > 批处理：实际训练一次喂一个 batch，输入变成 $X\in\mathbb{R}^{B\times d_{\text{in}}}$ （ $B$ 是 batch size）。线性层写成 $Z=XW^\top+\mathbf{b}$ ，输出 $Z\in\mathbb{R}^{B\times d_{\text{out}}}$ 。偏置 $\mathbf{b}$ 靠 Ch 08 的广播加到每行上。本章为简洁主要写单样本形式 $W\mathbf{x}+\mathbf{b}$ ，结论对 batch 形式完全成立。
 
-### 神经元与激活函数
+### 9.3.2 神经元与激活函数
 
 把线性变换的结果 $\mathbf{z}$ 逐元素套上一个**激活函数（activation function）** $\phi:\mathbb{R}\to\mathbb{R}$ ，就得到一个**神经元层**：
 
@@ -178,7 +178,7 @@ SiLU 是 ReLU 的「平滑版」： $x\to+\infty$ 时 $\mathrm{SiLU}(x)\to x$ �
 
 > 一句话对比：**sigmoid/tanh 平滑但饱和（梯度消失）；ReLU 不饱和但有死区；SiLU 兼顾平滑、不饱和、非零负梯度**——这就是现代 LLM 普遍选 SiLU 系激活的原因。
 
-### 多层感知机（MLP）
+### 9.3.3 多层感知机（MLP）
 
 $L$ 层 MLP 是 $L$ 个「线性层 + 激活」的复合。记第 $\ell$ 层的输入为 $\mathbf{h}^{(\ell-1)}$ （约定 $\mathbf{h}^{(0)}=\mathbf{x}$ 为网络输入），输出为 $\mathbf{h}^{(\ell)}$ ，则：
 
@@ -190,7 +190,7 @@ $$
 
 MLP 的「层间宽度」 $d_1,d_2,\dots,d_L$ 是超参数。一个常见配置是「先扩张再收缩」：比如 $d_{\text{in}}\to 4d\to d_{\text{out}}$ ——这正是 Transformer FFN（Ch 13、Ch 23）的形状。注意「$4d$」是原始 Transformer 的约定，**zllm 实际采用 π-缩放**：`intermediate_size=2432`（$\lceil 768\pi/64\rceil\times 64$，约 3.17 倍，对齐 64 倍数以提升 Tensor Core 利用率，详见 Ch 16/23）。
 
-### 损失函数
+### 9.3.4 损失函数
 
 网络定义好后，还需要一个**损失函数（loss function）** $\mathcal{L}$ 来衡量「预测和真值差多少」。Ch 06 的梯度下降就是沿 $-\nabla_\theta\mathcal{L}$ 更新参数。两种最基本的损失：
 
@@ -216,7 +216,7 @@ $$
 
 本节做两件事：① 画出四种激活函数的**形状**并分析它们的**梯度特性**（梯度消失 / 死神经元 / 平滑）；② **证明**「没有非线性，多层 MLP 退化成单层线性」——这是全章最关键的理论命门。
 
-### 激活函数的形状与梯度特性
+### 9.4.1 激活函数的形状与梯度特性
 
 把四种激活函数画在同一张图上对比（横轴 $x$ ，纵轴 $\phi(x)$ ）：
 
@@ -253,7 +253,7 @@ $$
 
 **SiLU 的平滑与负区非零。** SiLU 在 $x<0$ 区域并非硬截断到 $0$ ，而是先略微下探到一个小的负值（约 $-0.28$ 在 $x\approx-1.28$ 处），再平滑地回到 $0$ ； $x>0$ 时趋近 $x$ （和 ReLU 一样）。关键好处：① 处处光滑可导（没有 ReLU 的折点），数值稳定；② 负区有非零梯度（ $\mathrm{SiLU}'(x)$ 在 $x<0$ 不为零），没有死神经元；③ 实验上在大模型上经验性地优于 ReLU。代价是计算稍贵（要算一次 sigmoid），但 GPU 上这点开销可忽略——**所以现代 LLM（包括 zllm）几乎清一色用 SiLU 系激活**。
 
-### 为什么必须有非线性激活 ⭐⭐
+### 9.4.2 为什么必须有非线性激活 ⭐⭐
 
 现在回答本章标题背后最深刻的问题：**为什么一定要有激活函数 $\phi$ ？去掉它，堆一百层线性层会怎样？**
 

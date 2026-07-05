@@ -87,7 +87,7 @@ graph LR
 
 ## 1.3 数学定义
 
-### 向量
+### 1.3.1 向量
 
 **向量**是排成一列的 $n$ 个实数。记作
 
@@ -109,7 +109,7 @@ $$
 
 这两种运算共同满足「线性」性质，这正是「线性代数」名字的由来。
 
-### 点积（dot product）
+### 1.3.2 点积（dot product）
 
 两个**同维**向量 $\mathbf{x}, \mathbf{y} \in \mathbb{R}^n$ 的**点积**（也叫内积，inner product）定义为逐元素相乘再求和：
 
@@ -125,7 +125,7 @@ $$
 
 可以看到，点积就是「对应位置相乘、再求和」——这个简单的操作正是注意力机制的核心。
 
-### 矩阵与矩阵乘法
+### 1.3.3 矩阵与矩阵乘法
 
 **矩阵**是排成 $m$ 行 $n$ 列的数表，记作 $A \in \mathbb{R}^{m \times n}$ ，第 $i$ 行第 $j$ 列的元素写作 $A_{ij}$ 或 $a_{ij}$ 。
 
@@ -147,7 +147,7 @@ $$
 
 这也解释了为什么内层维度 $p$ 必须匹配：因为那正是做点积时求和的下标范围。
 
-### 范数（norm）
+### 1.3.4 范数（norm）
 
 向量的**范数**度量它的「长度」或「大小」。最常用的是 $L_p$ 范数族：
 
@@ -181,7 +181,7 @@ $$
 
 PyTorch 里 `x.norm(p)` 直接给出 $L_p$ 范数；RMSNorm（Ch 20）用到的「均方根」其实就和 $L_2$ 范数只差一个常数因子。
 
-### 向量夹角与余弦相似度
+### 1.3.5 向量夹角与余弦相似度
 
 两个向量之间的「方向接近程度」用什么度量？几何直觉告诉我们：**看夹角**。夹角越小，方向越一致；夹角越大，方向越偏离。按夹角大小可以分成三种情况：
 
@@ -197,39 +197,7 @@ PyTorch 里 `x.norm(p)` 直接给出 $L_p$ 范数；RMSNorm（Ch 20）用到的�
 - $\cos\theta = 0$ ：夹角 $90^\circ$ ，两向量**正交**（毫不相关）；
 - $\cos\theta = -1$ ：夹角 $180^\circ$ ，两向量**方向完全相反**（反向平行）。
 
-现在的关键问题是：我们手头只有向量 $\mathbf{x}, \mathbf{y}$ 的坐标，怎么算出 $\cos\theta$ ？答案是借助**余弦定理**。
-
-**余弦定理**。对任意三角形，若两条边长为 $a$、 $b$ ，它们的夹角为 $C$ ，则第三条边 $c$ 满足：
-
-$$
-\boxed{c^2 = a^2 + b^2 - 2ab\cos C}
-$$
-
-当 $C=90^\circ$ 时 $\cos C=0$ ，它退化为勾股定理 $c^2=a^2+b^2$ ——所以余弦定理是勾股定理的推广。
-
-把向量 $\mathbf{x}, \mathbf{y}$ 的起点放在同一点，它们终点之间的连线就是 $\mathbf{x}-\mathbf{y}$ ，于是 $\Vert\mathbf{x}\Vert$、 $\Vert\mathbf{y}\Vert$、 $\Vert\mathbf{x}-\mathbf{y}\Vert$ 三条边围成一个三角形， $\mathbf{x}$ 与 $\mathbf{y}$ 的夹角 $\theta$ 正是其中那个夹角。直接套用余弦定理：
-
-![向量三角形与余弦定理](figs/ch01-vector-triangle-cosine-law.svg)
-
-$$
-\Vert\mathbf{x} - \mathbf{y}\Vert^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta
-$$
-
-另一方面，直接展开左边（逐元素计算距离平方）：
-
-$$
-\Vert\mathbf{x} - \mathbf{y}\Vert^2 = \sum_i (x_i - y_i)^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \sum_i x_i y_i = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2(\mathbf{x}\cdot\mathbf{y})
-$$
-
-> 比较这两个展开式：右边前两项 $\Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2$ 完全相同，可以消掉；那么含 $\cos\theta$ 的那一项就必须等于含 $\sum_i x_i y_i$ 的那一项，即 $-2\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta = -2(\mathbf{x}\cdot\mathbf{y})$ 。
-
-于是立刻得到点积与夹角的关系：
-
-$$
-\mathbf{x} \cdot \mathbf{y} = \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta
-$$
-
-两边除以 $\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ ，就得到 **余弦相似度** 的定义：
+我们手头只有向量 $\mathbf{x}, \mathbf{y}$ 的坐标，怎么算出 $\cos\theta$ ？§1.4.1 用**余弦定理**推出了点积与夹角的关系 $\mathbf{x}\cdot\mathbf{y}=\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta$ ，两边除以 $\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ 立刻得到 **余弦相似度（cosine similarity）** 的定义：
 
 $$
 \boxed{ \cos\theta = \frac{\mathbf{x} \cdot \mathbf{y}}{\Vert\mathbf{x}\Vert_2 \Vert\mathbf{y}\Vert_2} }
@@ -255,9 +223,45 @@ $$
 
 光有定义还不够，我们必须把它们和几何图像挂钩。这一节是全章最关键的部分：**能在脑子里画图，才算真懂了线性代数。**
 
-### 点积 = 投影长度
+### 1.4.1 推导：点积与夹角的关系（余弦定理）
 
-§1.3 已经推出了点积的几何形式 $\mathbf{x}\cdot\mathbf{y}=\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta$ 。这一节换一个角度看它：不谈夹角，只谈**投影**。
+§1.3.2 用逐元素求和定义了点积 $\mathbf{x}\cdot\mathbf{y}=\sum_i x_i y_i$ ，§1.3.5 又用 $\cos\theta$ 给出了余弦相似度。这两者怎么联系起来？也就是说，仅有坐标时怎么算出夹角的余弦？答案是借助**余弦定理**。
+
+**余弦定理**。对任意三角形，若两条边长为 $a$、 $b$ ，它们的夹角为 $C$ ，则第三条边 $c$ 满足：
+
+$$
+\boxed{c^2 = a^2 + b^2 - 2ab\cos C}
+$$
+
+当 $C=90^\circ$ 时 $\cos C=0$ ，它退化为勾股定理 $c^2=a^2+b^2$ ——所以余弦定理是勾股定理的推广。
+
+把向量 $\mathbf{x}, \mathbf{y}$ 的起点放在同一点，它们终点之间的连线就是 $\mathbf{x}-\mathbf{y}$ ，于是 $\Vert\mathbf{x}\Vert$、 $\Vert\mathbf{y}\Vert$、 $\Vert\mathbf{x}-\mathbf{y}\Vert$ 三条边围成一个三角形， $\mathbf{x}$ 与 $\mathbf{y}$ 的夹角 $\theta$ 正是其中那个夹角。直接套用余弦定理：
+
+![向量三角形与余弦定理](figs/ch01-vector-triangle-cosine-law.svg)
+
+$$
+\Vert\mathbf{x} - \mathbf{y}\Vert^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta
+$$
+
+另一方面，直接展开左边（逐元素计算距离平方）：
+
+$$
+\Vert\mathbf{x} - \mathbf{y}\Vert^2 = \sum_i (x_i - y_i)^2 = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2 \sum_i x_i y_i = \Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2 - 2(\mathbf{x}\cdot\mathbf{y})
+$$
+
+> 比较这两个展开式：右边前两项 $\Vert\mathbf{x}\Vert^2 + \Vert\mathbf{y}\Vert^2$ 完全相同，可以消掉；那么含 $\cos\theta$ 的那一项就必须等于含 $\sum_i x_i y_i$ 的那一项，即 $-2\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta = -2(\mathbf{x}\cdot\mathbf{y})$ 。
+
+于是立刻得到连接代数（点积）与几何（夹角）的桥梁：
+
+$$
+\boxed{ \mathbf{x} \cdot \mathbf{y} = \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert\cos\theta }
+$$
+
+§1.3.5 的余弦相似度公式正是由它两边除以 $\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ 得到。这个恒等式也是后续两节（投影解释、柯西–施瓦茨不等式）的出发点。
+
+### 1.4.2 点积 = 投影长度
+
+有了 §1.4.1 的恒等式 $\mathbf{x}\cdot\mathbf{y}=\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta$ ，这一节换一个角度看它：不谈夹角，只谈**投影**。
 
 把向量 $\mathbf{y}$ 沿 $\mathbf{x}$ 的方向「拍扁」，得到它在 $\mathbf{x}$ 方向上的分量 $\Vert\mathbf{y}\Vert\cos\theta$ 。这是一个带正负号的标量——沿 $\mathbf{x}$ 正方向为正、反方向为负——叫作 $\mathbf{y}$ 在 $\mathbf{x}$ 上的**有向投影长度**。于是点积可以读作：
 
@@ -267,7 +271,7 @@ $$
 
 换谁都一样：点积也可以写成 $\Vert\mathbf{y}\Vert \times (\mathbf{x}\text{ 在 }\mathbf{y}\text{ 方向上的投影})$ ，它不分「谁投到谁」。
 
-投影的正负，正好对应 §1.3 开头讲过的三种夹角：
+投影的正负，正好对应 §1.3.5 讲过的三种夹角：
 
 | 夹角 | $\mathbf{y}$ 的有向投影 | 点积 $\mathbf{x}\cdot\mathbf{y}$ |
 |---|:---:|:---:|
@@ -285,7 +289,7 @@ $$
 
 那么这个上下界是严格的吗？由下面这条不等式一锤定音。
 
-### 柯西–施瓦茨不等式
+### 1.4.3 柯西–施瓦茨不等式
 
 **柯西–施瓦茨不等式（Cauchy–Schwarz inequality）**：
 
@@ -295,18 +299,18 @@ $$
 
 等号当且仅当两向量**共线**（同向或反向）时成立。
 
-**证明只需一行**：把 §1.3 的恒等式 $\mathbf{x}\cdot\mathbf{y}=\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta$ 代入，再用基本事实 $|\cos\theta|\leq 1$ ，立刻得到 $|\mathbf{x}\cdot\mathbf{y}|\leq\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ ；等号对应 $|\cos\theta|=1$ ，即 $\theta\in\{0,\pi\}$ ，正是两向量共线。
+**证明只需一行**：把 §1.4.1 的恒等式 $\mathbf{x}\cdot\mathbf{y}=\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert\cos\theta$ 代入，再用基本事实 $|\cos\theta|\leq 1$ ，立刻得到 $|\mathbf{x}\cdot\mathbf{y}|\leq\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ ；等号对应 $|\cos\theta|=1$ ，即 $\theta\in\{0,\pi\}$ ，正是两向量共线。
 
 **几何读法**：不等式两边除以 $\Vert\mathbf{x}\Vert$ ，得到 $|\Vert\mathbf{y}\Vert\cos\theta|\leq\Vert\mathbf{y}\Vert$ ——一个向量在任一方向上的**投影长度，绝不会超过它自身的长度**。柯西–施瓦茨本质上就是这句话的代数化身。
 
 **两条直接推论**：
 
-- 把 $\mathbf{x},\mathbf{y}$ 都取成**单位向量**（ $\Vert\mathbf{x}\Vert=\Vert\mathbf{y}\Vert=1$ ），点积落在 $[-1,1]$ ——这正是 §1.3 余弦相似度值域 $[-1,1]$ 的代数依据。
+- 把 $\mathbf{x},\mathbf{y}$ 都取成**单位向量**（ $\Vert\mathbf{x}\Vert=\Vert\mathbf{y}\Vert=1$ ），点积落在 $[-1,1]$ ——这正是 §1.3.5 余弦相似度值域 $[-1,1]$ 的代数依据。
 - 前文刚看到的「同向取最大、反向取最小」，其严格上下界正是 $\pm\Vert\mathbf{x}\Vert\Vert\mathbf{y}\Vert$ 。
 
 **它不只是个摆设**：Ch 06（最优化）会用它严格证明**「负梯度是最速下降方向」**——在单位步长 $\Vert\mathbf{d}\Vert=1$ 的约束下， $\nabla f(\theta)^\top\mathbf{d}\ge -\Vert\nabla f(\theta)\Vert$ ，等号当 $\mathbf{d}$ 取负梯度方向时成立。换句话说，要让损失下降最快，朝负梯度走是数学上最优的——而这条结论的根基，正是柯西–施瓦茨。
 
-### 矩阵乘法 = 线性变换
+### 1.4.4 矩阵乘法 = 线性变换
 
 把 $\mathbf{x} \in \mathbb{R}^n$ 乘上一个矩阵 $A \in \mathbb{R}^{m \times n}$ ，得到 $A\mathbf{x} \in \mathbb{R}^m$ 。这个过程可以理解成：**矩阵 $A$ 把向量 $\mathbf{x}$ 从 $\mathbb{R}^n$ 「搬运并变形」到 $\mathbb{R}^m$**。这种「搬运并变形」就叫**线性变换（linear transformation）**。
 
@@ -328,7 +332,7 @@ $$
 
 ![矩阵乘法 = 线性变换（旋转 + 缩放）](figs/ch01-matrix-transform_anim.svg)
 
-### 逐步演算：手算一次矩阵乘法
+### 1.4.5 逐步演算：手算一次矩阵乘法
 
 理解了几何，我们再回到代数，亲手算一个 $2\times2$ 的例子，把求和公式 $`(AB)_{ij}=\sum_k A_{ik}B_{kj}`$ 落实到每一格。设
 
