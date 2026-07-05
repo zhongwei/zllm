@@ -332,30 +332,11 @@ $$
 
 ![矩阵乘法 = 线性变换（旋转 + 缩放）](figs/ch01-matrix-transform_anim.svg)
 
-### 1.4.5 逐步演算：手算一次矩阵乘法
+### 1.4.5 从公式到代码：实现与陷阱
 
-理解了几何，我们再回到代数，亲手算一个 $2\times2$ 的例子，把求和公式 $`(AB)_{ij}=\sum_k A_{ik}B_{kj}`$ 落实到每一格。设
+最后把矩阵乘法从数学符号落实到代码。求和公式 $`(AB)_{ij}=\sum_k A_{ik}B_{kj}`$ 在 PyTorch 里就是 `A @ B` 或 `torch.matmul(A, B)`——**一次 `@` 调用，背后是上百万次「行点乘列」**，这正是 GPU 擅长并行的地方，也是 Ch 08（张量计算与 PyTorch 自动微分）会展开讲的内容。具体的逐格演算已在 §1.3.3 的动画里展示，这里不再重复。
 
-$$
-A = \begin{pmatrix} 1 & 2 \cr 3 & 4 \end{pmatrix}, \qquad B = \begin{pmatrix} 5 & 6 \cr 7 & 8 \end{pmatrix}
-$$
-
-逐格计算 $C = AB$ （每一格都是「 $A$ 的某行点乘 $B$ 的某列」）：
-
-$$
-\begin{aligned}
-C_{11} &= 1\cdot 5 + 2\cdot 7 = 19 \cr
-C_{12} &= 1\cdot 6 + 2\cdot 8 = 22 \cr
-C_{21} &= 3\cdot 5 + 4\cdot 7 = 43 \cr
-C_{22} &= 3\cdot 6 + 4\cdot 8 = 50
-\end{aligned}
-\qquad\Longrightarrow\qquad
-AB = \begin{pmatrix} 19 & 22 \cr 43 & 50 \end{pmatrix}
-$$
-
-把这个过程对照成代码，就是 `A @ B` 或 `torch.matmul(A, B)`。**一次 `@` 调用，背后是上百万次「行点乘列」**——这正是 GPU 擅长并行的地方，也是 Ch 08（张量计算与 PyTorch 自动微分）会展开讲的内容。
-
-> **小心陷阱：矩阵乘法一般不满足交换律。** 上例中 $BA \neq AB$ （你可以自己验算）。在 LLM 里这意味着 $W_2(W_1 \mathbf{x})$ 和 $W_1(W_2 \mathbf{x})$ 是两回事——层的顺序不能乱写。
+> **小心陷阱：矩阵乘法一般不满足交换律。** 通常 $BA \neq AB$。在 LLM 里这意味着 $W_2(W_1 \mathbf{x})$ 和 $W_1(W_2 \mathbf{x})$ 是两回事——层的顺序不能乱写。
 
 ## 1.5 与本项目联系
 
