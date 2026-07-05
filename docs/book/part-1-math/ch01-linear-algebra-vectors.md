@@ -314,19 +314,11 @@ $$
 
 把 $\mathbf{x} \in \mathbb{R}^n$ 乘上一个矩阵 $A \in \mathbb{R}^{m \times n}$ ，得到 $A\mathbf{x} \in \mathbb{R}^m$ 。这个过程可以理解成：**矩阵 $A$ 把向量 $\mathbf{x}$ 从 $\mathbb{R}^n$ 「搬运并变形」到 $\mathbb{R}^m$**。这种「搬运并变形」就叫**线性变换（linear transformation）**。
 
-为什么叫「线性」？因为矩阵乘法同时满足
+为什么叫「线性」？因为矩阵乘法同时满足 $`A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y} A(c \mathbf{x}) = c A\mathbf{x}`$ ——加法和标量乘法在变换前后都保持。
 
-$$
-A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}, \qquad A(c \mathbf{x}) = c A\mathbf{x}
-$$
+这意味着：**只要弄清楚矩阵把「基向量」变到了哪里，就能推出它把任何向量变到哪里。**
 
-——加法和标量乘法在变换前后都保持。这意味着：**只要弄清楚矩阵把「基向量」变到了哪里，就能推出它把任何向量变到哪里。**
-
-最直观的两个例子是**旋转**和**缩放**。在 2 维平面上，逆时针旋转角 $\alpha$ 的矩阵是
-
-$$
-R(\alpha) = \begin{pmatrix} \cos\alpha & -\sin\alpha \cr \sin\alpha & \cos\alpha \end{pmatrix}
-$$
+最直观的两个例子是**旋转**和**缩放**。在 2 维平面上，逆时针旋转角 $\alpha$ 的矩阵是 $`R(\alpha) = \begin{pmatrix} \cos\alpha & -\sin\alpha \cr \sin\alpha & \cos\alpha \end{pmatrix}`$ 
 
 它把任何向量原地旋转 $\alpha$ 、长度不变（正交矩阵的标志）；而 $`\begin{pmatrix} 2 & 0 \cr 0 & 2 \end{pmatrix}`$ 则把整个平面均匀放大 2 倍。LLM 里每一层做的 `x @ W`，本质上就是「把语义向量旋转、拉伸到另一组坐标轴上」，**权重矩阵 $W$ 编码的就是这次变换的几何规则**。
 
