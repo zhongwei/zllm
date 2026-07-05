@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>行列约定对照：A𝐱（数学·列向量）与 𝐱ᵀW（代码·行向量）</title>
+  <desc>左右双面板同步演算同一个线性变换：左为课本的 A𝐱（矩阵左乘列向量），右为代码的 𝐱ᵀW（行向量右乘矩阵，W=Aᵀ）。高亮在两面板间循环演算两个输出分量，底部给出批处理提示 X@W。</desc>
+  <style>
+    .a { color: #2563eb; font-weight: 600; }
+    .b { color: #ea580c; font-weight: 600; }
+    .ink { color: #1f2937; }
+    .lbl { color: #374151; }
+    .dim { color: #6b7280; }
+    .bracket { color: #64748b; }
+    .op { color: #6b7280; }
+    .result { color: #7c3aed; font-weight: 600; }
+    .matrix-label { color: #6b7280; font-style: italic; }
+
+    .hl-a { fill: #2563eb; stroke: #2563eb; fill-opacity: 0.18; stroke-width: 2; stroke-dasharray: 4; rx: 4; }
+    .hl-b { fill: #ea580c; stroke: #ea580c; fill-opacity: 0.18; stroke-width: 2; stroke-dasharray: 4; rx: 4; }
+    .hl-c { fill: #7c3aed; stroke: #7c3aed; fill-opacity: 0.25; stroke-width: 2; rx: 4; }
+
+    .bridge { stroke: #6b7280; stroke-width: 2; fill: none; stroke-dasharray: 5 3; }
+    .bridge-head { fill: #6b7280; stroke: none; }
+
+    @media (prefers-color-scheme: dark) {
+      .a { color: #60a5fa; }
+      .b { color: #fb923c; }
+      .ink { color: #e5e7eb; }
+      .lbl { color: #e5e7eb; }
+      .dim { color: #9ca3af; }
+      .bracket { color: #94a3b8; }
+      .op { color: #9ca3af; }
+      .result { color: #a78bfa; }
+      .matrix-label { color: #9ca3af; }
+      .hl-a { fill: #60a5fa; stroke: #60a5fa; fill-opacity: 0.22; }
+      .hl-b { fill: #fb923c; stroke: #fb923c; fill-opacity: 0.22; }
+      .hl-c { fill: #a78bfa; stroke: #a78bfa; fill-opacity: 0.3; }
+      .bridge { stroke: #94a3b8; }
+      .bridge-head { fill: #94a3b8; }
+    }
+  </style>
+
+  <defs>
+    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" stroke-width="0.3" class="dim" opacity="0.25"/>
+    </pattern>
+    <marker id="bridge-head" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" class="bridge-head"/>
+    </marker>
+  </defs>
+
+  <rect width="100%" height="100%" fill="url(#grid)" class="dim"/>
+
+  <!-- 顶部标题 -->
+  <text class="lbl" x="460" y="32" font-size="16" font-weight="600" fill="currentColor" text-anchor="middle">
+    行列约定对照：A𝐱（数学·列向量） ⟷ 𝐱ᵀW（代码·行向量），其中 W = Aᵀ
+  </text>
+  <text class="a" x="208" y="58" font-size="13" fill="currentColor" text-anchor="middle">数学约定：矩阵左乘 列向量</text>
+  <text class="b" x="716" y="58" font-size="13" fill="currentColor" text-anchor="middle">代码约定：行向量 右乘 矩阵</text>
+
+  <!-- ================= 高亮层（动画核心） ================= -->
+  <g id="highlights">
+    <!-- 左面板：A 的行（phase1 用第1行，phase2 用第2行） -->
+    <rect class="hl-a" x="92" y="108" width="142" height="30" opacity="0">
+      <animate attributeName="opacity" values="1;0;1" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+    </rect>
+    <rect class="hl-a" x="92" y="146" width="142" height="30" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+    </rect>
+    <!-- 左面板：𝐱 列向量常亮低亮 -->
+    <rect class="hl-a" x="258" y="100" width="36" height="98" opacity="0.45"/>
+
+    <!-- 左面板：𝐲 结果分量 -->
+    <rect class="hl-c" x="322" y="118" width="36" height="26" opacity="0">
+      <animate attributeName="opacity" values="1;0;1" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+    </rect>
+    <rect class="hl-c" x="322" y="156" width="36" height="26" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+    </rect>
+
+    <!-- 右面板：𝐱ᵀ 行向量常亮低亮 -->
+    <rect class="hl-b" x="534" y="100" width="138" height="32" opacity="0.45"/>
+    <!-- 右面板：W 的列（phase1 第1列，phase2 第2列） -->
+    <rect class="hl-b" x="698" y="148" width="44" height="92" opacity="0">
+      <animate attributeName="opacity" values="1;0;1" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+    </rect>
+    <rect class="hl-b" x="742" y="148" width="44" height="92" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+    </rect>
+    <!-- 右面板：𝐲ᵀ 结果分量 -->
+    <rect class="hl-c" x="820" y="182" width="40" height="30" opacity="0">
+      <animate attributeName="opacity" values="1;0;1" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+    </rect>
+    <rect class="hl-c" x="862" y="182" width="40" height="30" opacity="0">
+      <animate attributeName="opacity" values="0;1;0" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+    </rect>
+  </g>
+
+  <!-- ================= 左面板：A 𝐱 = 𝐲 ================= -->
+  <g id="left-panel">
+    <!-- 矩阵 A (2×3) -->
+    <path d="M 104 102 L 96 102 L 96 176 L 104 176" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 220 102 L 228 102 L 228 176 L 220 176" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <text class="ink" x="120" y="125" font-size="17" fill="currentColor" text-anchor="middle">1</text>
+    <text class="ink" x="162" y="125" font-size="17" fill="currentColor" text-anchor="middle">2</text>
+    <text class="ink" x="204" y="125" font-size="17" fill="currentColor" text-anchor="middle">0</text>
+    <text class="ink" x="120" y="163" font-size="17" fill="currentColor" text-anchor="middle">0</text>
+    <text class="ink" x="162" y="163" font-size="17" fill="currentColor" text-anchor="middle">1</text>
+    <text class="ink" x="204" y="163" font-size="17" fill="currentColor" text-anchor="middle">3</text>
+    <text class="matrix-label a" x="162" y="196" font-size="13" fill="currentColor" text-anchor="middle">A (2×3)</text>
+
+    <text class="op" x="250" y="145" font-size="20" fill="currentColor" text-anchor="middle">·</text>
+
+    <!-- 𝐱 列向量 (3×1) -->
+    <path d="M 268 104 L 260 104 L 260 196 L 268 196" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 284 104 L 292 104 L 292 196 L 284 196" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <text class="ink" x="276" y="129" font-size="17" fill="currentColor" text-anchor="middle">1</text>
+    <text class="ink" x="276" y="159" font-size="17" fill="currentColor" text-anchor="middle">2</text>
+    <text class="ink" x="276" y="189" font-size="17" fill="currentColor" text-anchor="middle">2</text>
+    <text class="matrix-label" x="276" y="216" font-size="13" fill="currentColor" text-anchor="middle">𝐱 (3×1)</text>
+
+    <text class="op" x="312" y="155" font-size="20" fill="currentColor" text-anchor="middle">=</text>
+
+    <!-- 𝐲 列向量 (2×1) -->
+    <path d="M 332 112 L 324 112 L 324 186 L 332 186" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 348 112 L 356 112 L 356 186 L 348 186" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <text class="result" x="340" y="137" font-size="17" fill="currentColor" text-anchor="middle">5</text>
+    <text class="result" x="340" y="175" font-size="17" fill="currentColor" text-anchor="middle">8</text>
+    <text class="matrix-label result" x="340" y="208" font-size="13" fill="currentColor" text-anchor="middle">𝐲 (2×1)</text>
+  </g>
+
+  <!-- ================= 桥梁：转置 ================= -->
+  <g id="bridge">
+    <path class="bridge" d="M 372 150 L 524 150" marker-end="url(#bridge-head)"/>
+    <text class="dim" x="448" y="140" font-size="13" fill="currentColor" text-anchor="middle">转置：W = Aᵀ</text>
+    <text class="dim" x="448" y="168" font-size="12" fill="currentColor" text-anchor="middle">(A𝐱)ᵀ = 𝐱ᵀAᵀ</text>
+  </g>
+
+  <!-- ================= 右面板：𝐱ᵀ W = 𝐲ᵀ ================= -->
+  <g id="right-panel">
+    <!-- 𝐱ᵀ 行向量 (1×3) -->
+    <path d="M 544 104 L 536 104 L 536 132 L 544 132" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 660 104 L 668 104 L 668 132 L 660 132" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <text class="ink" x="560" y="125" font-size="17" fill="currentColor" text-anchor="middle">1</text>
+    <text class="ink" x="602" y="125" font-size="17" fill="currentColor" text-anchor="middle">2</text>
+    <text class="ink" x="644" y="125" font-size="17" fill="currentColor" text-anchor="middle">2</text>
+    <text class="matrix-label" x="602" y="156" font-size="13" fill="currentColor" text-anchor="middle">𝐱ᵀ (1×3)</text>
+
+    <text class="op" x="688" y="148" font-size="20" fill="currentColor" text-anchor="middle">·</text>
+
+    <!-- W 矩阵 (3×2) = Aᵀ -->
+    <path d="M 704 150 L 696 150 L 696 236 L 704 236" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 780 150 L 788 150 L 788 236 L 780 236" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <text class="ink" x="720" y="171" font-size="17" fill="currentColor" text-anchor="middle">1</text>
+    <text class="ink" x="762" y="171" font-size="17" fill="currentColor" text-anchor="middle">0</text>
+    <text class="ink" x="720" y="199" font-size="17" fill="currentColor" text-anchor="middle">2</text>
+    <text class="ink" x="762" y="199" font-size="17" fill="currentColor" text-anchor="middle">1</text>
+    <text class="ink" x="720" y="227" font-size="17" fill="currentColor" text-anchor="middle">0</text>
+    <text class="ink" x="762" y="227" font-size="17" fill="currentColor" text-anchor="middle">3</text>
+    <text class="matrix-label b" x="740" y="256" font-size="13" fill="currentColor" text-anchor="middle">W = Aᵀ (3×2)</text>
+
+    <text class="op" x="808" y="200" font-size="20" fill="currentColor" text-anchor="middle">=</text>
+
+    <!-- 𝐲ᵀ 行向量 (1×2) -->
+    <path d="M 830 182 L 822 182 L 822 214 L 830 214" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <path d="M 888 182 L 896 182 L 896 214 L 888 214" fill="none" stroke="currentColor" stroke-width="2" class="bracket"/>
+    <text class="result" x="840" y="203" font-size="17" fill="currentColor" text-anchor="middle">5</text>
+    <text class="result" x="882" y="203" font-size="17" fill="currentColor" text-anchor="middle">8</text>
+    <text class="matrix-label result" x="860" y="234" font-size="13" fill="currentColor" text-anchor="middle">𝐲ᵀ (1×2)</text>
+  </g>
+
+  <!-- ================= 同步计算行 ================= -->
+  <line class="dim" x1="120" y1="285" x2="800" y2="285" stroke="currentColor" stroke-width="0.5" opacity="0.4"/>
+  <g font-size="15" font-family="'Courier New', Courier, monospace" text-anchor="middle">
+    <text class="lbl" x="460" y="310" fill="currentColor">
+      <animate attributeName="opacity" values="1;0.25;1" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+      <tspan class="a">左 A₁·𝐱 = 1·1+2·2+0·2 = </tspan><tspan class="result" font-weight="bold">5</tspan>
+      <tspan class="op">     |     </tspan>
+      <tspan class="b">右 𝐱ᵀ·W₁ = 1·1+2·2+2·0 = </tspan><tspan class="result" font-weight="bold">5</tspan>
+    </text>
+    <text class="lbl" x="460" y="310" fill="currentColor">
+      <animate attributeName="opacity" values="0.25;1;0.25" keyTimes="0;0.5;1" dur="7s" calcMode="discrete" repeatCount="indefinite"/>
+      <tspan class="a">左 A₂·𝐱 = 0·1+1·2+3·2 = </tspan><tspan class="result" font-weight="bold">8</tspan>
+      <tspan class="op">     |     </tspan>
+      <tspan class="b">右 𝐱ᵀ·W₂ = 1·0+2·1+2·3 = </tspan><tspan class="result" font-weight="bold">8</tspan>
+    </text>
+  </g>
+
+  <!-- ================= 批处理提示 ================= -->
+  <g id="batch-hint">
+    <rect x="150" y="345" width="620" height="56" rx="8" fill="none" stroke="currentColor" stroke-width="1" class="dim" stroke-dasharray="4 3" opacity="0.6"/>
+    <text class="dim" x="460" y="368" font-size="13" fill="currentColor" text-anchor="middle">
+      批处理 Batch：把 B 个样本摞成 X [B, 3]，则 X @ W → Y [B, 2]
+    </text>
+    <text class="dim" x="460" y="390" font-size="13" fill="currentColor" text-anchor="middle">
+      同一个 W 复用，批维 B 自动广播到每一行 —— 这正是代码用 <tspan class="b" font-weight="600">行向量布局</tspan>的原因
+    </text>
+  </g>
+</svg>
