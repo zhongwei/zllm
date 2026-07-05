@@ -314,9 +314,24 @@ $$
 
 把 $\mathbf{x} \in \mathbb{R}^n$ 乘上一个矩阵 $A \in \mathbb{R}^{m \times n}$ ，得到 $A\mathbf{x} \in \mathbb{R}^m$ 。这个过程可以理解成：**矩阵 $A$ 把向量 $\mathbf{x}$ 从 $\mathbb{R}^n$ 「搬运并变形」到 $\mathbb{R}^m$**。这种「搬运并变形」就叫**线性变换（linear transformation）**。
 
-为什么叫「线性」？因为矩阵乘法同时满足 $`A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}, \qquad A(c \mathbf{x}) = c A\mathbf{x}`$ ——加法和标量乘法在变换前后都保持。
+为什么叫「线性」？先从字面看：「线」就是直线。线性变换把**直线仍变成直线**、**平行线仍保持平行**、**均匀的网格仍保持均匀**、**原点钉在原地不动**——没有任何弯曲、折叠或整体平移。这层几何直觉翻译成代数语言，正是矩阵乘法满足的两条性质：
 
-这意味着：**只要弄清楚矩阵把「基向量」变到了哪里，就能推出它把任何向量变到哪里。**
+- **可加性（additivity）**： $`A(\mathbf{x}+\mathbf{y}) = A\mathbf{x}+A\mathbf{y}`$ ——「和的像等于像的和」。两个向量先相加再变换，与各自变换后再相加，结果完全一样；
+- **齐次性（homogeneity）**： $`A(c\mathbf{x}) = c A\mathbf{x}`$ ——「先伸缩后变换，等于先变换后伸缩」。标量 $c$ 在变换前后可以自由进出。
+
+两条合起来就叫**线性性质（linearity）**，这正是「线性代数」一名的由来。
+
+这两条性质还带来一个极其重要的推论。任意向量都能拆成基向量的线性组合 $\mathbf{x}=\sum_i c_i \mathbf{e}_i$ ；反复套用可加性与齐次性，就有
+
+$$
+A\mathbf{x} = A\left(\sum_i c_i \mathbf{e}_i\right) = \sum_i c_i A\mathbf{e}_i
+$$
+
+也就是说，变换后的结果 $A\mathbf{x}$ 完全由「每个基向量 $\mathbf{e}_i$ 被送到了哪里」决定。一个 $n$ 维空间只有 $n$ 个基向量，而矩阵 $A$ 的第 $i$ 列恰好就是 $A\mathbf{e}_i$ ——**矩阵的每一列，就是它把对应基向量变到的那根箭头**。这就是那句口诀的真正含义：
+
+> **只要弄清楚矩阵把基向量变到了哪里，它把任何向量变到哪里就自动确定了——剩下的全是线性组合。**
+
+> **边界提醒：加一个常数偏置就不再是「线性」了。** $`f(\mathbf{x})=A\mathbf{x}+\mathbf{b}`$ 叫**仿射变换（affine transformation）**：原点会被搬离原位，齐次性随之失效（ $`f(c\mathbf{x}) \neq c f(\mathbf{x})`$ ）。LLM 前馈层里的 `x @ W + b` 严格说是仿射；只是因为单层仿射表达力有限，必须堆叠多层、再插入非线性激活，才谈得上「网络」，所以口语里常把这种仿射层简称「线性层」。
 
 最直观的两个例子是**旋转**和**缩放**。在 2 维平面上，逆时针旋转角 $\alpha$ 的矩阵是 $`R(\alpha) = \begin{pmatrix} \cos\alpha & -\sin\alpha \cr \sin\alpha & \cos\alpha \end{pmatrix}`$ 
 
