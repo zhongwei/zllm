@@ -262,7 +262,7 @@ $$
 把向量 $\mathbf{y}$ 沿 $\mathbf{x}$ 的方向「拍扁」，得到它在 $\mathbf{x}$ 方向上的分量 $\Vert\mathbf{y}\Vert\cos\theta$ 。这是一个带正负号的标量——沿 $\mathbf{x}$ 正方向为正、反方向为负——叫作 $\mathbf{y}$ 在 $\mathbf{x}$ 上的**有向投影长度**。于是点积可以读作：
 
 $$
-\boxed{ \; \mathbf{x}\cdot\mathbf{y} \;=\; \Vert\mathbf{x}\Vert \times (\text{$\mathbf{y}$ 在 $\mathbf{x}$ 方向上的有向投影长度}) \; }
+\boxed{ \mathbf{x}\cdot\mathbf{y} = \Vert\mathbf{x}\Vert \times (\mathbf{y}\text{ 在 }\mathbf{x}\text{ 方向上的有向投影长度}) }
 $$
 
 换谁都一样：点积也可以写成 $\Vert\mathbf{y}\Vert \times (\mathbf{x}\text{ 在 }\mathbf{y}\text{ 方向上的投影})$ ，它不分「谁投到谁」。
@@ -290,7 +290,7 @@ $$
 **柯西–施瓦茨不等式（Cauchy–Schwarz inequality）**：
 
 $$
-\boxed{ \; |\mathbf{x}\cdot\mathbf{y}| \;\leq\; \Vert\mathbf{x}\Vert\,\Vert\mathbf{y}\Vert \; }
+\boxed{ |\mathbf{x}\cdot\mathbf{y}| \leq \Vert\mathbf{x}\Vert \Vert\mathbf{y}\Vert }
 $$
 
 等号当且仅当两向量**共线**（同向或反向）时成立。
