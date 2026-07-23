@@ -136,7 +136,7 @@ $$
 \boxed{ A = Q \Lambda Q^\top, \qquad Q^\top Q = I }
 $$
 
-> **正交矩阵 = 旋转（或反射）。** 因为 $Q^\top Q = I$ 意味着 $Q$ 保持所有向量的长度（ $\VertQ\mathbf{x}\Vert = \Vert\mathbf{x}\Vert$ ），它只能旋转坐标系、不能拉伸。这条性质后面会反复用到。
+> **正交矩阵 = 旋转（或反射）。** 因为 $Q^\top Q = I$ 意味着 $Q$ 保持所有向量的长度（ $\Vert Q\mathbf{x}\Vert = \Vert\mathbf{x}\Vert$ ），它只能旋转坐标系、不能拉伸。这条性质后面会反复用到。
 
 ### 2.3.3 奇异值分解（SVD）
 
@@ -229,7 +229,7 @@ $$
 为什么 SVD 对任意矩阵都成立？关键在于 $A^\top A$ 这个对称半正定矩阵。对任意 $\mathbf{x}$ ，
 
 $$
-\mathbf{x}^\top(A^\top A)\mathbf{x} = (A\mathbf{x})^\top(A\mathbf{x}) = \VertA\mathbf{x}\Vert^2 \geq 0
+\mathbf{x}^\top(A^\top A)\mathbf{x} = (A\mathbf{x})^\top(A\mathbf{x}) = \Vert A\mathbf{x}\Vert^2 \geq 0
 $$
 
 所以 $A^\top A$ 是半正定的，它的特征值全非负。设其特征分解为
@@ -270,13 +270,13 @@ $A_k$ 是秩为 $k$ 的矩阵，它只需存 $k(m+n)$ 个数，远少于 $mn$ �
 形式化地，对任意秩 $\leq k$ 的矩阵 $B$ ，
 
 $$
-\VertA - A_k\Vert_2 = \sigma_{k+1}  \leq  \VertA - B\Vert_2
+\Vert A - A_k\Vert_2 = \sigma_{k+1}  \leq  \Vert A - B\Vert_2
 $$
 
 （这里 $\Vert\cdot\Vert_2$ 是谱范数，即最大奇异值。）对 Frobenius 范数 $\Vert\cdot\Vert_F$ 也有类似结论：
 
 $$
-\VertA - A_k\Vert_F^2 = \sum_{i=k+1}^{r} \sigma_i^2
+\Vert A - A_k\Vert_F^2 = \sum_{i=k+1}^{r} \sigma_i^2
 $$
 
 也就是说：**误差等于被丢掉的那些奇异值的「能量」**。只要 $\sigma_{k+1}, \sigma_{k+2}, \ldots$ 都很小， $A_k$ 就几乎是 $A$ 本身。
@@ -370,7 +370,7 @@ SVD 的截断形式 $A_k$ 就是**主成分分析（Principal Component Analysis
 1. **特征分解**： $A\mathbf{v}=\lambda\mathbf{v}$ ，特征方程 $\det(A-\lambda I)=0$ 。对一般可对角化方阵 $A=Q\Lambda Q^{-1}$ ；**实对称矩阵**更特殊， $A=Q\Lambda Q^\top$ ，特征值全实数、特征向量可正交归一。
 2. **SVD**：任意 $A\in\mathbb{R}^{m\times n}$ 都能写成 $A=U\Sigma V^\top$ ；几何上 = **旋转 → 沿轴缩放 → 旋转**。 $\sigma_i$ 衡量各方向的「能量」。
 3. **秩**： $\mathrm{rank}(A)$ = 独立信息维度 = 非零奇异值个数。**低秩 ⟺ 可压缩 ⟺ 信息冗余**。
-4. **Eckart-Young 定理**：截断 SVD $`A_k = \sum_{i=1}^k\sigma_i\mathbf{u}_i\mathbf{v}_i^\top`$ 是最佳秩 $k$ 近似；误差 $\VertA-A_k\Vert_2 = \sigma_{k+1}$ 。
+4. **Eckart-Young 定理**：截断 SVD $`A_k = \sum_{i=1}^k\sigma_i\mathbf{u}_i\mathbf{v}_i^\top`$ 是最佳秩 $k$ 近似；误差 $\Vert A-A_k\Vert_2 = \sigma_{k+1}$ 。
 5. **正交与投影**： $\mathbf{x}^\top\mathbf{y}=0$ ⟺ 几何垂直；正交矩阵 $Q^\top Q=I$ 只旋转不拉伸；投影矩阵 $P=A(A^\top A)^{-1}A^\top$ 把向量映到 $A$ 的列空间，满足 $P^2=P$ 。
 
 > **前方预告。** 本章把矩阵拆成了「方向 + 缩放」，但 LLM 里到处都是**不确定性**：下一个 token 是什么？模型预测有多可信？训练 loss 为什么用交叉熵？这些问题的语言不再是线性代数，而是**概率论**。Ch 03《概率论基础》会引入随机变量、分布、期望、方差，为后面的 softmax、交叉熵、采样解码铺好最后一块数学地砖。
