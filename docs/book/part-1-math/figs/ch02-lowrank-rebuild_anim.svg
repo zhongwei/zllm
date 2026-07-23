@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 300" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>低秩近似重建与 LoRA 压缩</title>
+<desc>同一目标在秩 k=1/4/8/16 下逐步清晰；右侧对比全参数 d² 与 LoRA 低秩 2dr 的参数量。</desc>
+<style>
+    .axis { color: #94a3b8; }
+    .ink { color: #1f2937; }
+    .lbl { color: #374151; }
+    .dim { color: #6b7280; }
+    .k { color: #2563eb; }
+    .full { color: #ea580c; }
+    .lora { color: #7c3aed; }
+    @media (prefers-color-scheme: dark) {
+      .axis { color: #475569; } .ink { color: #e5e7eb; } .lbl { color: #e5e7eb; }
+      .dim { color: #9ca3af; } .k { color: #60a5fa; } .full { color: #fb923c; } .lora { color: #a78bfa; }
+    }
+  </style>
+
+<defs>
+    <!-- 目标图案：一个 16×16 的「钩子/字母」形，用若干方块拼成 -->
+    <g id="target">
+      <!-- 用相对坐标 0..160，后续 scale。手工拼一个「Z」字形 -->
+      <rect x="20"  y="20"  width="120" height="20"/>
+      <rect x="100" y="40"  width="20"  height="20"/>
+      <rect x="80"  y="60"  width="20"  height="20"/>
+      <rect x="60"  y="80"  width="20"  height="20"/>
+      <rect x="40"  y="100" width="20"  height="20"/>
+      <rect x="20"  y="120" width="120" height="20"/>
+    </g>
+    <clipPath id="cellclip"><rect x="0" y="0" width="160" height="160"/></clipPath>
+    <!-- 不同模糊等级，模拟秩 k 的近似 -->
+    <filter id="blur1" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="14"/></filter>
+    <filter id="blur4" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="blur8" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="2"/></filter>
+    <filter id="blur16" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="0.4"/></filter>
+  </defs>
+
+<!-- ===== 左：重建视图 (中心 110,140，160×160 画布缩到 160px) ===== -->
+<g transform="translate(30,40)">
+    <!-- 网格框 -->
+    <rect x="0" y="0" width="160" height="160" fill="none" stroke="currentColor" stroke-width="1.2" class="axis"/>
+    <!-- k=1 最模糊 -->
+    <g clip-path="url(#cellclip)" class="k" opacity="0">
+      <animate attributeName="opacity" values="1;1;0;0;0;0;1" keyTimes="0;0.24;0.25;0.49;0.5;0.99;1" dur="8s" repeatCount="indefinite"/>
+      <use href="#target" fill="currentColor" filter="url(#blur1)"/>
+    </g>
+    <!-- k=4 -->
+    <g clip-path="url(#cellclip)" class="k" opacity="0">
+      <animate attributeName="opacity" values="0;0;1;1;0;0;0" keyTimes="0;0.24;0.25;0.49;0.5;0.99;1" dur="8s" repeatCount="indefinite"/>
+      <use href="#target" fill="currentColor" filter="url(#blur4)"/>
+    </g>
+    <!-- k=8 -->
+    <g clip-path="url(#cellclip)" class="k" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.24;0.25;0.49;0.5;0.99;1" dur="8s" repeatCount="indefinite"/>
+      <use href="#target" fill="currentColor" filter="url(#blur8)"/>
+    </g>
+    <!-- k=16 (清晰) -->
+    <g clip-path="url(#cellclip)" class="k" opacity="0">
+      <animate attributeName="opacity" values="0;0;0;0;0;0;1" keyTimes="0;0.24;0.25;0.49;0.5;0.74;0.75;1" dur="8s" repeatCount="indefinite"/>
+      <use href="#target" fill="currentColor" filter="url(#blur16)"/>
+    </g>
+    <!-- 当前 k 标签（循环切换） -->
+    <text class="k" x="80" y="185" font-size="16" font-weight="700" fill="currentColor" text-anchor="middle">
+      k=1（秩1，最模糊）
+      <animate attributeName="opacity" values="1;1;0;0;0;0;1" keyTimes="0;0.24;0.25;0.49;0.5;0.99;1" dur="8s" repeatCount="indefinite"/>
+    </text>
+    <text class="k" x="80" y="185" font-size="16" font-weight="700" fill="currentColor" text-anchor="middle">
+      k=4
+      <animate attributeName="opacity" values="0;0;1;1;0;0;0" keyTimes="0;0.24;0.25;0.49;0.5;0.99;1" dur="8s" repeatCount="indefinite"/>
+    </text>
+    <text class="k" x="80" y="185" font-size="16" font-weight="700" fill="currentColor" text-anchor="middle">
+      k=8
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.24;0.25;0.49;0.5;0.99;1" dur="8s" repeatCount="indefinite"/>
+    </text>
+    <text class="k" x="80" y="185" font-size="16" font-weight="700" fill="currentColor" text-anchor="middle">
+      k=16（满秩，清晰）
+      <animate attributeName="opacity" values="0;0;0;0;0;0;1" keyTimes="0;0.24;0.25;0.49;0.5;0.74;0.75;1" dur="8s" repeatCount="indefinite"/>
+    </text>
+  </g>
+<text class="dim" x="110" y="32" font-size="12" fill="currentColor" text-anchor="middle">奇异值越多 → 越接近原矩阵</text>
+
+<!-- ===== 右：LoRA 参数结构示意 ===== -->
+<g transform="translate(280,50)">
+    <text class="lbl" x="180" y="0" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">LoRA：用低秩代替满秩</text>
+
+    <!-- ΔW 满秩大方块 d×d -->
+    <rect class="full" x="20" y="20" width="90" height="90" fill="currentColor" fill-opacity="0.18" stroke="currentColor" stroke-width="2"/>
+    <text class="full" x="65" y="70" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">ΔW</text>
+    <text class="full" x="65" y="86" font-size="11" fill="currentColor" text-anchor="middle">d×d</text>
+    <text class="full" x="65" y="130" font-size="12" font-weight="600" fill="currentColor" text-anchor="middle">d² 个参数</text>
+
+    <text class="dim" x="135" y="70" font-size="20" fill="currentColor" text-anchor="middle">≈</text>
+
+    <!-- B 细长条 d×r -->
+    <rect class="lora" x="160" y="20" width="22" height="90" fill="currentColor" fill-opacity="0.22" stroke="currentColor" stroke-width="2"/>
+    <text class="lora" x="171" y="70" font-size="12" font-weight="600" fill="currentColor" text-anchor="middle">B</text>
+    <text class="lora" x="171" y="86" font-size="10" fill="currentColor" text-anchor="middle">d×r</text>
+    <text class="dim" x="196" y="70" font-size="16" fill="currentColor" text-anchor="middle">×</text>
+    <!-- A 扁条 r×d -->
+    <rect class="lora" x="212" y="58" width="90" height="14" fill="currentColor" fill-opacity="0.22" stroke="currentColor" stroke-width="2"/>
+    <text class="lora" x="257" y="69" font-size="11" font-weight="600" fill="currentColor" text-anchor="middle">A (r×d)</text>
+    <text class="lora" x="232" y="130" font-size="12" font-weight="600" fill="currentColor" text-anchor="middle">仅 2dr 个参数</text>
+  </g>
+
+<!-- 底部：压缩比横条 -->
+<g transform="translate(340,210)">
+    <!-- 全参 d²=768² 满条 -->
+    <rect class="full" x="0" y="0" width="300" height="16" fill="currentColor" fill-opacity="0.25" stroke="currentColor" stroke-width="1.2"/>
+    <text class="full" x="-6" y="12" font-size="11" fill="currentColor" text-anchor="end">全参</text>
+    <text class="full" x="306" y="12" font-size="11" fill="currentColor">d²=589 824</text>
+    <!-- LoRA r=16 ≈ 4.2% → 300×0.042≈12.6px -->
+    <rect class="lora" x="0" y="26" width="13" height="16" fill="currentColor" fill-opacity="0.55" stroke="currentColor" stroke-width="1.2"/>
+    <text class="lora" x="-6" y="38" font-size="11" fill="currentColor" text-anchor="end">r=16</text>
+    <text class="lora" x="22" y="38" font-size="11" fill="currentColor">2dr=24 576（约 4.2%，压缩 24 倍）</text>
+  </g>
+<text class="dim" x="340" y="276" font-size="12" fill="currentColor">d=768</text>
+<text class="dim" x="640" y="276" font-size="12" fill="currentColor" text-anchor="end">秩 r 越小越省参数，但近似越粗</text>
+</svg>

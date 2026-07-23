@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 780 280" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>SVD 三步几何分解：旋转→缩放→旋转</title>
+<desc>单位圆经过 Vᵀ 旋转、Σ 沿轴拉伸成椭圆、U 再旋转，演示任意矩阵 A=UΣVᵀ 的几何分解。</desc>
+<style>
+    .axis { color: #cbd5e1; }
+    .ink { color: #1f2937; }
+    .lbl { color: #374151; }
+    .dim { color: #6b7280; }
+    .gray { color: #9ca3af; }
+    .frame { color: #64748b; }
+    .step { color: #2563eb; }
+    .scale { color: #ea580c; }
+    .result { color: #7c3aed; }
+    @media (prefers-color-scheme: dark) {
+      .axis { color: #475569; } .ink { color: #e5e7eb; } .lbl { color: #e5e7eb; }
+      .dim { color: #9ca3af; } .gray { color: #64748b; } .frame { color: #94a3b8; }
+      .step { color: #60a5fa; } .scale { color: #fb923c; } .result { color: #a78bfa; }
+    }
+  </style>
+
+<defs>
+    <marker id="ah-g" markerWidth="8" markerHeight="7" refX="7" refY="3.5" orient="auto">
+      <polygon points="0 0, 8 3.5, 0 7" fill="currentColor" class="gray"/>
+    </marker>
+  </defs>
+
+<!-- 四个面板中心 x = 110, 300, 490, 680；y = 130；单位 = 30px -->
+
+<!-- ===== 面板 1: 输入 单位圆 ===== -->
+<g transform="translate(110,130)">
+    <line class="axis" x1="-60" y1="0" x2="60" y2="0" stroke="currentColor" stroke-width="1"/>
+    <line class="axis" x1="0" y1="-60" x2="0" y2="60" stroke="currentColor" stroke-width="1"/>
+    <circle cx="0" cy="0" r="30" fill="none" stroke="currentColor" stroke-width="1.6" class="gray"/>
+    <!-- 坐标基向量 -->
+    <line class="step" x1="0" y1="0" x2="30" y2="0" stroke="currentColor" stroke-width="2" marker-end="url(#ah-g)"/>
+    <line class="step" x1="0" y1="0" x2="0" y2="-30" stroke="currentColor" stroke-width="2" marker-end="url(#ah-g)"/>
+    <text class="dim" x="0" y="85" font-size="12" fill="currentColor" text-anchor="middle">输入 x</text>
+    <text class="dim" x="0" y="100" font-size="11" fill="currentColor" text-anchor="middle">单位圆 r=1</text>
+  </g>
+<text class="lbl" x="110" y="32" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">输入</text>
+
+<!-- 箭头 ① -->
+<text class="step" x="205" y="120" font-size="20" font-weight="700" fill="currentColor" text-anchor="middle">① Vᵀ
+    <animate attributeName="opacity" values="1; 0.3; 1" dur="6s" begin="0s" repeatCount="indefinite"/>
+  </text>
+<text class="dim" x="205" y="140" font-size="11" fill="currentColor" text-anchor="middle">旋转</text>
+
+<!-- ===== 面板 2: Vᵀ 旋转后（仍是圆，但基向量转了 25°）===== -->
+<g transform="translate(300,130) rotate(-25)">
+    <line class="axis" x1="-60" y1="0" x2="60" y2="0" stroke="currentColor" stroke-width="1"/>
+    <line class="axis" x1="0" y1="-60" x2="0" y2="60" stroke="currentColor" stroke-width="1"/>
+    <circle cx="0" cy="0" r="30" fill="none" stroke="currentColor" stroke-width="1.6" class="gray"/>
+    <!-- 旋转后的基向量（蓝），指向新方向 -->
+    <line class="step" x1="0" y1="0" x2="30" y2="0" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah-g)"/>
+    <line class="step" x1="0" y1="0" x2="0" y2="-30" stroke="currentColor" stroke-width="2.2" marker-end="url(#ah-g)"/>
+  </g>
+<text class="step" x="300" y="100" font-size="11" fill="currentColor" text-anchor="middle" opacity="0.85">
+    <animate attributeName="opacity" values="0.4; 1; 0.4" dur="6s" begin="0s" repeatCount="indefinite"/>旋转不改变形状/长度
+  </text>
+<text class="lbl" x="300" y="32" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">① Vᵀ 旋转</text>
+
+<!-- 箭头 ② -->
+<text class="scale" x="395" y="120" font-size="20" font-weight="700" fill="currentColor" text-anchor="middle">② Σ
+    <animate attributeName="opacity" values="0.3; 1; 0.3" dur="6s" begin="2s" repeatCount="indefinite"/>
+  </text>
+<text class="dim" x="395" y="140" font-size="11" fill="currentColor" text-anchor="middle">缩放</text>
+
+<!-- ===== 面板 3: Σ 拉伸成椭圆（沿旋转后坐标轴：σ₁=2→60px, σ₂=0.8→24px）===== -->
+<g transform="translate(490,130) rotate(-25)">
+    <ellipse cx="0" cy="0" rx="60" ry="24" fill="none" stroke="currentColor" stroke-width="1.8" class="scale"/>
+    <line class="scale" x1="0" y1="0" x2="60" y2="0" stroke="currentColor" stroke-width="2.4" marker-end="url(#ah-g)"/>
+    <line class="scale" x1="0" y1="0" x2="0" y2="-24" stroke="currentColor" stroke-width="2.4" marker-end="url(#ah-g)"/>
+  </g>
+<text class="scale" x="490" y="100" font-size="11" fill="currentColor" text-anchor="middle">
+    <animate attributeName="opacity" values="0.4; 1; 0.4" dur="6s" begin="2s" repeatCount="indefinite"/>σ₁=2, σ₂=0.8
+  </text>
+<text class="lbl" x="490" y="32" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">② Σ 缩放</text>
+
+<!-- 箭头 ③ -->
+<text class="result" x="585" y="120" font-size="20" font-weight="700" fill="currentColor" text-anchor="middle">③ U
+    <animate attributeName="opacity" values="0.3; 1; 0.3" dur="6s" begin="4s" repeatCount="indefinite"/>
+  </text>
+<text class="dim" x="585" y="140" font-size="11" fill="currentColor" text-anchor="middle">旋转</text>
+
+<!-- ===== 面板 4: U 再旋转 40° → 椭圆总转角 65° ===== -->
+<g transform="translate(680,130) rotate(-65)">
+    <ellipse cx="0" cy="0" rx="60" ry="24" fill="none" stroke="currentColor" stroke-width="2" class="result"/>
+    <line class="result" x1="0" y1="0" x2="60" y2="0" stroke="currentColor" stroke-width="2.4" marker-end="url(#ah-g)"/>
+    <line class="result" x1="0" y1="0" x2="0" y2="-24" stroke="currentColor" stroke-width="2.4" marker-end="url(#ah-g)"/>
+  </g>
+<text class="result" x="680" y="100" font-size="11" fill="currentColor" text-anchor="middle">
+    <animate attributeName="opacity" values="0.4; 1; 0.4" dur="6s" begin="4s" repeatCount="indefinite"/>最终输出 Ax
+  </text>
+<text class="lbl" x="680" y="32" font-size="14" font-weight="600" fill="currentColor" text-anchor="middle">③ U 旋转</text>
+
+<!-- 底部公式条 -->
+<text class="ink" x="390" y="245" font-size="15" fill="currentColor" text-anchor="middle" font-family="'Courier New', monospace">
+    A x = U Σ Vᵀ x  =  ③旋转 ②缩放 ①旋转
+  </text>
+<text class="dim" x="390" y="266" font-size="12" fill="currentColor" text-anchor="middle">
+    任意线性变换 = 找到最佳视角，让变换退化成沿轴拉伸
+  </text>
+</svg>

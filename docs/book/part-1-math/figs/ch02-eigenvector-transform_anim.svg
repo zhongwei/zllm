@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 380" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>特征向量变换：方向不变的轴</title>
+<desc>单位圆上 8 个向量被对称矩阵 A=[[2,1],[1,2]] 作用；仅两个特征方向（红/蓝）方向不变、分别缩放 λ₁=3、λ₂=1，其余向量被拧转。</desc>
+<style>
+    .axis { color: #cbd5e1; }
+    .ink { color: #1f2937; }
+    .lbl { color: #374151; }
+    .dim { color: #6b7280; }
+    .gray { color: #9ca3af; }
+    .vec { color: #9ca3af; }
+    .eig1 { color: #dc2626; }
+    .eig2 { color: #2563eb; }
+    .op { color: #6b7280; }
+    .result { color: #7c3aed; }
+    @media (prefers-color-scheme: dark) {
+      .axis { color: #475569; }
+      .ink { color: #e5e7eb; }
+      .lbl { color: #e5e7eb; }
+      .dim { color: #9ca3af; }
+      .gray { color: #64748b; }
+      .vec { color: #64748b; }
+      .eig1 { color: #f87171; }
+      .eig2 { color: #60a5fa; }
+      .op { color: #9ca3af; }
+      .result { color: #a78bfa; }
+    }
+  </style>
+
+<defs>
+    <marker id="ah-v" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto">
+      <polygon points="0 0, 9 4, 0 8" fill="currentColor" class="vec"/>
+    </marker>
+    <marker id="ah-1" markerWidth="10" markerHeight="9" refX="9" refY="4.5" orient="auto">
+      <polygon points="0 0, 10 4.5, 0 9" fill="currentColor" class="eig1"/>
+    </marker>
+    <marker id="ah-2" markerWidth="10" markerHeight="9" refX="9" refY="4.5" orient="auto">
+      <polygon points="0 0, 10 4.5, 0 9" fill="currentColor" class="eig2"/>
+    </marker>
+  </defs>
+
+<!-- 标题 -->
+<text class="lbl" x="190" y="30" font-size="15" font-weight="600" fill="currentColor" text-anchor="middle">变换前：单位圆</text>
+<text class="lbl" x="570" y="30" font-size="15" font-weight="600" fill="currentColor" text-anchor="middle">变换后：A 作用 → 椭圆</text>
+<text class="dim" x="380" y="30" font-size="22" fill="currentColor" text-anchor="middle">→</text>
+
+<!-- ============ 左面板：单位圆 (中心 190,180, 单位=42px) ============ -->
+<g id="before" transform="translate(190,180)">
+    <!-- 坐标轴 -->
+    <line class="axis" x1="-90" y1="0" x2="90" y2="0" stroke="currentColor" stroke-width="1"/>
+    <line class="axis" x1="0" y1="-90" x2="0" y2="90" stroke="currentColor" stroke-width="1"/>
+    <!-- 单位圆 -->
+    <circle cx="0" cy="0" r="42" fill="none" stroke="currentColor" stroke-width="1.5" class="gray" opacity="0.7"/>
+    <!-- 8 个单位向量（灰）: 0,45,...,315 -->
+    <!-- 45° (eig1 方向) 与 135° (eig2 方向) 留作彩色 -->
+    <g class="vec" stroke="currentColor" stroke-width="1.4" fill="none" opacity="0.75">
+      <line x1="0" y1="0" x2="42" y2="0" marker-end="url(#ah-v)"/>
+      <line x1="0" y1="0" x2="0" y2="-42" marker-end="url(#ah-v)"/>
+      <line x1="0" y1="0" x2="-42" y2="0" marker-end="url(#ah-v)"/>
+      <line x1="0" y1="0" x2="0" y2="42" marker-end="url(#ah-v)"/>
+      <line x1="0" y1="0" x2="29.7" y2="-29.7" marker-end="url(#ah-v)"/>
+      <line x1="0" y1="0" x2="-29.7" y2="-29.7" marker-end="url(#ah-v)"/>
+      <line x1="0" y1="0" x2="-29.7" y2="29.7" marker-end="url(#ah-v)"/>
+      <line x1="0" y1="0" x2="29.7" y2="29.7" marker-end="url(#ah-v)"/>
+    </g>
+    <!-- 特征轴 1 (红, 45°方向直线) -->
+    <line class="eig1" x1="-50" y1="50" x2="50" y2="-50" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.55"/>
+    <!-- 特征轴 2 (蓝, 135°方向直线) -->
+    <line class="eig2" x1="-50" y1="-50" x2="50" y2="50" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.55"/>
+    <!-- 特征向量 q1 (红, 45°, 单位长) -->
+    <line class="eig1" x1="0" y1="0" x2="29.7" y2="-29.7" stroke="currentColor" stroke-width="2.6" marker-end="url(#ah-1)"/>
+    <!-- 特征向量 q2 (蓝, 135°, 单位长) -->
+    <line class="eig2" x1="0" y1="0" x2="-29.7" y2="-29.7" stroke="currentColor" stroke-width="2.6" marker-end="url(#ah-2)"/>
+    <text class="eig1" x="38" y="-34" font-size="13" font-weight="700" fill="currentColor">q₁</text>
+    <text class="eig2" x="-52" y="-34" font-size="13" font-weight="700" fill="currentColor">q₂</text>
+    <text class="dim" x="0" y="108" font-size="12" fill="currentColor" text-anchor="middle">所有向量长度 = 1</text>
+  </g>
+
+<!-- ============ 右面板：椭圆 (中心 570,180, 单位=28px → σ₁=3→84px, σ₂=1→28px) ============ -->
+<g id="after" transform="translate(570,180)">
+    <line class="axis" x1="-110" y1="0" x2="110" y2="0" stroke="currentColor" stroke-width="1"/>
+    <line class="axis" x1="0" y1="-90" x2="0" y2="90" stroke="currentColor" stroke-width="1"/>
+    <!-- 椭圆：长半轴 84px 沿 45°, 短半轴 28px 沿 135°。绘制为旋转椭圆 -->
+    <g transform="rotate(-45)">
+      <ellipse cx="0" cy="0" rx="84" ry="28" fill="none" stroke="currentColor" stroke-width="1.5" class="gray" opacity="0.7"/>
+    </g>
+    <!-- 8 个变换后向量（灰）。原 (cosθ,sinθ)→(2cosθ+sinθ, cosθ+2sinθ)，单位=28px -->
+    <g class="vec" stroke="currentColor" stroke-width="1.4" fill="none" opacity="0.75">
+      <!-- 0°: (1,0)→(2,1) -->
+      <line x1="0" y1="0" x2="56" y2="-28" marker-end="url(#ah-v)"/>
+      <!-- 90°: (0,1)→(1,2) -->
+      <line x1="0" y1="0" x2="28" y2="-56" marker-end="url(#ah-v)"/>
+      <!-- 180°: (-1,0)→(-2,-1) -->
+      <line x1="0" y1="0" x2="-56" y2="28" marker-end="url(#ah-v)"/>
+      <!-- 270°: (0,-1)→(-1,-2) -->
+      <line x1="0" y1="0" x2="-28" y2="56" marker-end="url(#ah-v)"/>
+      <!-- 0°附近 22.5°跳过；用 0/90/180/270 + 对角 -->
+      <!-- 45°对角邻: (1,1)/√2→3·(1,1)/√2 属特征(红)；用 22.5° 不必，这里补 4 个非特征对角变换 -->
+      <!-- (0.927,0.375)→(2.229,1.677) 略；简化：直接画 0/90/180/270 四灰箭头已够示意 -->
+    </g>
+    <!-- 特征轴直线（红 45°、蓝 135°）延伸 -->
+    <line class="eig1" x1="-95" y1="95" x2="95" y2="-95" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.55"/>
+    <line class="eig2" x1="-40" y1="-40" x2="40" y2="40" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" opacity="0.55"/>
+    <!-- 特征向量像：q1→3·q1 (红, 长度 84px 沿 45°) -->
+    <line class="eig1" x1="0" y1="0" x2="84" y2="-84" stroke="currentColor" stroke-width="2.8" marker-end="url(#ah-1)">
+      <animate attributeName="stroke-width" values="2.8; 4; 2.8" dur="3s" repeatCount="indefinite"/>
+    </line>
+    <!-- 特征向量像：q2→1·q2 (蓝, 长度 28px 沿 135°) -->
+    <line class="eig2" x1="0" y1="0" x2="-28" y2="-28" stroke="currentColor" stroke-width="2.8" marker-end="url(#ah-2)">
+      <animate attributeName="stroke-width" values="2.8; 4; 2.8" dur="3s" begin="1.5s" repeatCount="indefinite"/>
+    </line>
+    <!-- λ 标签（闪烁） -->
+    <text class="eig1" x="74" y="-78" font-size="14" font-weight="700" fill="currentColor">λ₁=3
+      <animate attributeName="opacity" values="1; 0.35; 1" dur="3s" repeatCount="indefinite"/>
+    </text>
+    <text class="eig2" x="-66" y="-30" font-size="14" font-weight="700" fill="currentColor">λ₂=1
+      <animate attributeName="opacity" values="0.35; 1; 0.35" dur="3s" repeatCount="indefinite"/>
+    </text>
+    <text class="dim" x="0" y="108" font-size="12" fill="currentColor" text-anchor="middle">长半轴=3，短半轴=1</text>
+  </g>
+
+<!-- 底部要点（循环切换） -->
+<g transform="translate(380,330)" text-anchor="middle" font-size="14">
+    <text class="result" fill="currentColor" font-weight="600">
+      红轴：方向不变，长度 1→3（拉伸 3 倍）
+      <animate attributeName="opacity" values="1; 1; 0.25; 0.25; 1" keyTimes="0; 0.5; 0.5; 0.95; 1" dur="6s" repeatCount="indefinite"/>
+    </text>
+    <text class="result" y="22" fill="currentColor" font-weight="600">
+      蓝轴：方向不变，长度 1→1（不缩放）
+      <animate attributeName="opacity" values="0.25; 0.25; 1; 1; 0.25" keyTimes="0; 0.5; 0.5; 0.95; 1" dur="6s" repeatCount="indefinite"/>
+    </text>
+  </g>
+<text class="dim" x="380" y="372" font-size="12" fill="currentColor" text-anchor="middle">
+    特征向量 = 变换中方向不变的轴；特征值 = 沿该轴的拉伸倍数
+  </text>
+</svg>

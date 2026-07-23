@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 320" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>奇异值谱与 Eckart-Young 截断</title>
+<desc>8 个奇异值从大到小排列；前 k 个高亮保留、后续淡化为误差，k 在 1/3/5 间切换，右侧实时显示 Frobenius 误差与能量保留率。</desc>
+<style>
+    .axis { color: #94a3b8; }
+    .ink { color: #1f2937; }
+    .lbl { color: #374151; }
+    .dim { color: #6b7280; }
+    .keep { color: #7c3aed; }
+    .drop { color: #cbd5e1; }
+    .err { color: #ea580c; }
+    .num { color: #1f2937; }
+    @media (prefers-color-scheme: dark) {
+      .axis { color: #475569; } .ink { color: #e5e7eb; } .lbl { color: #e5e7eb; }
+      .dim { color: #9ca3af; } .keep { color: #a78bfa; } .drop { color: #334155; }
+      .err { color: #fb923c; } .num { color: #e5e7eb; }
+    }
+  </style>
+
+<!-- σ 值: 3.0, 2.0, 1.2, 0.6, 0.2, 0.08, 0.03, 0.01 ；最大 3.0 → 200px 高 -->
+<!-- 坐标原点 (60, 250)，8 根柱宽 38，间隔 12，从 x=70 开始 -->
+<line class="axis" x1="60" y1="250" x2="500" y2="250" stroke="currentColor" stroke-width="1.5"/>
+<line class="axis" x1="60" y1="40" x2="60" y2="250" stroke="currentColor" stroke-width="1.5"/>
+
+<!-- 柱子高度: σ×(200/3)=σ×66.67。x 起始 70，步长 50 -->
+<!-- i=1 σ=3.0 h=200 ; i=2 σ=2.0 h=133 ; i=3 σ=1.2 h=80 ; i=4 σ=0.6 h=40 ; i=5 σ=0.2 h=13 ; i=6 σ=0.08 h=5 ; i=7 σ=0.03 h=2 ; i=8 σ=0.01 h=1 -->
+
+<!-- 保留的柱子（紫，随 k 切换）。k 在 1/3/5 间循环 -->
+<g>
+    <!-- k=1 时只 i=1 保留 -->
+    <rect class="keep" x="70" y="50" width="38" height="200" fill="currentColor" opacity="0.85" stroke="currentColor" stroke-width="1.5">
+      <animate attributeName="opacity" values="0.85; 0.85; 0.85; 0.25; 0.25; 0.25; 0.85; 0.85" keyTimes="0; 0.33; 0.34; 0.55; 0.56; 0.78; 0.79; 1" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <!-- i=2: k>=3 保留 -->
+    <rect class="keep" x="120" y="117" width="38" height="133" fill="currentColor" opacity="0.25" stroke="currentColor" stroke-width="1.5">
+      <animate attributeName="opacity" values="0.25; 0.25; 0.85; 0.85; 0.85; 0.85; 0.25; 0.25" keyTimes="0; 0.33; 0.34; 0.55; 0.56; 0.78; 0.79; 1" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <!-- i=3: k>=3 保留 -->
+    <rect class="keep" x="170" y="170" width="38" height="80" fill="currentColor" opacity="0.25" stroke="currentColor" stroke-width="1.5">
+      <animate attributeName="opacity" values="0.25; 0.25; 0.85; 0.85; 0.85; 0.85; 0.25; 0.25" keyTimes="0; 0.33; 0.34; 0.55; 0.56; 0.78; 0.79; 1" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <!-- i=4: k>=5 保留 -->
+    <rect class="keep" x="220" y="210" width="38" height="40" fill="currentColor" opacity="0.25" stroke="currentColor" stroke-width="1.5">
+      <animate attributeName="opacity" values="0.25; 0.25; 0.25; 0.25; 0.85; 0.85; 0.25; 0.25" keyTimes="0; 0.33; 0.34; 0.55; 0.56; 0.78; 0.79; 1" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <!-- i=5: k>=5 保留 -->
+    <rect class="keep" x="270" y="237" width="38" height="13" fill="currentColor" opacity="0.25" stroke="currentColor" stroke-width="1.5">
+      <animate attributeName="opacity" values="0.25; 0.25; 0.25; 0.25; 0.85; 0.85; 0.25; 0.25" keyTimes="0; 0.33; 0.34; 0.55; 0.56; 0.78; 0.79; 1" dur="9s" repeatCount="indefinite"/>
+    </rect>
+    <!-- i=6..8 始终丢弃（灰） -->
+    <rect class="drop" x="320" y="245" width="38" height="5" fill="currentColor"/>
+    <rect class="drop" x="370" y="248" width="38" height="2" fill="currentColor"/>
+    <rect class="drop" x="420" y="249" width="38" height="1" fill="currentColor"/>
+  </g>
+
+<!-- σ 数值标签 -->
+<g class="dim" font-size="11" fill="currentColor" text-anchor="middle">
+    <text x="89" y="44">3.0</text>
+    <text x="139" y="111">2.0</text>
+    <text x="189" y="164">1.2</text>
+    <text x="239" y="204">0.6</text>
+    <text x="289" y="231">0.2</text>
+    <text x="339" y="239">0.08</text>
+    <text x="389" y="242">0.03</text>
+    <text x="439" y="243">0.01</text>
+  </g>
+<!-- i 轴标签 -->
+<g class="dim" font-size="11" fill="currentColor" text-anchor="middle">
+    <text x="89" y="266">σ₁</text><text x="139" y="266">σ₂</text><text x="189" y="266">σ₃</text>
+    <text x="239" y="266">σ₄</text><text x="289" y="266">σ₅</text><text x="339" y="266">σ₆</text>
+    <text x="389" y="266">σ₇</text><text x="439" y="266">σ₈</text>
+  </g>
+<text class="dim" x="280" y="290" font-size="12" fill="currentColor" text-anchor="middle">奇异值（从大到小排序）</text>
+<text class="dim" x="30" y="145" font-size="12" fill="currentColor" text-anchor="middle" transform="rotate(-90,30,145)">σᵢ 大小</text>
+
+<!-- 右侧信息面板：随 k 切换 -->
+<g transform="translate(530,80)" text-anchor="middle">
+    <text class="keep" font-size="34" font-weight="700" fill="currentColor">k=1
+      <animate attributeName="opacity" values="1;1;0;0;0;0;1" keyTimes="0;0.33;0.34;0.55;0.56;0.78;0.79" dur="9s" repeatCount="indefinite"/>
+    </text>
+    <text class="keep" font-size="34" font-weight="700" fill="currentColor">k=3
+      <animate attributeName="opacity" values="0;0;1;1;0;0;0" keyTimes="0;0.33;0.34;0.55;0.56;0.78;0.79" dur="9s" repeatCount="indefinite"/>
+    </text>
+    <text class="keep" font-size="34" font-weight="700" fill="currentColor">k=5
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.33;0.34;0.55;0.56;0.78;0.79" dur="9s" repeatCount="indefinite"/>
+    </text>
+  </g>
+<!-- 保留率 -->
+<g transform="translate(530,130)" text-anchor="middle" font-size="13">
+    <text class="ink" fill="currentColor">能量保留 60.6%
+      <animate attributeName="opacity" values="1;1;0;0;0;0;1" keyTimes="0;0.33;0.34;0.55;0.56;0.78;0.79" dur="9s" repeatCount="indefinite"/>
+    </text>
+    <text class="ink" fill="currentColor">能量保留 97.3%
+      <animate attributeName="opacity" values="0;0;1;1;0;0;0" keyTimes="0;0.33;0.34;0.55;0.56;0.78;0.79" dur="9s" repeatCount="indefinite"/>
+    </text>
+    <text class="ink" fill="currentColor">能量保留 ≈100%
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.33;0.34;0.55;0.56;0.78;0.79" dur="9s" repeatCount="indefinite"/>
+    </text>
+  </g>
+<!-- Frobenius 误差 -->
+<g transform="translate(530,158)" text-anchor="middle" font-size="13">
+    <text class="err" fill="currentColor">‖A−Aₖ‖_F=2.42
+      <animate attributeName="opacity" values="1;1;0;0;0;0;1" keyTimes="0;0.33;0.34;0.55;0.56;0.78;0.79" dur="9s" repeatCount="indefinite"/>
+    </text>
+    <text class="err" fill="currentColor">‖A−Aₖ‖_F=0.64
+      <animate attributeName="opacity" values="0;0;1;1;0;0;0" keyTimes="0;0.33;0.34;0.55;0.56;0.78;0.79" dur="9s" repeatCount="indefinite"/>
+    </text>
+    <text class="err" fill="currentColor">‖A−Aₖ‖_F=0.09
+      <animate attributeName="opacity" values="0;0;0;0;1;1;0" keyTimes="0;0.33;0.34;0.55;0.56;0.78;0.79" dur="9s" repeatCount="indefinite"/>
+    </text>
+  </g>
+<text class="dim" x="530" y="200" font-size="11" fill="currentColor" text-anchor="middle">紫色=保留</text>
+<text class="dim" x="530" y="215" font-size="11" fill="currentColor" text-anchor="middle">灰色=截断(误差)</text>
+
+<text class="dim" x="310" y="312" font-size="12" fill="currentColor" text-anchor="middle">
+    截断小奇异值 = 丢弃低能量方向；误差 = ∑(被丢 σᵢ)²
+  </text>
+</svg>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 340" width="100%" height="100%" font-family="system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <title>投影到列空间</title>
+<desc>把向量 b=(3,4) 投影到 span{(1,1)} 上得到 Pb=(3.5,3.5)，残差 b−Pb 与列空间正交。</desc>
+<style>
+    .axis { color: #94a3b8; }
+    .ink { color: #1f2937; }
+    .lbl { color: #374151; }
+    .dim { color: #6b7280; }
+    .cs { color: #2563eb; }
+    .b { color: #ea580c; }
+    .pb { color: #7c3aed; }
+    .res { color: #9ca3af; }
+    @media (prefers-color-scheme: dark) {
+      .axis { color: #475569; } .ink { color: #e5e7eb; } .lbl { color: #e5e7eb; }
+      .dim { color: #9ca3af; } .cs { color: #60a5fa; } .b { color: #fb923c; }
+      .pb { color: #a78bfa; } .res { color: #64748b; }
+    }
+  </style>
+
+<defs>
+    <marker id="ah-cs" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto">
+      <polygon points="0 0, 9 4, 0 8" fill="currentColor" class="cs"/></marker>
+    <marker id="ah-b" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto">
+      <polygon points="0 0, 9 4, 0 8" fill="currentColor" class="b"/></marker>
+    <marker id="ah-pb" markerWidth="9" markerHeight="8" refX="8" refY="4" orient="auto">
+      <polygon points="0 0, 9 4, 0 8" fill="currentColor" class="pb"/></marker>
+  </defs>
+
+<!-- 原点 (70,290)，单位 = 38px。x→右，y→上(故 y 屏幕坐标 = 290 - 38*y) -->
+<!-- 坐标轴 -->
+<g stroke="currentColor" stroke-width="1" class="axis">
+    <line x1="40" y1="290" x2="440" y2="290"/>
+    <line x1="70" y1="310" x2="70" y2="40"/>
+  </g>
+<!-- 刻度 (淡) -->
+<g class="dim" font-size="10" fill="currentColor" text-anchor="middle">
+    <text x="108" y="304">1</text><text x="146" y="304">2</text><text x="184" y="304">3</text>
+    <text x="222" y="304">4</text><text x="260" y="304">5</text><text x="298" y="304">6</text>
+  </g>
+<g class="dim" font-size="10" fill="currentColor" text-anchor="end">
+    <text x="64" y="254">1</text><text x="64" y="216">2</text><text x="64" y="178">3</text>
+    <text x="64" y="140">4</text><text x="64" y="102">5</text>
+  </g>
+<text class="dim" x="446" y="294" font-size="12" fill="currentColor">x₁</text>
+<text class="dim" x="66" y="38" font-size="12" fill="currentColor" text-anchor="end">x₂</text>
+
+<!-- 列空间 span{(1,1)}：方向 (1,1)，从 (-1,-1) 到 (6,6)。
+     屏幕坐标： (1,1) → (70+38, 290-38)=(108,252)，6 倍 → (70+228,290-228)=(298,62)；反向 → (70-38,290+38)=(32,328) -->
+<line class="cs" x1="32" y1="328" x2="320" y2="40" stroke="currentColor" stroke-width="2" opacity="0.7"/>
+<text class="cs" x="328" y="40" font-size="12" font-weight="600" fill="currentColor">列空间 span{(1,1)ᵀ}</text>
+
+<!-- b = (3,4) → (70+114, 290-152)=(184,138) -->
+<line class="b" x1="70" y1="290" x2="184" y2="138" stroke="currentColor" stroke-width="2.6" marker-end="url(#ah-b)">
+    <animate attributeName="opacity" values="0;1" dur="1s" begin="0s" fill="freeze"/>
+  </line>
+<text class="b" x="146" y="128" font-size="13" font-weight="700" fill="currentColor" opacity="0">
+    b=(3,4)
+    <animate attributeName="opacity" values="0;1" dur="0.6s" begin="0.8s" fill="freeze"/>
+  </text>
+
+<!-- 残差 b - Pb：从 Pb(3.5,3.5)→(70+133,290-133)=(203,157) 到 b(184,138)。虚线灰 -->
+<line class="res" x1="203" y1="157" x2="184" y2="138" stroke="currentColor" stroke-width="1.8" stroke-dasharray="5 3">
+    <animate attributeName="opacity" values="0;0.9" dur="0.6s" begin="1.4s" fill="freeze"/>
+  </line>
+
+<!-- 投影 Pb = (3.5,3.5) → (203,157) -->
+<line class="pb" x1="70" y1="290" x2="203" y2="157" stroke="currentColor" stroke-width="2.8" marker-end="url(#ah-pb)">
+    <animate attributeName="opacity" values="0;1" dur="0.8s" begin="1.6s" fill="freeze"/>
+  </line>
+<circle class="pb" cx="203" cy="157" r="4" fill="currentColor">
+    <animate attributeName="opacity" values="0;1" dur="0.3s" begin="2.2s" fill="freeze"/>
+  </circle>
+<text class="pb" x="210" y="150" font-size="13" font-weight="700" fill="currentColor" opacity="0">
+    Pb=(3.5,3.5)
+    <animate attributeName="opacity" values="0;1" dur="0.5s" begin="2.4s" fill="freeze"/>
+  </text>
+
+<!-- 直角标记：在 Pb 处画小方块，沿列空间方向(1,1)与残差方向(-1,1)。
+     Pb=(203,157)。列空间方向单位 (1,1)/√2 → 屏幕步长 (38/√2, -38/√2)≈(27,-27)，取 10px → (7,-7)。
+     残差方向 (-1,1)/√2 → 屏幕 (-7,-7)。方块四角： Pb, Pb+(7,-7)=(210,150), Pb+(0,-14)=(203,143), Pb+(-7,-7)=(196,150) -->
+<polygon class="res" points="203,157 210,150 203,143 196,150" fill="none" stroke="currentColor" stroke-width="1.4" opacity="0">
+    <animate attributeName="opacity" values="0;0.9" dur="0.4s" begin="2.6s" fill="freeze"/>
+  </polygon>
+<text class="res" x="158" y="148" font-size="11" fill="currentColor" opacity="0">残差 b−Pb⊥列空间
+    <animate attributeName="opacity" values="0;0.85" dur="0.5s" begin="2.8s" fill="freeze"/>
+  </text>
+
+<!-- 底部公式（淡入后常驻） -->
+<g transform="translate(250,318)" text-anchor="middle" opacity="0">
+    <animate attributeName="opacity" values="0;1" dur="0.6s" begin="3s" fill="freeze"/>
+    <text class="ink" font-size="13" fill="currentColor">P = A(AᵀA)⁻¹Aᵀ ， 把任意向量映到 A 的列空间</text>
+  </g>
+</svg>
